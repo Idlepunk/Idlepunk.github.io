@@ -1,0 +1,81 @@
+body {
+    color: orange;
+}
+
+body {
+    background-color: #000;
+}
+
+.clickRed {
+    color: red;
+    cursor: pointer;
+    cursor: hand;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#footer {
+    position: relative;
+    bottom: 0;
+}
+
+#footerSave {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.title {
+    color: blue;
+}
+
+* {
+    font-family: Courier;
+}
+
+.testleft {
+    float: left;
+}
+
+.floatRight {
+    float: right;
+    width: 50%;
+}
+
+hr {
+    background-color: #000;
+    border-top: 1px dashed orange;
+    border-bottom: 1px dashed orange;
+}
+
+.output {
+    float: left;
+    width: 50%;
+}
+
+.bottompad {
+    margin-bottom: 5%;
+    position: absolute;
+    bottom: 0;
+}
+
+.number {
+    color: #ff0;
+}
+
+.thankyou {
+    height: 200px;
+    width: 400px;
+    background: #000;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+}
+
+.description {
+    color: #C70039;
+}
