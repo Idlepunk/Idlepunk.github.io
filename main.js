@@ -349,7 +349,7 @@ function changeUpgradeText(input) {
                     HTMLEditor('ICEPickUpgradeDesc', 'MOLE was first true cybernetic virus, it has had many iterations over the years, this injects all of them.');
                     break;
                 default:
-                    HTMLEditor('ICEPickUpgradeName', 'Write new software');
+                    HTMLEditor('ICEPickUpgradeName', 'Write new anti-ICE software');
                     HTMLEditor('ICEPickUpgradeCost', formatBytes(cost));
                     HTMLEditor('ICEPickUpgradeDesc', 'ICE defense is ever changing, new ICE picking software is always required.');
                     break;
@@ -373,9 +373,9 @@ function changeUpgradeText(input) {
                     HTMLEditor('botnetUpgradeDesc', 'Your Bots no longer need to report home, they are free to run wild in cyberspace, returning only to drop off their collected data.');
                     break;
                 default:
-                    HTMLEditor('botnetUpgradeName', 'SOMEBODY');
+                    HTMLEditor('botnetUpgradeName', 'Push out new Bot firmware');
                     HTMLEditor('botnetUpgradeCost', formatBytes(cost));
-                    HTMLEditor('botnetUpgradeDesc', 'ONCE TOLD ME')
+                    HTMLEditor('botnetUpgradeDesc', 'ONCE TOLD ME THE WORLD IS GONNA HACK ME I AINT THE FASTEST BOT IN THE NET.')
                     break;
             }
             break;
