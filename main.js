@@ -309,17 +309,17 @@ function changeUpgradeText(input) {
     switch (input) {
         case 'cyberdeck':
             switch (cyberdeckUpgradeCount) {
-                case 1:
+                case 0:
                     HTMLEditor('cyberdeckUpgradeName', 'Install Neural Interfaces');
                     HTMLEditor('cyberdeckUpgradeCost', formatBytes(cost));
                     HTMLEditor('cyberdeckUpgradeDesc', 'First developed by triGen Consolidated, the Neural Interface allows humans to traverse cyberspace using nothing but their brains. In addition, atrophied limbs can save you money on food.');
                     break;
-                case 2:
+                case 1:
                     HTMLEditor('cyberdeckUpgradeName', 'Flash ZedSoft firmware');
                     HTMLEditor('cyberdeckUpgradeCost', formatBytes(cost));
                     HTMLEditor('cyberdeckUpgradeDesc', 'ZedSoft is the most revered Cyberdeck development company in the entire Inner Seoul Arcology. They have an exclusive contract with MILNET-KOREA, making their products difficult to source.');
                     break;
-                case 3:
+                case 2:
                     HTMLEditor('cyberdeckUpgradeName', 'Create a clustered Superdeck');
                     HTMLEditor('cyberdeckUpgradeCost', formatBytes(cost));
                     HTMLEditor('cyberdeckUpgradeDesc', 'An ancient trick, by networking a large number of Decks together you can create a Superdeck, more powerful than the sum of its parts.');
@@ -333,17 +333,17 @@ function changeUpgradeText(input) {
             break;
         case 'ICEPick':
             switch (ICEPickUpgradeCount) {
-                case 1:
+                case 0:
                     HTMLEditor('ICEPickUpgradeName', 'Prepare BLACKICE Countermeasures');
                     HTMLEditor('ICEPickUpgradeCost', formatBytes(cost));
                     HTMLEditor('ICEPickUpgradeDesc', 'BLACKICE, originally developed to protect the intellectual assets of Meturia-Preva Consolidated, is now a blanket term for security software capable of killing intruders.');
                     break;
-                case 2:
+                case 1:
                     HTMLEditor('ICEPickUpgradeName', 'Setup Dummy Interface');
                     HTMLEditor('ICEPickUpgradeCost', formatBytes(cost));
                     HTMLEditor('ICEPickUpgradeDesc', 'Corporations, particularly those in the Eurasian Economic Zone, are partial to sending assassins after those who steal their data. Setting up a Dummy Interface makes it hard for them to track you down.');
                     break;
-                case 3:
+                case 2:
                     HTMLEditor('ICEPickUpgradeName', 'MOLE Injectors');
                     HTMLEditor('ICEPickUpgradeCost', formatBytes(cost));
                     HTMLEditor('ICEPickUpgradeDesc', 'MOLE was first true cybernetic virus, it has had many iterations over the years, this injects all of them.');
@@ -357,17 +357,17 @@ function changeUpgradeText(input) {
             break;
         case 'botnet':
             switch (botnetUpgradeCount) {
-                case 1:
+                case 0:
                     HTMLEditor('botnetUpgradeName', 'Self replicating Botnet');
                     HTMLEditor('botnetUpgradeCost', formatBytes(cost));
                     HTMLEditor('botnetUpgradeDesc', 'Your Bots can now utilise idle system processing power to create new bots to add to the Botnet.');
                     break;
-                case 2:
+                case 1:
                     HTMLEditor('botnetUpgradeName', 'Allow your Botnet to use ICE Picks');
                     HTMLEditor('botnetUpgradeCost', formatBytes(cost));
                     HTMLEditor('botnetUpgradeDesc', 'Your bots can now use your ICE Picking software to help infiltration.');
                     break;
-                case 3:
+                case 2:
                     HTMLEditor('botnetUpgradeName', 'Create AutoBotnet');
                     HTMLEditor('botnetUpgradeCost', formatBytes(cost));
                     HTMLEditor('botnetUpgradeDesc', 'Your Bots no longer need to report home, they are free to run wild in cyberspace, returning only to drop off their collected data.');
@@ -381,17 +381,17 @@ function changeUpgradeText(input) {
             break;
         case 'neuralZombie':
             switch (neuralZombieUpgradeCount) {
-                case 1:
+                case 0:
                     HTMLEditor('neuralZombieUpgradeName', 'Harambe2');
                     HTMLEditor('neuralZombieUpgradeCost', formatBytes(cost));
                     HTMLEditor('neuralZombieUpgradeDesc', 'Harambe2')
                     break;
-                case 2:
+                case 1:
                     HTMLEditor('neuralZombieUpgradeName', 'Harambe3');
                     HTMLEditor('neuralZombieUpgradeCost', formatBytes(cost));
                     HTMLEditor('neuralZombieUpgradeDesc', 'Harambe3')
                     break;
-                case 3:
+                case 2:
                     HTMLEditor('neuralZombieUpgradeName', 'Harambe4');
                     HTMLEditor('neuralZombieUpgradeCost', formatBytes(cost));
                     HTMLEditor('neuralZombieUpgradeDesc', 'Harambe4')
