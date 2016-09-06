@@ -335,6 +335,7 @@ function increment() {
     HTMLEditor('AIRateTotal', formatBytes(AIIncome));
     //Total
     HTMLEditor('dataHacked', formatBytes(Math.floor(dataHacked)));
+    HTMLEditor('totalDataHacked', formatBytes(Math.floor(totalDataHacked)));
     HTMLEditor('totalIncome', formatBytes(totalIncome));
 }
 
@@ -499,7 +500,7 @@ function doUpgrade(input) {
 
 function getUpgradeCost(input, indexModifier) {
     if (indexModifier === undefined) {
-        indexModifier = 0
+        indexModifier = 0;
     };
     var array;
     var index;

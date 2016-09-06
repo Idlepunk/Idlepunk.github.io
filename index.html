@@ -8,11 +8,12 @@
     </head>
     <body id='all'>
         <div id='heading'>
-            IDLEPUNK 0.2.10 - Crazy upgrades
+            IDLEPUNK 0.2.11
         </div>
         <hr>
         <br>
-        Data Hacked: <span id='dataHacked'>90 Bytes</span><br>
+        Total Data Hacked: <span id='totalDataHacked' class='number'> 0 Bytes</span><br>
+        Data Avaliable: <span id='dataHacked' class='number'>10 Bytes</span><br>
         <br>
         <hr>
         <!-- Datajack -->
@@ -21,7 +22,7 @@
         Datajack into <span class='clickRed' id='dataJackMouseOver' onclick="jackIn(1000000000000);">CYBERSPACE</span><br>
         -->
         
-        Total income rate: <span id="totalIncome">0</span>/Second <!-- Cyberdeck -->
+        Total income rate: <span id="totalIncome" class='number'>0</span> per second <!-- Cyberdeck -->
         <hr id='cyberdeckHR'>
         <div class='floatRight' id='cyberdeckUpgradeMenu'>
             <span class='clickRed' id='cyberdeckUpgradeName' onclick='upgrade(1);'>Upgrade to an Ergonomic Deck</span><br>
@@ -53,7 +54,7 @@
             You have <span class='number' id='ICEPickNumber'>0</span> ICE Picks<br>
             ICE Picks hack at <span class='number' id='ICEPickRate'>10 Bytes</span> per second<br>
             All you ICE Picks are hacking at <span class='number' id='ICEPickRateTotal'>0 Bytes</span> per second<br>
-            Your ICEPicks are creating <span class=number id='ICEPickCyberdeckCreationRate'>0</span> Cyberdecks per second.
+            Your ICEPicks are creating <span class=number id='ICEPickCyberdeckCreationRate'>0</span> Cyberdecks per second
         </div><!-- Botnet -->
         <hr id='botnetHR'>
         <div class='floatRight' id='botnetUpgradeMenu'>
@@ -70,7 +71,7 @@
             You have <span class='number' id='botnetNumber'>0</span> Botnets<br>
             Botnets hack at <span class='number' id='botnetRate'>10 Bytes</span> per second<br>
             All your Botnets are hacking at <span class='number' id='botnetRateTotal'>0 Bytes</span> per second<br>
-            Your Botnets are creating <span class=number id='botnetICEPickCreationRate'>0</span> ICE Picks per second.
+            Your Botnets are creating <span class=number id='botnetICEPickCreationRate'>0</span> ICE Picks per second
         </div><!-- Neural Zombie -->
         <hr id='neuralZombieHR'>
         <div class='floatRight' id='neuralZombieUpgradeMenu'>
@@ -87,7 +88,7 @@
             You have <span class='number' id='neuralZombieNumber'>0</span> Neural Zombies<br>
             Neural Zombies hack at <span class='number' id='neuralZombieRate'>10 Bytes</span> per second<br>
             All your Neural Zombies are hacking at <span class='number' id='neuralZombieRateTotal'>0 Bytes</span> per second<br>
-            Your Zombies are creating <span class=number id='nerualZombieBotnetCreationRate'>0</span> Botnets per second.
+            Your Zombies are creating <span class=number id='nerualZombieBotnetCreationRate'>0</span> Botnets per second
         </div><!-- AI -->
         <hr id='AIHR'>
         <div class='floatRight' id='AIUpgradeMenu'>
