@@ -243,7 +243,7 @@ function formatBytes(bytes, decimals) {
         if (bytes == 1) return '1 Byte';
         var k = 1000;
         var dm = 2 + 1 || 3;
-        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB', 'YOU BROKE IT'];
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB', 'Googolbyte', 'Hypotheticalbyte', 'Asherbyte', 'IRanOutOfActualBytesAWhileAgoByte', 'Harambyte', 'ImOutOfByteIdeasByte', 'TheNextOneWillBeNaNByte', 'NaNByte'];
         var i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
