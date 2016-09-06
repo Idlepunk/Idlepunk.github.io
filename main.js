@@ -334,7 +334,7 @@ function increment() {
     HTMLEditor('AIRate', formatBytes(AIRate * 10));
     HTMLEditor('AIRateTotal', formatBytes(AIIncome));
     //Total
-    HTMLEditor('dataHacked', formatBytes(dataHacked));
+    HTMLEditor('dataHacked', formatBytes(Math.floor(dataHacked)));
     HTMLEditor('totalIncome', formatBytes(totalIncome));
 }
 
@@ -365,7 +365,7 @@ function jackIn(number) {
 
 function changeUpgradeText(input) {
     var type;
-    var cost = getUpgradeCost(input);
+    var cost = getUpgradeCost(input, 1);
     switch (input) {
         case 'cyberdeck':
             switch (cyberdeckUpgradeCount) {
@@ -603,20 +603,28 @@ function upgrade(input) {
     }
 }
 
-function buyCyberdeck() {
-    buyItem('cyberdeck', 10);
+function buyCyberdeck(input) {
+    for (var i = 0; i < input; i++){
+        buyItem('cyberdeck', 10);
+    }
 }
 
-function buyICEPick() {
-    buyItem('ICEPick', 110);
+function buyICEPick(input) {
+    for (var i = 0; i < input; i++){
+        buyItem('ICEPick', 110);
+    }
 }
 
-function buyBotnet() {
-    buyItem('botnet', 1200);
+function buyBotnet(input) {
+    for (var i = 0; i < input; i++){
+        buyItem('botnet', 1200);
+    }
 }
 
-function buyNeuralZombie() {
-    buyItem('neuralZombie', 13000);
+function buyNeuralZombie(input) {
+    for (var i = 0; i < input; i++){
+        buyItem('neuralZombie', 13000);
+    }
 }
 
 function buyAI() {
@@ -635,11 +643,11 @@ function buyItem(item, baseCost) {
         itemPurchasedInt += 1;
         HTMLEditor(itemNumberName, itemNumberInt);
         HTMLEditor('dataHacked', formatBytes(dataHacked));
-    }
+    
     var nextCost = Math.floor(baseCost * Math.pow(1.15, itemPurchasedInt));
     var itemCost = item + 'Cost';
     HTMLEditor(itemCost, formatBytes(nextCost));
     window[itemNumberName] = itemNumberInt;
     window[itemPurchasedName] = itemPurchasedInt;
-    var i = 1;
+    };
 }
