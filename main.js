@@ -288,7 +288,7 @@ window.setInterval(function() {
         autoBuy();
         autoBuyCount = 0;
     }
-}, 10); //100 = 10 ticks per second
+}, 100); //100 = 10 ticks per second
 function checkForReveal() {
     //Decks Base
     if (totalDataHacked >= 10) {
