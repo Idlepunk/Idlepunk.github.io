@@ -8,7 +8,7 @@
     </head>
     <body id='all'>
         <div id='heading'>
-            IDLEPUNK 0.2.9 - MORE BALANCE
+            IDLEPUNK 0.2.10 - Crazy upgrades
         </div>
         <hr>
         <br>
@@ -16,9 +16,10 @@
         <br>
         <hr>
         <!-- Datajack -->
-        <!--
-        Datajack into <span class='clickRed' id='dataJackMouseOver' onclick="jackIn(10000000000);">CYBERSPACE</span><br>
+        
+        Datajack into <span class='clickRed' id='dataJackMouseOver' onclick="jackIn(1000000000000);">CYBERSPACE</span><br>
         -->
+        
         Total income rate: <span id="totalIncome">0</span>/Second <!-- Cyberdeck -->
         <hr id='cyberdeckHR'>
         <div class='floatRight' id='cyberdeckUpgradeMenu'>
@@ -45,6 +46,7 @@
             You have <span class='number' id='ICEPickNumber'>0</span> ICE Picks<br>
             ICE Picks hack at <span class='number' id='ICEPickRate'>10 Bytes</span> per second<br>
             All you ICE Picks are hacking at <span class='number' id='ICEPickRateTotal'>0 Bytes</span> per second<br>
+            Your ICEPicks are creating <span class=number id='ICEPickCyberdeckCreationRate'>0</span> Cyberdecks per second.
         </div><!-- Botnet -->
         <hr id='botnetHR'>
         <div class='floatRight' id='botnetUpgradeMenu'>
@@ -58,12 +60,13 @@
             You have <span class='number' id='botnetNumber'>0</span> Botnets<br>
             Botnets hack at <span class='number' id='botnetRate'>10 Bytes</span> per second<br>
             All your Botnets are hacking at <span class='number' id='botnetRateTotal'>0 Bytes</span> per second<br>
+            Your Botnets are creating <span class=number id='botnetICEPickCreationRate'>0</span> ICE Picks per second.
         </div><!-- Neural Zombie -->
         <hr id='neuralZombieHR'>
         <div class='floatRight' id='neuralZombieUpgradeMenu'>
-            <span class='clickRed' id='neuralZombieUpgradeName' onclick='upgrade(4);'>Harambe1</span><br>
+            <span class='clickRed' id='neuralZombieUpgradeName' onclick='upgrade(4);'>Anti-tamper Zombies</span><br>
             This will cost <span class='number' id='neuralZombieUpgradeCost'>600 KB</span><br>
-            <span id='neuralZombieUpgradeDesc'>Harambe</span><br>
+            <span id='neuralZombieUpgradeDesc'>A BioWipe Amalgamated Anti-tamper System&trade; will ensure that any evidence located inside your Zombies will be unrecoverable.</span><br>
         </div>
         <div id='neuralZombieDiv'>
             Create a <span class='clickRed' id='neuralZombieMouseOver' onclick="buyNeuralZombie();">Neural Zombie</span><br>
@@ -71,6 +74,7 @@
             You have <span class='number' id='neuralZombieNumber'>0</span> Neural Zombies<br>
             Neural Zombies hack at <span class='number' id='neuralZombieRate'>10 Bytes</span> per second<br>
             All your Neural Zombies are hacking at <span class='number' id='neuralZombieRateTotal'>0 Bytes</span> per second<br>
+            Your Zombies are creating <span class=number id='nerualZombieBotnetCreationRate'>0</span> Botnets per second.
         </div><!-- AI -->
         <hr id='AIHR'>
         <div class='floatRight' id='AIUpgradeMenu'>
@@ -120,17 +124,17 @@
         document.getElementById('AIMouseOver').onmouseover = function() {showText('AIMouseOver')};
         document.getElementById('AIMouseOver').onmouseout = function() {stopText()};
         </script> 
-        <script>
-        //Google Analytics
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+		<script>
+		//Analytics
+		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-        ga('create', 'UA-83596439-1', 'auto');
-        ga('send', 'pageview');
+		  ga('create', 'UA-83733311-1', 'auto');
+		  ga('send', 'pageview');
 
-        </script> 
+		</script>
         <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
         <!-- Idlepunk -->
         <ins class="adsbygoogle"
