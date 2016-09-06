@@ -243,7 +243,35 @@ function formatBytes(bytes, decimals) {
         if (bytes == 1) return '1 Byte';
         var k = 1000;
         var dm = 2 + 1 || 3;
-        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB', 'Googolbyte', 'Hypotheticalbyte', 'Asherbyte', 'IRanOutOfActualBytesAWhileAgoByte', 'Harambyte', 'ImOutOfByteIdeasByte', 'TheNextOneWillBeNaNByte', 'NaNByte'];
+        var sizes = ['Bytes', 
+        'KB', 
+        'MB', 
+        'GB', 
+        'TB', 
+        'PB', 
+        'EB', 
+        'ZB', 
+        'YB', 
+        'Googolbyte', 
+        'Hypotheticalbyte', 
+        'Asherbyte', 
+        'IRanOutOfActualBytesAWhileAgoByte', 
+        'Harambyte', 
+        'ImOutOfByteIdeasByte', 
+        'TheNextOneWillBeNaNByte', 
+        'NaNByte',
+        'StillMoreBytesThoughByte',
+        'TheNextOneWillBeUndefinedByte',
+        'undefined',
+        'STILL MORE BYTES THOUGH BYTE',
+        'BYTES HAVE SPACES NOW BYTE',
+        'BYTES ARE REALLY LONG NOW, HELLO HOW ARE YOU? BYTE',
+        'OH ALSO BYTES ARE IN ALL CAPS NOW FOR SOME REASON BYTE',
+        'Somebody once told me the world is gonna roll me I aint the sharpest tool in the shed She was looking kind of dumb with her finger and her thumb In the shape of an "L" on her forehead Well the years start coming and they dont stop coming Fed to the rules and I hit the ground running Didnt make sense not to live for fun Your brain gets smart but your head gets dumb So much to do so much to see So whats wrong with taking the back streets Youll never know if you dont go Youll never shine if you dont glow [Chorus] Hey now youre an All Star get your game on, go play Hey now youre a Rock Star get the show on get paid And all that glitters is gold Only shooting stars break the mold Its a cool place and they say it gets colder Youre bundled up now but wait til you get older But the meteor men beg to differ Judging by the hole in the satellite picture The ice we skate is getting pretty thin The waters getting warm so you might as well swim My worlds on fire how about yours Thats the way I like it and I never get bored [Chorus x2] Somebody once asked could I spare some change for gas I need to get myself away from this place I said yep what a concept I could use a little fuel myself And we could all use a little change Well, the years start coming and they dont stop coming Fed to the rules and I hit the ground running Didnt make sense not to live for fun Your brain gets smart but your head gets dumb So much to do, so much to see So whats wrong with taking the back streets Youll never know if you dont go Youll never shine if you dont glow [Chorus x2] Byte',
+        'Please just stop byte',
+        'Thanks for playing byte',
+        'Goodbyte' //27
+        ];
         var i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
