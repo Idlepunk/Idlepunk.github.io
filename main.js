@@ -1,6 +1,6 @@
-//Add save support for purchase counts
-//Balance creation rate
-
+//There is some kind of bug with loading last NZ upgrade
+//Replace array population with loop
+//OOPify increment()
 var autoSaveCount = 0;
 var autoBuyCount = 0;
 var dataHacked = 0;
@@ -82,7 +82,7 @@ function save() {
     localStorage.setItem('save', JSON.stringify(savegame));
 }
 
-function exportSave(){
+function exportSave() {
     save();
     var savegame = JSON.parse(localStorage.getItem('save'));
     savegame = JSON.stringify(savegame);
@@ -90,13 +90,12 @@ function exportSave(){
     window.prompt('Your save: ', obfuscatedSave);
 }
 
-function importSave(){
+function importSave() {
     var obfuscatedSave = prompt('Paste save here');
     var save = atob(obfuscatedSave);
     localStorage.setItem('save', save);
     load();
 }
-
 
 function load() {
     var savegame = JSON.parse(localStorage.getItem('save')); //Loads the save
@@ -116,7 +115,7 @@ function load() {
         //cyberdeckUpgradeCount
         if (typeof savegame.cyberdeckUpgradeCount !== 'undefined') cyberdeckUpgradeCount = savegame.cyberdeckUpgradeCount;
         //cyberdecksUpgrades
-        if (cyberdeckUpgradeCount != 0) {
+        if (cyberdeckUpgradeCount !== 0) {
             changeUpgradeText('cyberdeck');
         }
         //ICEPickNumber
@@ -129,7 +128,7 @@ function load() {
         //ICEPickUpgradeCount
         if (typeof savegame.ICEPickUpgradeCount !== 'undefined') ICEPickUpgradeCount = savegame.ICEPickUpgradeCount;
         //ICEPicksUpgrades
-        if (ICEPickUpgradeCount != 0) {
+        if (ICEPickUpgradeCount !== 0) {
             changeUpgradeText('ICEPick');
         }
         //botnetNumber 
@@ -142,7 +141,7 @@ function load() {
         //BotnetMultipler
         if (typeof savegame.botnetUpgradeCount !== 'undefined') botnetUpgradeCount = savegame.botnetUpgradeCount;
         //Botnet Upgrades
-        if (botnetUpgradeCount != 0) {
+        if (botnetUpgradeCount !== 0) {
             changeUpgradeText('botnet');
         }
         //neuralZombieNumber
@@ -155,7 +154,7 @@ function load() {
         //neuralZombieUpgradeCount
         if (typeof savegame.neuralZombieUpgradeCount !== 'undefined') neuralZombieUpgradeCount = savegame.neuralZombieUpgradeCount;
         //neuralZombiesUpgrades
-        if (neuralZombieUpgradeCount != 0) {
+        if (neuralZombieUpgradeCount !== 0) {
             changeUpgradeText('neuralZombie');
         }
         //AINumber
@@ -243,22 +242,22 @@ function formatBytes(bytes, decimals) {
         if (bytes == 1) return '1 Byte';
         var k = 1000;
         var dm = 2 + 1 || 3;
-        var sizes = ['Bytes', 
-        'KB', 
-        'MB', 
-        'GB', 
-        'TB', 
-        'PB', 
-        'EB', 
-        'ZB', 
-        'YB', 
-        'Googolbyte', 
-        'Hypotheticalbyte', 
-        'Asherbyte', 
-        'IRanOutOfActualBytesAWhileAgoByte', 
-        'Harambyte', 
-        'ImOutOfByteIdeasByte', 
-        'TheNextOneWillBeNaNByte', 
+        var sizes = ['Bytes',
+        'KB',
+        'MB',
+        'GB',
+        'TB',
+        'PB',
+        'EB',
+        'ZB',
+        'YB',
+        'Googolbyte',
+        'Hypotheticalbyte',
+        'Asherbyte',
+        'IRanOutOfActualBytesAWhileAgoByte',
+        'Harambyte',
+        'ImOutOfByteIdeasByte',
+        'TheNextOneWillBeNaNByte',
         'NaNByte',
         'StillMoreBytesThoughByte',
         'TheNextOneWillBeUndefinedByte',
@@ -279,19 +278,17 @@ function formatBytes(bytes, decimals) {
 window.setInterval(function() {
     increment();
     checkForReveal();
-    autoSaveCount ++;
+    autoSaveCount++;
     if (autoSaveCount >= 100) {
         save();
         autoSaveCount = 0;
     }
-    autoBuyCount ++;
-    if (autoBuyCount >= 10){
-    	autoBuy();
-    	autoBuyCount = 0;
-	}
-
-
-}, 100); //100 = 10 ticks per second
+    autoBuyCount++;
+    if (autoBuyCount >= 10) {
+        autoBuy();
+        autoBuyCount = 0;
+    }
+}, 10); //100 = 10 ticks per second
 function checkForReveal() {
     //Decks Base
     if (totalDataHacked >= 10) {
@@ -383,23 +380,22 @@ function increment() {
     HTMLEditor('totalIncome', formatBytes(totalIncome));
 }
 
-function autoBuy(){
-    if (ICEPickUpgradeCount >= 4){ //ICEPicks create decks
-    	cyberdeckNumber += Math.floor(ICEPickNumber / 10);
-    	HTMLEditor('ICEPickCyberdeckCreationRate', Math.floor(ICEPickNumber / 10));
-    	HTMLEditor('cyberdeckNumber', cyberdeckNumber);
+function autoBuy() {
+    if (ICEPickUpgradeCount >= 4) { //ICEPicks create decks
+        cyberdeckNumber += Math.floor(ICEPickNumber / 10);
+        HTMLEditor('ICEPickCyberdeckCreationRate', Math.floor(ICEPickNumber / 10));
+        HTMLEditor('cyberdeckNumber', cyberdeckNumber);
     }
-
-    if (botnetUpgradeCount >= 4){
-    	ICEPickNumber += Math.floor(botnetNumber / 10);
-    	HTMLEditor('botnetICEPickCreationRate', Math.floor(botnetNumber / 10));
-    	HTMLEditor('ICEPickNumber', ICEPickNumber);
+    if (botnetUpgradeCount >= 4) {
+        ICEPickNumber += Math.floor(botnetNumber / 10);
+        HTMLEditor('botnetICEPickCreationRate', Math.floor(botnetNumber / 10));
+        HTMLEditor('ICEPickNumber', ICEPickNumber);
     }
-    if (neuralZombieUpgradeCount >= 4){
-    	botnetNumber += Math.floor(neuralZombieNumber / 10);//Creates 1 botnet for every 2 zombies, * 10 so its per second.
-    	HTMLEditor('nerualZombieBotnetCreationRate', Math.floor(neuralZombieNumber / 10));
-    	HTMLEditor('botnetNumber', botnetNumber);
-    }    
+    if (neuralZombieUpgradeCount >= 4) {
+        botnetNumber += Math.floor(neuralZombieNumber / 10); //Creates 1 botnet for every 2 zombies, * 10 so its per second.
+        HTMLEditor('nerualZombieBotnetCreationRate', Math.floor(neuralZombieNumber / 10));
+        HTMLEditor('botnetNumber', botnetNumber);
+    }
 }
 
 function jackIn(number) {
@@ -545,61 +541,69 @@ function doUpgrade(input) {
 function getUpgradeCost(input, indexModifier) {
     if (indexModifier === undefined) {
         indexModifier = 0;
-    };
+    }
     var array;
     var index;
     var cyberdeckUpgradeCostArray = [
- 1000,                  //1
- 10000,                 //2
- 100000,                //3
- 1000000,               //4
- 10000000,              //5
- 100000000,             //6
- 1000000000,            //7
- 10000000000,           //8
- 100000000000,          //9
- 1000000000000,         //10
- 10000000000000,        //11
- ];
+	 1000, //1
+	 10000, //2
+	 100000, //3
+	 1000000, //4
+	 10000000, //5
+	 100000000, //6
+	 1000000000, //7
+	 10000000000, //8
+	 100000000000, //9
+	 1000000000000, //10
+	 10000000000000, //11
+	 100000000000000, //12
+	 1000000000000000 //13
+	 ];
     var ICEPickUpgradeCostArray = [
- 6000,                  //1
- 60000,                 //2
- 600000,                //3
- 6000000,               //4
- 60000000,              //5
- 600000000,             //6
- 6000000000,            //7
- 60000000000,           //8
- 600000000000,          //9
- 6000000000000,         //10
- 60000000000000,        //11
- ];
+	 6000, //1
+	 60000, //2
+	 600000, //3
+	 6000000, //4
+	 60000000, //5
+	 600000000, //6
+	 6000000000, //7
+	 60000000000, //8
+	 600000000000, //9
+	 6000000000000, //10
+	 60000000000000, //11
+	 600000000000000, //12
+	 6000000000000000 //13
+	 ];
     var botnetUpgradeCostArray = [
- 10000,                 //1
- 100000,                //2
- 1000000,               //3
- 10000000,              //4
- 100000000,             //5
- 1000000000,            //6
- 10000000000,           //7
- 100000000000,          //8
- 1000000000000,         //9
- 10000000000000,        //10
- 100000000000000,    	//11
- ];
+	 15000, //1
+	 150000, //2
+	 1500000, //3
+	 15000000, //4
+	 150000000, //5
+	 1500000000, //6
+	 15000000000, //7
+	 150000000000, //8
+	 1500000000000, //9
+	 15000000000000, //10
+	 150000000000000, //11
+	 1500000000000000, //12
+	 15000000000000000 //13
+	 ];
     var neuralZombieUpgradeCostArray = [
- 60000,                 //1
- 600000,                //2
- 6000000,               //3
- 60000000,              //4
- 600000000,             //5
- 6000000000,            //6
- 60000000000,           //7
- 600000000000,          //8
- 6000000000000,         //9
- 60000000000000,        //10
- 600000000000000,    	//11
- ];
+	 65000, //1
+	 650000, //2
+	 6500000, //3
+	 65000000, //4
+	 650000000, //5
+	 6500000000, //6
+	 65000000000, //7
+	 650000000000, //8
+	 6500000000000, //9
+	 65000000000000, //10
+	 650000000000000, //11
+	 6500000000000000, //12
+	 65000000000000000 //13
+	 ];
     switch (input) {
         case 'cyberdeck':
             array = cyberdeckUpgradeCostArray;
@@ -649,25 +653,25 @@ function upgrade(input) {
 }
 
 function buyCyberdeck(input) {
-    for (var i = 0; i < input; i++){
+    for (var i = 0; i < input; i++) {
         buyItem('cyberdeck', 10);
     }
 }
 
 function buyICEPick(input) {
-    for (var i = 0; i < input; i++){
+    for (var i = 0; i < input; i++) {
         buyItem('ICEPick', 110);
     }
 }
 
 function buyBotnet(input) {
-    for (var i = 0; i < input; i++){
+    for (var i = 0; i < input; i++) {
         buyItem('botnet', 1200);
     }
 }
 
 function buyNeuralZombie(input) {
-    for (var i = 0; i < input; i++){
+    for (var i = 0; i < input; i++) {
         buyItem('neuralZombie', 13000);
     }
 }
@@ -688,11 +692,10 @@ function buyItem(item, baseCost) {
         itemPurchasedInt += 1;
         HTMLEditor(itemNumberName, itemNumberInt);
         HTMLEditor('dataHacked', formatBytes(dataHacked));
-    
-    var nextCost = Math.floor(baseCost * Math.pow(1.15, itemPurchasedInt));
-    var itemCost = item + 'Cost';
-    HTMLEditor(itemCost, formatBytes(nextCost));
-    window[itemNumberName] = itemNumberInt;
-    window[itemPurchasedName] = itemPurchasedInt;
-    };
+        var nextCost = Math.floor(baseCost * Math.pow(1.15, itemPurchasedInt));
+        var itemCost = item + 'Cost';
+        HTMLEditor(itemCost, formatBytes(nextCost));
+        window[itemNumberName] = itemNumberInt;
+        window[itemPurchasedName] = itemPurchasedInt;
+    }
 }
