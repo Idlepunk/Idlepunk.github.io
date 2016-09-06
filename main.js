@@ -82,6 +82,22 @@ function save() {
     localStorage.setItem('save', JSON.stringify(savegame));
 }
 
+function exportSave(){
+    save();
+    var savegame = JSON.parse(localStorage.getItem('save'));
+    savegame = JSON.stringify(savegame);
+    var obfuscatedSave = window.btoa(savegame);
+    window.prompt('Your save: ', obfuscatedSave);
+}
+
+function importSave(){
+    var obfuscatedSave = prompt('Paste save here');
+    var save = atob(obfuscatedSave);
+    localStorage.setItem('save', save);
+    load();
+}
+
+
 function load() {
     var savegame = JSON.parse(localStorage.getItem('save')); //Loads the save
     if (savegame !== null) {
@@ -407,7 +423,7 @@ function changeUpgradeText(input) {
                 case 2:
                     HTMLEditor('ICEPickUpgradeName', 'Cyberdeck Simulators');
                     HTMLEditor('ICEPickUpgradeCost', formatBytes(cost));
-                    HTMLEditor('ICEPickUpgradeDesc', 'Servers that are hacked by your ICE Picks can now host virtual Cyberdecks.');
+                    HTMLEditor('ICEPickUpgradeDesc', 'Servers that are hacked by your ICE Picks can now host virtual Cyberdecks. For every 10 ICE Picks, you will generate 1 Cyberdeck each second.');
                     break;
                 default:
                     HTMLEditor('ICEPickUpgradeName', 'Write new anti-ICE software');
@@ -431,7 +447,7 @@ function changeUpgradeText(input) {
                 case 2:
                     HTMLEditor('botnetUpgradeName', 'ICEBOTS');
                     HTMLEditor('botnetUpgradeCost', formatBytes(cost));
-                    HTMLEditor('botnetUpgradeDesc', 'Your Botnets can now steal ICE Picks.');
+                    HTMLEditor('botnetUpgradeDesc', 'Your Botnets can now steal ICE Picks. for every 10 Botnets, you will generate 1 ICE Pick each second.');
                     break;
                 default:
                     HTMLEditor('botnetUpgradeName', 'Push out new Bot firmware');
@@ -455,7 +471,7 @@ function changeUpgradeText(input) {
                 case 2:
                     HTMLEditor('neuralZombieUpgradeName', 'Software writing Zombies');
                     HTMLEditor('neuralZombieUpgradeCost', formatBytes(cost));
-                    HTMLEditor('neuralZombieUpgradeDesc', 'Your Zombies now create Botnets.')
+                    HTMLEditor('neuralZombieUpgradeDesc', 'Your Zombies can now create Botnets. For every 10 Neural Zombies, you will generate 1 Botnet each second.')
                     break;
                 default:
                     HTMLEditor('neuralZombieUpgradeName', 'Install more RAM');
