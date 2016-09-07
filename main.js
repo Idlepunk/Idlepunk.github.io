@@ -27,7 +27,6 @@ var AIMultiplier = 1;
 function startUp() {
     //visibilityLoader('all', 0); //Hides the entire body until individual elements have been loaded.
     document.getElementById('all').style.display = 'inline'; //display is set to none by default to hide stuff while loading.
-
     dataHacked = 10;
     totalDataHacked = 10;
     load(); //Loads the save, remove to disable autoloading on refresh.
@@ -80,21 +79,6 @@ function save() {
         AIMultiplier: AIMultiplier
     }
     localStorage.setItem('save', JSON.stringify(savegame));
-}
-
-function exportSave() {
-    save();
-    var savegame = JSON.parse(localStorage.getItem('save'));
-    savegame = JSON.stringify(savegame);
-    var obfuscatedSave = window.btoa(savegame);
-    window.prompt('Your save: ', obfuscatedSave);
-}
-
-function importSave() {
-    var obfuscatedSave = prompt('Paste save here');
-    var save = atob(obfuscatedSave);
-    localStorage.setItem('save', save);
-    load();
 }
 
 function load() {
@@ -170,22 +154,28 @@ function load() {
     }
 }
 
-function visibilityLoader(elementID, visibility) {
-    if (visibility == 1) {
-        visibility = 'visible';
-    } else if (visibility === 0) {
-        visibility = 'hidden';
-    }
-    document.getElementById(elementID).style.visibility = visibility;
+function exportSave() {
+    save();
+    var savegame = JSON.parse(localStorage.getItem('save'));
+    savegame = JSON.stringify(savegame);
+    var obfuscatedSave = window.btoa(savegame);
+    window.prompt('Your save: ', obfuscatedSave);
 }
 
-function HTMLEditor(elementID, input) {
-    document.getElementById(elementID).innerHTML = input;
+function importSave() {
+    var obfuscatedSave = prompt('Paste save here');
+    var save = atob(obfuscatedSave);
+    localStorage.setItem('save', save);
+    load();
 }
 
 function deleteSave() {
     localStorage.removeItem('save');
     location.reload();
+}
+
+function HTMLEditor(elementID, input) {
+    document.getElementById(elementID).innerHTML = input;
 }
 
 function visibilityLoader(elementID, visibility) {
@@ -227,13 +217,9 @@ function stopText() {
     document.getElementById('output').innerHTML = '...';
 }
 
-function destroyFloats(input){
+function destroyFloats(input) {
     dataHacked = parseFloat(parseFloat(dataHacked).toFixed(1));
     totalDataHacked = parseFloat(parseFloat(totalDataHacked).toFixed(1));
-}
-
-function roundToOneDP(input) {
-    return Math.round(input * 10) / 10;
 }
 
 function formatBytes(bytes, decimals) {
@@ -275,6 +261,12 @@ function formatBytes(bytes, decimals) {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
     //Main Loop
+
+function jackIn(number) {
+    dataHacked = dataHacked + number;
+    HTMLEditor('dataHacked', formatBytes(dataHacked));
+    totalDataHacked += number;
+}
 window.setInterval(function() {
     increment();
     checkForReveal();
@@ -394,12 +386,6 @@ function autoBuy() {
     }
 }
 
-function jackIn(number) {
-    dataHacked = dataHacked + number;
-    HTMLEditor('dataHacked', formatBytes(dataHacked));
-    totalDataHacked += number;
-}
-
 function changeUpgradeText(input) {
     var type;
     var cost = getUpgradeCost(input, 1);
@@ -498,6 +484,33 @@ function changeUpgradeText(input) {
                     HTMLEditor('neuralZombieUpgradeCost', formatBytes(cost));
                     HTMLEditor('neuralZombieUpgradeDesc', 'Zombies LOVE RAM')
                     break;
+            }
+    }
+}
+
+function upgrade(input) {
+    switch (input) {
+        case 1:
+            doUpgrade('cyberdeck');
+            //changeUpgradeText('cyberdeck');
+            break;
+        case 2:
+            doUpgrade('ICEPick');
+            //changeUpgradeText('ICEPick');
+            break;
+        case 3:
+            doUpgrade('botnet');
+            //changeUpgradeText('botnet');
+            break;
+        case 4:
+            doUpgrade('neuralZombie');
+            //changeUpgradeText('neuralZombie');
+            break;
+        case 'AI':
+            if (dataHacked >= 650000000000000 && AIMultiplier == 1) {
+                //document.getElementById('all').innerHTML = '<span class="test">Thank You.</span>';
+                HTMLEditor('all', '<span class="thankyou">Thank You.</span>');
+                break;
             }
     }
 }
@@ -621,30 +634,23 @@ function getUpgradeCost(input, indexModifier) {
     return array[index + indexModifier];
 }
 
-function upgrade(input) {
-    switch (input) {
-        case 1:
-            doUpgrade('cyberdeck');
-            //changeUpgradeText('cyberdeck');
-            break;
-        case 2:
-            doUpgrade('ICEPick');
-            //changeUpgradeText('ICEPick');
-            break;
-        case 3:
-            doUpgrade('botnet');
-            //changeUpgradeText('botnet');
-            break;
-        case 4:
-            doUpgrade('neuralZombie');
-            //changeUpgradeText('neuralZombie');
-            break;
-        case 'AI':
-            if (dataHacked >= 650000000000000 && AIMultiplier == 1) {
-                //document.getElementById('all').innerHTML = '<span class="test">Thank You.</span>';
-                HTMLEditor('all', '<span class="thankyou">Thank You.</span>');
-                break;
-            }
+function buyItem(item, baseCost) {
+    var itemNumberName = item + 'Number';
+    var itemPurchasedName = item + 'Purchased';
+    var itemNumberInt = window[itemNumberName];
+    var itemPurchasedInt = window[itemPurchasedName];
+    var cost = Math.floor(baseCost * Math.pow(1.15, itemPurchasedInt));
+    if (dataHacked >= cost) {
+        dataHacked -= cost;
+        itemNumberInt += 1;
+        itemPurchasedInt += 1;
+        HTMLEditor(itemNumberName, itemNumberInt);
+        HTMLEditor('dataHacked', formatBytes(dataHacked));
+        var nextCost = Math.floor(baseCost * Math.pow(1.15, itemPurchasedInt));
+        var itemCost = item + 'Cost';
+        HTMLEditor(itemCost, formatBytes(nextCost));
+        window[itemNumberName] = itemNumberInt;
+        window[itemPurchasedName] = itemPurchasedInt;
     }
 }
 
@@ -674,24 +680,4 @@ function buyNeuralZombie(input) {
 
 function buyAI() {
     buyItem('AI', 140000);
-}
-
-function buyItem(item, baseCost) {
-    var itemNumberName = item + 'Number';
-    var itemPurchasedName = item + 'Purchased';
-    var itemNumberInt = window[itemNumberName];
-    var itemPurchasedInt = window[itemPurchasedName];
-    var cost = Math.floor(baseCost * Math.pow(1.15, itemPurchasedInt));
-    if (dataHacked >= cost) {
-        dataHacked -= cost;
-        itemNumberInt += 1;
-        itemPurchasedInt += 1;
-        HTMLEditor(itemNumberName, itemNumberInt);
-        HTMLEditor('dataHacked', formatBytes(dataHacked));
-        var nextCost = Math.floor(baseCost * Math.pow(1.15, itemPurchasedInt));
-        var itemCost = item + 'Cost';
-        HTMLEditor(itemCost, formatBytes(nextCost));
-        window[itemNumberName] = itemNumberInt;
-        window[itemPurchasedName] = itemPurchasedInt;
-    }
 }
