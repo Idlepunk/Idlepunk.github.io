@@ -19,14 +19,14 @@ body {
 }
 
 #footer {
-    position: relative;
+    position: absolute;
     bottom: 0;
 }
 
 #footerSave {
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: 15px;
+    right: 20px;
 }
 
 .title {
@@ -82,4 +82,8 @@ hr {
 
 .all{
 	display:none;
+}
+
+p {
+    margin:0;
 }

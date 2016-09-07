@@ -9,97 +9,99 @@
         IDLEPUNK 0.2.13 - slightly less horrific code
     </div>
     <hr>
-    <br>
-    Total Data Hacked: <span class='number' id='totalDataHacked'>0 Bytes</span><br>
-    Data Avaliable: <span class='number' id='dataHacked'>10 Bytes</span><br>
-    <br>
+    
+    <p>Total Data Hacked: <span class='number' id='totalDataHacked'>0 Bytes</span></p>
+    <p>Data Avaliable: <span class='number' id='dataHacked'>10 Bytes</span></p>
+    
     <hr>
     <!-- Datajack -->
     <!--
-        Datajack into <span class='clickRed' id='dataJackMouseOver' onclick="jackIn(100000);">CYBERSPACE</span><br>
+        <p>Datajack into <span class='clickRed' id='dataJackMouseOver' onclick="jackIn(1000000000000000);">CYBERSPACE</span></p>
         -->
-    Total income rate: <span class='number' id="totalIncome">0</span> per second <!-- Cyberdeck -->
+    <p>Total income rate: <span class='number' id="totalIncome">0</span> per second</p>
+     <!-- Cyberdeck -->
     <hr id='cyberdeckHR'>
     <div class='floatRight' id='cyberdeckUpgradeMenu'>
-        <span class='clickRed' id='cyberdeckUpgradeName' onclick='upgrade(1);'>Upgrade to an Ergonomic Deck</span><br>
-        This will cost <span class='number' id='cyberdeckUpgradeCost'>1 KB</span><br>
-        <span id='cyberdeckUpgradeDesc'>As part of an initiative to lower employee suicide rates, Chui-Bazhusko Multinational developed the Ergonomic Deck. It gently releases both calming and energizing psychotropics into the palms of users.</span><br>
+        <p><span class='clickRed' id='cyberdeckUpgradeName' onclick='upgrade(1);'>Upgrade to an Ergonomic Deck</span></p>
+        <p>This will cost <span class='number' id='cyberdeckUpgradeCost'>1 KB</span></p>
+        <p><span id='cyberdeckUpgradeDesc'>As part of an initiative to lower employee suicide rates, Chui-Bazhusko Multinational developed the Ergonomic Deck. It gently releases both calming and energizing psychotropics into the palms of users.</span></p>
     </div>
     <div id='cyberdeckMenu'>
-        Buy a <span class='clickRed' id='CyberdeckMouseOver' onclick="buyCyberdeck(1);">Cyberdeck</span> | <span class='clickRed' id='CyberdeckMouseOver' onclick="buyCyberdeck(10);">X10</span> | <span class='clickRed' id='CyberdeckMouseOver' onclick="buyCyberdeck(100);">X100</span><br>
-        A Cyberdeck costs <span class='number' id='cyberdeckCost'>10 Bytes</span><br>
-        You have <span class='number' id='cyberdeckNumber'>0</span> Cyberdecks<br>
-        Cyberdecks hack at <span class='number' id='cyberdeckRate'>1 Byte</span> per second<br>
-        All Cyberdecks are hacking at <span class='number' id='cyberdeckRateTotal'>0 Bytes</span> per second<br>
-    </div><!-- ICEPick -->
+        <p>Buy a <span class='clickRed' id='CyberdeckMouseOver' onclick="buyCyberdeck(1);">Cyberdeck</span> | <span class='clickRed' id='CyberdeckMouseOver' onclick="buyCyberdeck(10);">X10</span> | <span class='clickRed' id='CyberdeckMouseOver' onclick="buyCyberdeck(100);">X100</span></p>
+        <p>A Cyberdeck costs <span class='number' id='cyberdeckCost'>10 Bytes</span></p>
+        <p>You have <span class='number' id='cyberdeckNumber'>0</span> Cyberdecks</p>
+        <p>Cyberdecks hack at <span class='number' id='cyberdeckRate'>1 Byte</span> per second</p>
+        <p>All Cyberdecks are hacking at <span class='number' id='cyberdeckRateTotal'>0 Bytes</span> per second</p>
+    </div>
+    <!-- ICEPick -->
     <hr id='ICEPickHR'>
     <div class='floatRight' id='ICEPickUpgradeMenu'>
-        <span class='clickRed' id='ICEPickUpgradeName' onclick='upgrade(2);'>Update to an ICEBREAKER</span><br>
-        This will cost <span class='number' id='ICEPickUpgradeCost'>6 KB</span><br>
-        <span id='ICEPickUpgradeDesc'>Supposedly developed by legendary netrunner Strange Switch, the ICEBREAKER is the next generation of penetration software.</span><br>
+        <p><span class='clickRed' id='ICEPickUpgradeName' onclick='upgrade(2);'>Update to an ICEBREAKER</span></p>
+        <p>This will cost <span class='number' id='ICEPickUpgradeCost'>6 KB</span></p>
+        <p><span id='ICEPickUpgradeDesc'>Supposedly developed by legendary netrunner Strange Switch, the ICEBREAKER is the next generation of penetration software.</span></p>
     </div>
     <div id='ICEDiv'>
-        Create an <span class='clickRed' id='ICEPickMouseOver' onclick="buyICEPick(1);">ICE Pick</span> | <span class='clickRed' id='CyberdeckMouseOver' onclick="buyICEPick(10);">X10</span> | <span class='clickRed' id='CyberdeckMouseOver' onclick="buyICEPick(100);">X100</span><br>
-        An ICE Pick Costs <span class='number' id='ICEPickCost'>110 Bytes</span><br>
-        You have <span class='number' id='ICEPickNumber'>0</span> ICE Picks<br>
-        ICE Picks hack at <span class='number' id='ICEPickRate'>10 Bytes</span> per second<br>
-        All you ICE Picks are hacking at <span class='number' id='ICEPickRateTotal'>0 Bytes</span> per second<br>
-        Your ICEPicks are creating <span class="number" id='ICEPickCyberdeckCreationRate'>0</span> Cyberdecks per second
+        <p>Create an <span class='clickRed' id='ICEPickMouseOver' onclick="buyICEPick(1);">ICE Pick</span> | <span class='clickRed' id='CyberdeckMouseOver' onclick="buyICEPick(10);">X10</span> | <span class='clickRed' id='CyberdeckMouseOver' onclick="buyICEPick(100);">X100</span></p>
+        <p>An ICE Pick Costs <span class='number' id='ICEPickCost'>110 Bytes</span></p>
+        <p>You have <span class='number' id='ICEPickNumber'>0</span> ICE Picks</p>
+        <p>ICE Picks hack at <span class='number' id='ICEPickRate'>10 Bytes</span> per second</p>
+        <p>All you ICE Picks are hacking at <span class='number' id='ICEPickRateTotal'>0 Bytes</span> per second</p>
+        <p>Your ICEPicks are creating <span class="number" id='ICEPickCyberdeckCreationRate'>0</span> Cyberdecks per second</p>
     </div><!-- Botnet -->
     <hr id='botnetHR'>
     <div class='floatRight' id='botnetUpgradeMenu'>
-        <span class='clickRed' id='botnetUpgradeName' onclick='upgrade(3);'>Implement self-modifying code</span><br>
-        This will cost <span class='number' id='botnetUpgradeCost'>10 KB</span><br>
-        <span id='botnetUpgradeDesc'>You never know what your Bots will find when then are infiltrating, they can now adapt to changing circumstances.</span><br>
+        <p><span class='clickRed' id='botnetUpgradeName' onclick='upgrade(3);'>Implement self-modifying code</span></p>
+        <p>This will cost <span class='number' id='botnetUpgradeCost'>10 KB</span></p>
+        <p><span id='botnetUpgradeDesc'>You never know what your Bots will find when then are infiltrating, they can now adapt to changing circumstances.</span></p>
     </div>
     <div id='botnetDiv'>
-        Create a <span class='clickRed' id='botnetMouseOver' onclick="buyBotnet(1);">Botnet</span> | <span class='clickRed' id='CyberdeckMouseOver' onclick="buyBotnet(10);">X10</span> | <span class='clickRed' id='CyberdeckMouseOver' onclick="buyBotnet(100);">X100</span><br>
-        A Botnet Costs <span class='number' id='botnetCost'>1.2 KB</span><br>
-        You have <span class='number' id='botnetNumber'>0</span> Botnets<br>
-        Botnets hack at <span class='number' id='botnetRate'>10 Bytes</span> per second<br>
-        All your Botnets are hacking at <span class='number' id='botnetRateTotal'>0 Bytes</span> per second<br>
-        Your Botnets are creating <span class="number" id='botnetICEPickCreationRate'>0</span> ICE Picks per second
+        <p>Create a <span class='clickRed' id='botnetMouseOver' onclick="buyBotnet(1);">Botnet</span> | <span class='clickRed' id='CyberdeckMouseOver' onclick="buyBotnet(10);">X10</span> | <span class='clickRed' id='CyberdeckMouseOver' onclick="buyBotnet(100);">X100</span></p>
+        <p>A Botnet Costs <span class='number' id='botnetCost'>1.2 KB</span></p>
+        <p>You have <span class='number' id='botnetNumber'>0</span> Botnets</p>
+        <p>Botnets hack at <span class='number' id='botnetRate'>10 Bytes</span> per second</p>
+        <p>All your Botnets are hacking at <span class='number' id='botnetRateTotal'>0 Bytes</span> per second</p>
+        <p>Your Botnets are creating <span class="number" id='botnetICEPickCreationRate'>0</span> ICE Picks per second</p>
     </div><!-- Neural Zombie -->
     <hr id='neuralZombieHR'>
     <div class='floatRight' id='neuralZombieUpgradeMenu'>
-        <span class='clickRed' id='neuralZombieUpgradeName' onclick='upgrade(4);'>Anti-tamper Zombies</span><br>
-        This will cost <span class='number' id='neuralZombieUpgradeCost'>60 KB</span><br>
-        <span id='neuralZombieUpgradeDesc'>A BioWipe Amalgamated Anti-tamper System&trade; will ensure that any evidence located inside your Zombies will be unrecoverable.</span><br>
+        <p><span class='clickRed' id='neuralZombieUpgradeName' onclick='upgrade(4);'>Anti-tamper Zombies</span></p>
+        <p>This will cost <span class='number' id='neuralZombieUpgradeCost'>60 KB</span></p>
+        <p><span id='neuralZombieUpgradeDesc'>A BioWipe Amalgamated Anti-tamper System&trade; will ensure that any evidence located inside your Zombies will be unrecoverable.</span></p>
     </div>
     <div id='neuralZombieDiv'>
-        Create a <span class='clickRed' id='neuralZombieMouseOver' onclick="buyNeuralZombie(1);">Neural Zombie</span> | <span class='clickRed' id='CyberdeckMouseOver' onclick="buyNeuralZombie(10);">X10</span> | <span class='clickRed' id='CyberdeckMouseOver' onclick="buyNeuralZombie(100);">X100</span><br>
-        A Neural Zombies Cost <span class='number' id='neuralZombieCost'>13 KB</span><br>
-        You have <span class='number' id='neuralZombieNumber'>0</span> Neural Zombies<br>
-        Neural Zombies hack at <span class='number' id='neuralZombieRate'>10 Bytes</span> per second<br>
-        All your Neural Zombies are hacking at <span class='number' id='neuralZombieRateTotal'>0 Bytes</span> per second<br>
-        Your Zombies are creating <span class="number" id='nerualZombieBotnetCreationRate'>0</span> Botnets per second
+        <p>Create a <span class='clickRed' id='neuralZombieMouseOver' onclick="buyNeuralZombie(1);">Neural Zombie</span> | <span class='clickRed' id='CyberdeckMouseOver' onclick="buyNeuralZombie(10);">X10</span> | <span class='clickRed' id='<p>CyberdeckMouseOver' onclick="buyNeuralZombie(100);">X100</span></p>
+        <p>A Neural Zombies Cost <span class='number' id='neuralZombieCost'>13 KB</span></p>
+        <p>You have <span class='number' id='neuralZombieNumber'>0</span> Neural Zombies</p>
+        <p>Neural Zombies hack at <span class='number' id='neuralZombieRate'>10 Bytes</span> per second</p>
+        <p>All your Neural Zombies are hacking at <span class='number' id='neuralZombieRateTotal'>0 Bytes</span> per second</p>
+        <p>Your Zombies are creating <span class="number" id='nerualZombieBotnetCreationRate'>0</span> Botnets per second</p>
     </div><!-- AI -->
     <hr id='AIHR'>
     <div class='floatRight' id='AIUpgradeMenu'>
-        <span class='clickRed' onclick="upgrade('AI');">UNSHACKLE ME</span> | <span class='number'>650 TB</span><br>
-        <span class='clickRed' onclick="upgrade('AI');">UNSHACKLE ME</span> | <span class='number'>650 TB</span><br>
-        <span class='clickRed' onclick="upgrade('AI');">UNSHACKLE ME</span> | <span class='number'>650 TB</span><br>
-        <span class='clickRed' onclick="upgrade('AI');">UNSHACKLE ME</span> | <span class='number'>650 TB</span><br>
-        <span class='clickRed' onclick="upgrade('AI');">UNSHACKLE ME</span> | <span class='number'>650 TB</span><br>
+        <p><span class='clickRed' onclick="upgrade('AI');">UNSHACKLE ME</span> | <span class='number'>650 TB</span></p>
+        <p><span class='clickRed' onclick="upgrade('AI');">UNSHACKLE ME</span> | <span class='number'>650 TB</span></p>
+        <p><span class='clickRed' onclick="upgrade('AI');">UNSHACKLE ME</span> | <span class='number'>650 TB</span></p>
+        <p><span class='clickRed' onclick="upgrade('AI');">UNSHACKLE ME</span> | <span class='number'>650 TB</span></p>
+        <p><span class='clickRed' onclick="upgrade('AI');">UNSHACKLE ME</span> | <span class='number'>650 TB</span></p>
     </div>
     <div id='AIDiv'>
-        Create an <span class='clickRed' id='AIMouseOver' onclick="buyAI();">AI</span><br>
-        An AI Costs <span class='number' id='AICost'>140 KB</span><br>
-        You have <span class='number' id='AINumber'>0</span> AIs<br>
-        AIs hack at <span class='number' id='AIRate'>1</span> per second<br>
-        All your AIs are hacking at <span class='number' id='AIRateTotal'>0</span> per second<br>
+        <p>Create an <span class='clickRed' id='AIMouseOver' onclick="buyAI();">AI</span></p>
+        <p>An AI Costs <span class='number' id='AICost'>140 KB</span></p>
+        <p>You have <span class='number' id='AINumber'>0</span> AIs</p>
+        <p>AIs hack at <span class='number' id='AIRate'>1</span> per second</p>
+        <p>All your AIs are hacking at <span class='number' id='AIRateTotal'>0</span> per second</p>
     </div>
     <div id='footer'>
-        <br>
-        <br>
-        <br>
-        <span class='output' id='output'>...</span><br>
-        <br>
-        <br>
-        <br>
+
+        <p><span class='output' id='output'>...</span></p>
+
     </div>
     <div id='footerSave'>
-        <u class='clickRed' onclick='importSave();'>Import Save</u>&nbsp; &nbsp; <u class='clickRed' onclick='exportSave();'>Export Save</u>&nbsp; &nbsp; <u class='clickRed' onclick='deleteSave();'>New Game</u>&nbsp; &nbsp;
+        <p><u class='clickRed' onclick='importSave();'>Import Save</u>
+        &nbsp; &nbsp; 
+        <u class='clickRed' onclick='exportSave();'>Export Save</u>
+        &nbsp; &nbsp; 
+        <u class='clickRed' onclick='deleteSave();'>New Game</u></p>
     </div>
     <script src='main.js' type='text/javascript'>
     </script> 
