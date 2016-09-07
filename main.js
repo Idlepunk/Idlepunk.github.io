@@ -539,6 +539,7 @@ function doUpgrade(input) {
             break;
     }
     cost = getUpgradeCost(input);
+    console.log(cost);
     if (dataHacked >= cost) {
         dataHacked -= cost;
         upgradeCountInt += 1;
@@ -553,85 +554,32 @@ function getUpgradeCost(input, indexModifier) {
     }
     var array;
     var index;
-    var cyberdeckUpgradeCostArray = [
-  1000, //1
-  10000, //2
-  100000, //3
-  1000000, //4
-  10000000, //5
-  100000000, //6
-  1000000000, //7
-  10000000000, //8
-  100000000000, //9
-  1000000000000, //10
-  10000000000000, //11
-  100000000000000, //12
-  1000000000000000 //13
-  ];
-    var ICEPickUpgradeCostArray = [
-  6000, //1
-  60000, //2
-  600000, //3
-  6000000, //4
-  60000000, //5
-  600000000, //6
-  6000000000, //7
-  60000000000, //8
-  600000000000, //9
-  6000000000000, //10
-  60000000000000, //11
-  600000000000000, //12
-  6000000000000000 //13
-  ];
-    var botnetUpgradeCostArray = [
-  15000, //1
-  150000, //2
-  1500000, //3
-  15000000, //4
-  150000000, //5
-  1500000000, //6
-  15000000000, //7
-  150000000000, //8
-  1500000000000, //9
-  15000000000000, //10
-  150000000000000, //11
-  1500000000000000, //12
-  15000000000000000 //13
-  ];
-    var neuralZombieUpgradeCostArray = [
-  65000, //1
-  650000, //2
-  6500000, //3
-  65000000, //4
-  650000000, //5
-  6500000000, //6
-  65000000000, //7
-  650000000000, //8
-  6500000000000, //9
-  65000000000000, //10
-  650000000000000, //11
-  6500000000000000, //12
-  65000000000000000 //13
-  ];
+    var baseUpgrade;
     switch (input) {
         case 'cyberdeck':
-            array = cyberdeckUpgradeCostArray;
+            baseUpgrade = 1000;
             index = cyberdeckUpgradeCount;
             break;
         case 'ICEPick':
-            array = ICEPickUpgradeCostArray;
+            baseUpgrade = 6000;
             index = ICEPickUpgradeCount;
             break;
         case 'botnet':
-            array = botnetUpgradeCostArray;
+            baseUpgrade = 15000;
             index = botnetUpgradeCount;
             break;
         case 'neuralZombie':
-            array = neuralZombieUpgradeCostArray
+            baseUpgrade = 65000;
             index = neuralZombieUpgradeCount;
             break;
     }
-    return array[index + indexModifier];
+    var costArray = [baseUpgrade];
+    for (var i = 1; i < 30; i++) {
+        var c = costArray[i - 1];
+        c *= 10;
+        costArray.push(c);
+    }
+    return costArray[index + indexModifier];
 }
 
 function buyItem(item, baseCost) {
