@@ -227,9 +227,9 @@ function stopText() {
     document.getElementById('output').innerHTML = '...';
 }
 
-function destroyFloats(input) {
-    var output = Math.round(input);
-    return output;
+function destroyFloats(input){
+    dataHacked = parseFloat(parseFloat(dataHacked).toFixed(1));
+    totalDataHacked = parseFloat(parseFloat(totalDataHacked).toFixed(1));
 }
 
 function roundToOneDP(input) {
@@ -362,6 +362,7 @@ function incrementItem(baseRate, numberOfItems, itemUpgradeCount, itemRateDiv, i
     HTMLEditor(itemRateTotalDiv, formatBytes(incomePerSecondTotal));
     dataHacked += incomePerTick;
     totalDataHacked += incomePerTick;
+    destroyFloats();
     return incomePerSecondTotal;
 }
 
