@@ -1,6 +1,7 @@
 //There is some kind of bug with loading last NZ upgrade
 //Replace array population with loop
 //OOPify increment()
+var tickRate = 10; //Ticks per second
 var autoSaveCount = 0;
 var autoBuyCount = 0;
 var dataHacked = 0;
@@ -338,46 +339,41 @@ function checkForReveal() {
 }
 
 function increment() {
-    var cyberdecksRate = (1 / 10) * Math.pow(2, cyberdeckUpgradeCount);
-    var ICEPicksRate = (8 / 10) * Math.pow(2, ICEPickUpgradeCount);
-    var botnetsRate = (47 / 10) * Math.pow(2, botnetUpgradeCount);
-    var neuralZombieRate = (260 / 10) * Math.pow(2, neuralZombieUpgradeCount);
-    var AIRate = (1400 / 10) * AIMultiplier;
-    var cyberdeckIncome = cyberdeckNumber * (cyberdecksRate * 10);
-    var ICEPickIncome = ICEPickNumber * (ICEPicksRate * 10);
-    var botnetIncome = botnetNumber * (botnetsRate * 10);
-    var neuralZombieIncome = neuralZombieNumber * (neuralZombieRate * 10);
-    var AIIncome = AINumber * (AIRate * 10);
-    var totalIncome = cyberdeckIncome + ICEPickIncome + botnetIncome + neuralZombieIncome + AIIncome;
-    //Decks
-    dataHacked += (cyberdeckNumber * cyberdecksRate);
-    totalDataHacked += (cyberdeckNumber * cyberdecksRate);
-    HTMLEditor('cyberdeckRate', formatBytes(cyberdecksRate * 10));
-    HTMLEditor('cyberdeckRateTotal', formatBytes(cyberdeckIncome));
-    //ICEPickNumber
-    dataHacked += (ICEPickNumber * ICEPicksRate);
-    totalDataHacked += (ICEPickNumber * ICEPicksRate);
-    HTMLEditor('ICEPickRate', formatBytes(ICEPicksRate * 10));
-    HTMLEditor('ICEPickRateTotal', formatBytes(ICEPickIncome));
-    //Botnet
-    dataHacked = dataHacked + (botnetNumber * botnetsRate);
-    totalDataHacked = totalDataHacked + (botnetNumber * botnetsRate);
-    HTMLEditor('botnetRate', formatBytes(botnetsRate * 10));
-    HTMLEditor('botnetRateTotal', formatBytes(botnetIncome));
-    //Neural Zombie
-    dataHacked = dataHacked + (neuralZombieNumber * neuralZombieRate);
-    totalDataHacked = totalDataHacked + (neuralZombieNumber * neuralZombieRate);
-    HTMLEditor('neuralZombieRate', formatBytes(neuralZombieRate * 10));
-    HTMLEditor('neuralZombieRateTotal', formatBytes(neuralZombieIncome));
-    //AI
-    dataHacked = dataHacked + (AINumber * AIRate);
-    totalDataHacked = totalDataHacked + (AINumber * AIRate);
-    HTMLEditor('AIRate', formatBytes(AIRate * 10));
-    HTMLEditor('AIRateTotal', formatBytes(AIIncome));
-    //Total
+    var incomePerSecondTotal = 0;
+    incomePerSecondTotal += incrementItem(1, cyberdeckNumber, cyberdeckUpgradeCount, 'cyberdeckRate', 'cyberdeckRateTotal');
+    incomePerSecondTotal += incrementItem(8, ICEPickNumber, ICEPickUpgradeCount, 'ICEPickRate', 'ICEPickRateTotal');
+    incomePerSecondTotal += incrementItem(47, botnetNumber, botnetUpgradeCount, 'botnetRate', 'botnetRateTotal');
+    incomePerSecondTotal += incrementItem(260, neuralZombieNumber, neuralZombieUpgradeCount, 'neuralZombieRate', 'neuralZombieRateTotal');
     HTMLEditor('dataHacked', formatBytes(Math.floor(dataHacked)));
     HTMLEditor('totalDataHacked', formatBytes(Math.floor(totalDataHacked)));
-    HTMLEditor('totalIncome', formatBytes(totalIncome));
+    HTMLEditor('totalIncome', formatBytes(incomePerSecondTotal));
+}
+
+function incrementItem(baseRate, numberOfItems, itemUpgradeCount, itemRateDiv, itemRateTotalDiv) {
+    var incomePerItem;
+    var incomePerTick;
+    var incomePerSecond;
+    var incomePerSecondTotal;
+    var incomePerTick;
+    incomePerItem = calculateIncome(itemUpgradeCount, baseRate);
+    incomePerSecond = incomePerItem * tickRate;
+    incomePerSecondTotal = incomePerSecond * numberOfItems;
+    incomePerTick = incomePerItem * numberOfItems;
+    HTMLEditor(itemRateDiv, formatBytes(incomePerSecond));
+    HTMLEditor(itemRateTotalDiv, formatBytes(incomePerSecondTotal));
+    dataHacked += incomePerTick;
+    totalDataHacked += incomePerTick;
+    return incomePerSecondTotal;
+}
+
+function calculateIncome(upgradeCount, baseRate) {
+    //BR = Base Rate
+    //TR = Ticks Per Second
+    //UC = Number Of Upgrades
+    //amount per tick = (BR/TR)*(2^UC)
+    //2^0 = 1
+    var incomePerTick = (baseRate / tickRate) * Math.pow(2, upgradeCount);
+    return incomePerTick;
 }
 
 function autoBuy() {
@@ -545,65 +541,65 @@ function getUpgradeCost(input, indexModifier) {
     var array;
     var index;
     var cyberdeckUpgradeCostArray = [
-	 1000, //1
-	 10000, //2
-	 100000, //3
-	 1000000, //4
-	 10000000, //5
-	 100000000, //6
-	 1000000000, //7
-	 10000000000, //8
-	 100000000000, //9
-	 1000000000000, //10
-	 10000000000000, //11
-	 100000000000000, //12
-	 1000000000000000 //13
-	 ];
+  1000, //1
+  10000, //2
+  100000, //3
+  1000000, //4
+  10000000, //5
+  100000000, //6
+  1000000000, //7
+  10000000000, //8
+  100000000000, //9
+  1000000000000, //10
+  10000000000000, //11
+  100000000000000, //12
+  1000000000000000 //13
+  ];
     var ICEPickUpgradeCostArray = [
-	 6000, //1
-	 60000, //2
-	 600000, //3
-	 6000000, //4
-	 60000000, //5
-	 600000000, //6
-	 6000000000, //7
-	 60000000000, //8
-	 600000000000, //9
-	 6000000000000, //10
-	 60000000000000, //11
-	 600000000000000, //12
-	 6000000000000000 //13
-	 ];
+  6000, //1
+  60000, //2
+  600000, //3
+  6000000, //4
+  60000000, //5
+  600000000, //6
+  6000000000, //7
+  60000000000, //8
+  600000000000, //9
+  6000000000000, //10
+  60000000000000, //11
+  600000000000000, //12
+  6000000000000000 //13
+  ];
     var botnetUpgradeCostArray = [
-	 15000, //1
-	 150000, //2
-	 1500000, //3
-	 15000000, //4
-	 150000000, //5
-	 1500000000, //6
-	 15000000000, //7
-	 150000000000, //8
-	 1500000000000, //9
-	 15000000000000, //10
-	 150000000000000, //11
-	 1500000000000000, //12
-	 15000000000000000 //13
-	 ];
+  15000, //1
+  150000, //2
+  1500000, //3
+  15000000, //4
+  150000000, //5
+  1500000000, //6
+  15000000000, //7
+  150000000000, //8
+  1500000000000, //9
+  15000000000000, //10
+  150000000000000, //11
+  1500000000000000, //12
+  15000000000000000 //13
+  ];
     var neuralZombieUpgradeCostArray = [
-	 65000, //1
-	 650000, //2
-	 6500000, //3
-	 65000000, //4
-	 650000000, //5
-	 6500000000, //6
-	 65000000000, //7
-	 650000000000, //8
-	 6500000000000, //9
-	 65000000000000, //10
-	 650000000000000, //11
-	 6500000000000000, //12
-	 65000000000000000 //13
-	 ];
+  65000, //1
+  650000, //2
+  6500000, //3
+  65000000, //4
+  650000000, //5
+  6500000000, //6
+  65000000000, //7
+  650000000000, //8
+  6500000000000, //9
+  65000000000000, //10
+  650000000000000, //11
+  6500000000000000, //12
+  65000000000000000 //13
+  ];
     switch (input) {
         case 'cyberdeck':
             array = cyberdeckUpgradeCostArray;
