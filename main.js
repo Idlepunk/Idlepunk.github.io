@@ -1,7 +1,4 @@
-//There is some kind of bug with loading last NZ upgrade
-//Replace array population with loop
-//OOPify increment()
-var tickRate = 10; //Ticks per second
+var tickRate = 10; //Ticks per second, this does not actually change
 var autoSaveCount = 0;
 var autoBuyCount = 0;
 var dataHacked = 0;
@@ -29,6 +26,8 @@ var AIMultiplier = 1;
 
 function startUp() {
     //visibilityLoader('all', 0); //Hides the entire body until individual elements have been loaded.
+    document.getElementById('all').style.display = 'inline'; //display is set to none by default to hide stuff while loading.
+
     dataHacked = 10;
     totalDataHacked = 10;
     load(); //Loads the save, remove to disable autoloading on refresh.

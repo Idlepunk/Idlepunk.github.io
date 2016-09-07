@@ -79,3 +79,7 @@ hr {
 .description {
     color: #C70039;
 }
+
+.all{
+	display:none;
+}
