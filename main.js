@@ -1,4 +1,4 @@
-var tickRate = 10; //Ticks per second, this does not actually change the tick rate, it's just used as a reference.
+var tickRate = 10; //Ticks per second, this does not actually change the tick rate, it's just used as a reference. Calculated by 1000 / Acutal refresh rate.
 var lastTick = (new Date).getTime(); //The time that the last tick occurred
 var autoSaveCount = 0; //Increases every tick so that the game doesn't auto save 10 times per second.
 var autoBuyCount = 0; //Increases every tick so that the game doesn't auto buy 10 times per second.
@@ -284,8 +284,9 @@ function updateGame(){
     deltaTime = Math.floor(deltaTime / 100); //(deltaTime / 100) determines the game's tick rate.
     for (var i=0; i<deltaTime; i++) {
         lastTick = now; //Updates the time of the most recent tick.
+        //Auto buy happens once per second, not once per tick.
         autoBuyCount++;
-        if (autoBuyCount >= 10) {
+        if (autoBuyCount >= tickRate) {
             autoBuy();
             autoBuyCount = 0;
         }
@@ -293,20 +294,21 @@ function updateGame(){
         checkForReveal(); 
     }
     autoSaveCount++;
-    if (autoSaveCount >= 10){ //Once every 10 seconds.
+    if (autoSaveCount >= 10){ //Once every X ticks.
         save();
         autoSaveCount = 0;
     }   
 
-    window.requestAnimationFrame(updateGame);
+    window.requestAnimationFrame(updateGame); //Calls this function again.
 }
 
-window.requestAnimationFrame(updateGame);
+window.requestAnimationFrame(updateGame); //If for some reason the function cannot call itself, this calls it again.
 
 
 
 
 function checkForReveal() {
+    //Checks if elements should be revealed.
     //Decks Base
     if (totalDataHacked >= 0) {
         visibilityLoader('cyberdeckMenu', 1);
@@ -355,23 +357,26 @@ function checkForReveal() {
 }
 
 function increment() {
+    //Increments all items.
     var incomePerSecondTotal = 0;
     incomePerSecondTotal += incrementItem(1, cyberdeckNumber, cyberdeckUpgradeCount, 'cyberdeckRate', 'cyberdeckRateTotal');
     incomePerSecondTotal += incrementItem(8, ICEPickNumber, ICEPickUpgradeCount, 'ICEPickRate', 'ICEPickRateTotal');
     incomePerSecondTotal += incrementItem(47, botnetNumber, botnetUpgradeCount, 'botnetRate', 'botnetRateTotal');
     incomePerSecondTotal += incrementItem(260, neuralZombieNumber, neuralZombieUpgradeCount, 'neuralZombieRate', 'neuralZombieRateTotal');
     incomePerSecondTotal += incrementItem(1400, AINumber, AIUpgradeCount, 'AIRate', 'AIRateTotal');
+    //Updates UI.
     HTMLEditor('dataHacked', formatBytes(Math.floor(dataHacked)));
     HTMLEditor('totalDataHacked', formatBytes(Math.floor(totalDataHacked)));
     HTMLEditor('totalIncome', formatBytes(incomePerSecondTotal));
 }
 
 function incrementItem(baseRate, numberOfItems, itemUpgradeCount, itemRateDiv, itemRateTotalDiv) {
+    //Generates income for specific item.
     var incomePerItem;
     var incomePerTick;
     var incomePerSecond;
     var incomePerSecondTotal;
-    //var incomePerTick;
+
     incomePerItem = calculateIncome(itemUpgradeCount, baseRate);
     incomePerSecond = incomePerItem * tickRate;
     incomePerSecondTotal = incomePerSecond * numberOfItems;
@@ -390,12 +395,16 @@ function calculateIncome(upgradeCount, baseRate) {
     //UC = Number Of Upgrades
     //amount per tick = (BR/TR)*(2^UC)
     //2^0 = 1
+    //2^1 = 2
+    //2^3 = 4
+    //2^4 = 8 etc
     var incomePerTick = (baseRate / tickRate) * Math.pow(2, upgradeCount);
     return incomePerTick;
 }
 
 function autoBuy() {
-    if (ICEPickUpgradeCount >= 4) { //ICEPicks create decks
+    //Every 10 of an item will create 1 item of the tier below it.
+    if (ICEPickUpgradeCount >= 4) {
         cyberdeckNumber += Math.floor(ICEPickNumber / 10);
         HTMLEditor('ICEPickCyberdeckCreationRate', Math.floor(ICEPickNumber / 10));
         HTMLEditor('cyberdeckNumber', cyberdeckNumber);
@@ -418,6 +427,8 @@ function autoBuy() {
 }
 
 function changeUpgradeText(input, offset) {
+    //Changes the upgrade text when an upgrade or a load occurs.
+    //Offset is used for loading so that it loads the current upgrade text, not the next upgrade text.
     var type;
     var cost = getUpgradeCost(input, 1);
     if (typeof offset === 'undefined'){
@@ -569,6 +580,7 @@ function upgrade(input) {
 }
 
 function doUpgrade(input) {
+    //Upgrades an item.
     var costElement;
     var cost;
     var nextCost;
@@ -596,15 +608,16 @@ function doUpgrade(input) {
             break;
     }
     cost = getUpgradeCost(input);
-    if (dataHacked >= cost) {
-        dataHacked -= cost;
-        upgradeCountInt += 1;
+    if (dataHacked >= cost) { //Checks the user has enough data.
+        dataHacked -= cost; //Subtracts the data.
+        upgradeCountInt += 1; //Upgrades.
         changeUpgradeText(input);
-        window[upgradeCountName] = upgradeCountInt;
+        window[upgradeCountName] = upgradeCountInt; //Updates the global variable.
     }
 }
 
 function getUpgradeCost(input, indexModifier) {
+    //Calculates how much an upgrade should cost.
     if (indexModifier === undefined) {
         indexModifier = 0;
     }
@@ -633,6 +646,8 @@ function getUpgradeCost(input, indexModifier) {
             index = AIUpgradeCount;
             break;
     }
+    //This array is inefficient, a better way is:
+    //Upgrade cost = (numberOfUpgrades + indexMod) * (baseCost * 10).
     var costArray = [baseUpgrade];
     for (var i = 1; i < 30; i++) {
         var c = costArray[i - 1];
@@ -645,27 +660,33 @@ function getUpgradeCost(input, indexModifier) {
 function buyItem(item, baseCost) {
     var itemNumberName = item + 'Number';
     var itemPurchasedName = item + 'Purchased';
+    //Gets global vars.
     var itemNumberInt = window[itemNumberName];
     var itemPurchasedInt = window[itemPurchasedName];
+    //Calculates cost of item.
     var cost = Math.floor(baseCost * Math.pow(1.15, itemPurchasedInt));
-    if (dataHacked >= cost) {
-        dataHacked -= cost;
-        itemNumberInt += 1;
+    if (dataHacked >= cost) { //Checks if user can afford item.
+        dataHacked -= cost; //Subtracts cost of item.
+        itemNumberInt += 1; //Adds an item.
         itemPurchasedInt += 1;
+        //Updates UI.
         HTMLEditor(itemNumberName, itemNumberInt);
         HTMLEditor('dataHacked', formatBytes(dataHacked));
         var nextCost = Math.floor(baseCost * Math.pow(1.15, itemPurchasedInt));
         var itemCost = item + 'Cost';
         HTMLEditor(itemCost, formatBytes(nextCost));
+        //Updates global vars.
         window[itemNumberName] = itemNumberInt;
         window[itemPurchasedName] = itemPurchasedInt;
     }
     else {
+        //If the user cannot afford the upgrade, returns break.
         return 'break';
     }
 }
 
 function buyCyberdeck(input) {
+    //Loops through buying the item until the input number is reached or the user cannot afford to buy any more.
     for (var i = 0; i < input; i++) {
         if (buyItem('cyberdeck', 10) == 'break'){
             break;
