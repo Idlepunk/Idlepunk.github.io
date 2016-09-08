@@ -102,7 +102,7 @@ function load() {
         if (typeof savegame.cyberdeckUpgradeCount !== 'undefined') cyberdeckUpgradeCount = savegame.cyberdeckUpgradeCount;
         //cyberdecksUpgrades
         if (cyberdeckUpgradeCount !== 0) {
-            changeUpgradeText('cyberdeck');
+            changeUpgradeText('cyberdeck', -1);
         }
         //ICEPickNumber
         if (typeof savegame.ICEPickNumber !== 'undefined') ICEPickNumber = savegame.ICEPickNumber;
@@ -115,7 +115,7 @@ function load() {
         if (typeof savegame.ICEPickUpgradeCount !== 'undefined') ICEPickUpgradeCount = savegame.ICEPickUpgradeCount;
         //ICEPicksUpgrades
         if (ICEPickUpgradeCount !== 0) {
-            changeUpgradeText('ICEPick');
+            changeUpgradeText('ICEPick', -1);
         }
         //botnetNumber 
         if (typeof savegame.botnetNumber !== 'undefined') botnetNumber = savegame.botnetNumber;
@@ -128,7 +128,7 @@ function load() {
         if (typeof savegame.botnetUpgradeCount !== 'undefined') botnetUpgradeCount = savegame.botnetUpgradeCount;
         //Botnet Upgrades
         if (botnetUpgradeCount !== 0) {
-            changeUpgradeText('botnet');
+            changeUpgradeText('botnet', -1);
         }
         //neuralZombieNumber
         if (typeof savegame.neuralZombieNumber !== 'undefined') neuralZombieNumber = savegame.neuralZombieNumber;
@@ -141,19 +141,21 @@ function load() {
         if (typeof savegame.neuralZombieUpgradeCount !== 'undefined') neuralZombieUpgradeCount = savegame.neuralZombieUpgradeCount;
         //neuralZombiesUpgrades
         if (neuralZombieUpgradeCount !== 0) {
-            changeUpgradeText('neuralZombie');
+            changeUpgradeText('neuralZombie', -1);
         }
         //AINumber
         if (typeof savegame.AINumber !== 'undefined') AINumber = savegame.AINumber;
         document.getElementById('AINumber').innerHTML = AINumber;
-        nextCost = Math.floor(140000 * Math.pow(1.15, AINumber));
+        nextCost = Math.floor(130000 * Math.pow(1.15, AINumber));
         document.getElementById('AICost').innerHTML = formatBytes(nextCost);
         //AIPurchased
         if (typeof savegame.AIPurchased !== 'undefined') AIPurchased = savegame.AIPurchased;
         //AIUpgradeCount
-        if (typeof savegame.AIUpgradeCount !== 'undefined') ICEPickUpgradeCount = savegame.ICEPickUpgradeCount;
-        checkForReveal();
-    }
+        if (typeof savegame.AIUpgradeCount !== 'undefined') AIUpgradeCount = savegame.AIUpgradeCount;
+        //AIsUpgrades
+        if (AIUpgradeCount !== 0) {
+            changeUpgradeText('AI', -1);
+        }    }
 }
 
 function exportSave() {
@@ -277,7 +279,7 @@ function updateGame(){
         checkForReveal(); 
     }
     autoSaveCount++;
-    if (autoSaveCount >= 1000){ //Once every 10 seconds.
+    if (autoSaveCount >= 10){ //Once every 10 seconds.
         save();
         console.log('saved');
         autoSaveCount = 0;
@@ -402,12 +404,16 @@ function autoBuy() {
     }
 }
 
-function changeUpgradeText(input) {
+function changeUpgradeText(input, offset) {
     var type;
     var cost = getUpgradeCost(input, 1);
+    if (typeof offset === 'undefined'){
+    	offset = 0
+    }
+
     switch (input) {
         case 'cyberdeck':
-            switch (cyberdeckUpgradeCount) {
+            switch (cyberdeckUpgradeCount + offset) {
                 case 0:
                     HTMLEditor('cyberdeckUpgradeName', 'Install Neural Interfaces');
                     HTMLEditor('cyberdeckUpgradeCost', formatBytes(cost));
@@ -431,7 +437,7 @@ function changeUpgradeText(input) {
             }
             break;
         case 'ICEPick':
-            switch (ICEPickUpgradeCount) {
+            switch (ICEPickUpgradeCount + offset) {
                 case 0:
                     HTMLEditor('ICEPickUpgradeName', 'Prepare BLACKICE Countermeasures');
                     HTMLEditor('ICEPickUpgradeCost', formatBytes(cost));
@@ -455,7 +461,7 @@ function changeUpgradeText(input) {
             }
             break;
         case 'botnet':
-            switch (botnetUpgradeCount) {
+            switch (botnetUpgradeCount + offset) {
                 case 0:
                     HTMLEditor('botnetUpgradeName', 'Self replicating Botnet');
                     HTMLEditor('botnetUpgradeCost', formatBytes(cost));
@@ -479,7 +485,7 @@ function changeUpgradeText(input) {
             }
             break;
         case 'neuralZombie':
-            switch (neuralZombieUpgradeCount) {
+            switch (neuralZombieUpgradeCount + offset) {
                 case 0:
                     HTMLEditor('neuralZombieUpgradeName', 'Pre-Setup Zombies');
                     HTMLEditor('neuralZombieUpgradeCost', formatBytes(cost));
@@ -503,7 +509,7 @@ function changeUpgradeText(input) {
             }
             break;
         case 'AI':
-            switch (AIUpgradeCount) {
+            switch (AIUpgradeCount + offset) {
                 case 0:
                     HTMLEditor('AIUpgradeName', 'PLACEHOLDER0');
                     HTMLEditor('AIUpgradeCost', formatBytes(cost));
