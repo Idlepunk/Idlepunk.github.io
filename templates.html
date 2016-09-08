@@ -1,4 +1,3 @@
-
 <div id='ZZZZZZDiv'>
         <p id='ZZZZZZMouseOver'>Create a <span class='clickRed' onclick="buyZZZZZZ(1);">ZZZZZZ</span> | 
         <span class='clickRed' onclick="buyZZZZZZ(10);">X10</span> | 
@@ -9,25 +8,10 @@
         <p>ZZZZZZs hack at <span class='number' id='ZZZZZZRate'>NNN Bytes</span> per second</p>
         <p>All your ZZZZZZs are hacking at <span class='number' id='ZZZZZZRateTotal'>NNN Bytes</span> per second</p>
         <p>Your ZZZZZZs are creating <span class="number" id='ZZZZZZICEPickCreationRate'>0</span> YYYYYYYY per second</p>
+</div>
+
+<div class='floatRight' id='AIUpgradeMenu'>
+        <p><span class='clickRed' id='AIUpgradeName' onclick='upgrade(5);'>Anti-tamper Zombies</span></p>
+        <p>This will cost <span class='number' id='AIUpgradeCost'>60 KB</span></p>
+        <p><span id='AIUpgradeDesc'>A BioWipe Amalgamated Anti-tamper System&trade; will ensure that any evidence located inside your Zombies will be unrecoverable.</span></p>
     </div>
-
-
-
-
-
-    <script>
-
-    var baseUpgrade;
-    switch(input){
-    	case 'cyberdeck':
-    		baseUpgrade = 1000;
-    }
-
-
-    var costArray = [baseUpgrade];
-
-    for (var i = 1; i < 30; i++) {
-        var c = costArray[i-1];
-        c *= 10;
-        test.push(c);
-    }

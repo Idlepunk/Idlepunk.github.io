@@ -23,7 +23,7 @@ var neuralZombieUpgradeCount = 0;
 //AIs
 var AINumber = 0;
 var AIPurchased = 0;
-var AIMultiplier = 1;
+var AIUpgradeCount = 0;
 
 function startUp() {
     //visibilityLoader('all', 0); //Hides the entire body until individual elements have been loaded.
@@ -78,7 +78,7 @@ function save() {
         //AIs
         AINumber: AINumber,
         AIPurchased: AIPurchased,
-        AIMultiplier: AIMultiplier
+        AIUpgradeCount: AIUpgradeCount
     }
     localStorage.setItem('save', JSON.stringify(savegame));
 }
@@ -150,8 +150,8 @@ function load() {
         document.getElementById('AICost').innerHTML = formatBytes(nextCost);
         //AIPurchased
         if (typeof savegame.AIPurchased !== 'undefined') AIPurchased = savegame.AIPurchased;
-        //AIMultiplier
-        if (typeof savegame.AIMultiplier !== 'undefined') ICEPickUpgradeCount = savegame.ICEPickUpgradeCount;
+        //AIUpgradeCount
+        if (typeof savegame.AIUpgradeCount !== 'undefined') ICEPickUpgradeCount = savegame.ICEPickUpgradeCount;
         checkForReveal();
     }
 }
@@ -226,41 +226,32 @@ function destroyFloats(input) {
 
 function formatBytes(bytes, decimals) {
         bytes = Math.round(bytes);
-        if (bytes === 0) return '0 Bytes';
-        if (bytes == 1) return '1 Byte';
-        var k = 1000;
-        var dm = 2 + 1 || 3;
-        var sizes = ['Bytes',
-        'KB',
-        'MB',
-        'GB',
-        'TB',
-        'PB',
-        'EB',
-        'ZB',
-        'YB',
-        'Googolbyte',
-        'Hypotheticalbyte',
-        'Asherbyte',
-        'IRanOutOfActualBytesAWhileAgoByte',
-        'Harambyte',
-        'ImOutOfByteIdeasByte',
-        'TheNextOneWillBeNaNByte',
-        'NaNByte',
-        'StillMoreBytesThoughByte',
-        'TheNextOneWillBeUndefinedByte',
-        'undefined',
-        'STILL MORE BYTES THOUGH BYTE',
-        'BYTES HAVE SPACES NOW BYTE',
-        'BYTES ARE REALLY LONG NOW, HELLO HOW ARE YOU? BYTE',
-        'OH ALSO BYTES ARE IN ALL CAPS NOW FOR SOME REASON BYTE',
-        'Somebody once told me the world is gonna roll me I aint the sharpest tool in the shed She was looking kind of dumb with her finger and her thumb In the shape of an "L" on her forehead Well the years start coming and they dont stop coming Fed to the rules and I hit the ground running Didnt make sense not to live for fun Your brain gets smart but your head gets dumb So much to do so much to see So whats wrong with taking the back streets Youll never know if you dont go Youll never shine if you dont glow [Chorus] Hey now youre an All Star get your game on, go play Hey now youre a Rock Star get the show on get paid And all that glitters is gold Only shooting stars break the mold Its a cool place and they say it gets colder Youre bundled up now but wait til you get older But the meteor men beg to differ Judging by the hole in the satellite picture The ice we skate is getting pretty thin The waters getting warm so you might as well swim My worlds on fire how about yours Thats the way I like it and I never get bored [Chorus x2] Somebody once asked could I spare some change for gas I need to get myself away from this place I said yep what a concept I could use a little fuel myself And we could all use a little change Well, the years start coming and they dont stop coming Fed to the rules and I hit the ground running Didnt make sense not to live for fun Your brain gets smart but your head gets dumb So much to do, so much to see So whats wrong with taking the back streets Youll never know if you dont go Youll never shine if you dont glow [Chorus x2] Byte',
-        'Please just stop byte',
-        'Thanks for playing byte',
-        'Goodbyte' //27
-        ];
-        var i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        if (bytes < 1000000000000000000000000000) {
+            if (bytes === 0) return '0 Bytes';
+            if (bytes == 1) return '1 Byte';
+            var k = 1000;
+            var dm = 2 + 1 || 3;
+            var sizes = [
+            'Bytes',
+            'KB',
+            'MB',
+            'GB',
+            'TB',
+            'PB',
+            'EB',
+            'ZB',
+            'YB'
+            ];
+            var i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+        else {
+            //bytes = parseFloat(parseFloat(bytes).toFixed(1));
+            bytes = bytes.toExponential();
+            bytes = parseFloat(parseFloat(bytes).toFixed(1));
+            return bytes;
+
+        }
     }
     //Main Loop
 
@@ -305,38 +296,38 @@ function checkForReveal() {
         visibilityLoader('cyberdeckHR', 1);
     }
     //Decks Upgrades
-    if (totalDataHacked >= 900) {
+    if (totalDataHacked >= 1000) {
         visibilityLoader('cyberdeckUpgradeMenu', 1);
     }
     //ICEPickNumber
-    if (totalDataHacked >= 100) {
+    if (totalDataHacked >= 110) {
         visibilityLoader('ICEDiv', 1);
         visibilityLoader('ICEPickHR', 1);
     }
     //ICE Upgrades
-    if (totalDataHacked >= 5000) {
+    if (totalDataHacked >= 6000) {
         visibilityLoader('ICEPickUpgradeMenu', 1);
     }
     //botnetNumber
-    if (totalDataHacked >= 1000) {
+    if (totalDataHacked >= 1200) {
         visibilityLoader('botnetDiv', 1);
         visibilityLoader('botnetHR', 1);
     }
     //Botnet Upgrades
-    if (totalDataHacked >= 9000) {
+    if (totalDataHacked >= 15000) {
         visibilityLoader('botnetUpgradeMenu', 1);
     }
     //neuralZombieNumber
-    if (totalDataHacked >= 10000) {
+    if (totalDataHacked >= 13000) {
         visibilityLoader('neuralZombieDiv', 1);
         visibilityLoader('neuralZombieHR', 1);
     }
     //NeuralZombie Upgrades
-    if (totalDataHacked >= 50000) {
+    if (totalDataHacked >= 65000) {
         visibilityLoader('neuralZombieUpgradeMenu', 1);
     }
     //AI
-    if (totalDataHacked >= 100000) {
+    if (totalDataHacked >= 130000) {
         visibilityLoader('AIDiv', 1);
         visibilityLoader('AIHR', 1);
     }
@@ -352,6 +343,7 @@ function increment() {
     incomePerSecondTotal += incrementItem(8, ICEPickNumber, ICEPickUpgradeCount, 'ICEPickRate', 'ICEPickRateTotal');
     incomePerSecondTotal += incrementItem(47, botnetNumber, botnetUpgradeCount, 'botnetRate', 'botnetRateTotal');
     incomePerSecondTotal += incrementItem(260, neuralZombieNumber, neuralZombieUpgradeCount, 'neuralZombieRate', 'neuralZombieRateTotal');
+    incomePerSecondTotal += incrementItem(1400, AINumber, AIUpgradeCount, 'AIRate', 'AIRateTotal');
     HTMLEditor('dataHacked', formatBytes(Math.floor(dataHacked)));
     HTMLEditor('totalDataHacked', formatBytes(Math.floor(totalDataHacked)));
     HTMLEditor('totalIncome', formatBytes(incomePerSecondTotal));
@@ -400,6 +392,11 @@ function autoBuy() {
         botnetNumber += Math.floor(neuralZombieNumber / 10); //Creates 1 botnet for every 2 zombies, * 10 so its per second.
         HTMLEditor('nerualZombieBotnetCreationRate', Math.floor(neuralZombieNumber / 10));
         HTMLEditor('botnetNumber', botnetNumber);
+    }
+    if (AIUpgradeCount >= 4) {
+        neuralZombieNumber += Math.floor(AINumber / 10);
+        HTMLEditor('AINeuralZombieCreationRate', Math.floor(AINumber / 10));
+        HTMLEditor('neuralZombieNumber', neuralZombieNumber);
     }
 }
 
@@ -502,6 +499,29 @@ function changeUpgradeText(input) {
                     HTMLEditor('neuralZombieUpgradeDesc', 'Zombies LOVE RAM')
                     break;
             }
+        case 'AI':
+            switch (AIUpgradeCount) {
+                case 0:
+                    HTMLEditor('AIUpgradeName', 'PLACEHOLDER0');
+                    HTMLEditor('AIUpgradeCost', formatBytes(cost));
+                    HTMLEditor('AIUpgradeDesc', 'PLACEHOLDER0')
+                    break;
+                case 1:
+                    HTMLEditor('AIUpgradeName', 'PLACEHOLDER1');
+                    HTMLEditor('AIUpgradeCost', formatBytes(cost));
+                    HTMLEditor('AIUpgradeDesc', 'PLACEHOLDER1')
+                    break;
+                case 2:
+                    HTMLEditor('AIUpgradeName', 'PLACEHOLDER2');
+                    HTMLEditor('AIUpgradeCost', formatBytes(cost));
+                    HTMLEditor('AIUpgradeDesc', 'PLACEHOLDER2')
+                    break;
+                default:
+                    HTMLEditor('AIUpgradeName', 'PLACEHOLDERDEF');
+                    HTMLEditor('AIUpgradeCost', formatBytes(cost));
+                    HTMLEditor('AIUpgradeDesc', 'PLACEHOLDERDEF')
+                    break;
+            }
     }
 }
 
@@ -509,26 +529,19 @@ function upgrade(input) {
     switch (input) {
         case 1:
             doUpgrade('cyberdeck');
-            //changeUpgradeText('cyberdeck');
             break;
         case 2:
             doUpgrade('ICEPick');
-            //changeUpgradeText('ICEPick');
             break;
         case 3:
             doUpgrade('botnet');
-            //changeUpgradeText('botnet');
             break;
         case 4:
             doUpgrade('neuralZombie');
-            //changeUpgradeText('neuralZombie');
             break;
-        case 'AI':
-            if (dataHacked >= 650000000000000 && AIMultiplier == 1) {
-                //document.getElementById('all').innerHTML = '<span class="test">Thank You.</span>';
-                HTMLEditor('all', '<span class="thankyou">Thank You.</span>');
-                break;
-            }
+        case 5:
+            doUpgrade('AI');
+            break;
     }
 }
 
@@ -553,6 +566,10 @@ function doUpgrade(input) {
         case 'neuralZombie':
             upgradeCountInt = neuralZombieUpgradeCount;
             upgradeCountName = 'neuralZombieUpgradeCount';
+            break;
+        case 'AI':
+            upgradeCountInt = AIUpgradeCount;
+            upgradeCountName = 'AIUpgradeCount';
             break;
     }
     cost = getUpgradeCost(input);
@@ -581,12 +598,16 @@ function getUpgradeCost(input, indexModifier) {
             index = ICEPickUpgradeCount;
             break;
         case 'botnet':
-            baseUpgrade = 15000;
+            baseUpgrade = 10000;
             index = botnetUpgradeCount;
             break;
         case 'neuralZombie':
-            baseUpgrade = 65000;
+            baseUpgrade = 60000;
             index = neuralZombieUpgradeCount;
+            break;
+        case 'AI':
+            baseUpgrade = 100000;
+            index = AIUpgradeCount;
             break;
     }
     var costArray = [baseUpgrade];
@@ -653,6 +674,10 @@ function buyNeuralZombie(input) {
     }
 }
 
-function buyAI() {
-    buyItem('AI', 140000);
+function buyAI(input) {
+    for (var i = 0; i < input; i++) {
+        if (buyItem('AI', 130000) == 'break'){
+            break;
+        }
+    }
 }

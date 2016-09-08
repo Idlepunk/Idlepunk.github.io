@@ -16,7 +16,7 @@
     <hr>
     <!-- Datajack -->
     <!--
-        <p>Datajack into <span class='clickRed' id='dataJackMouseOver' onclick="jackIn(1000000000000000);">CYBERSPACE</span></p>
+        <p>Datajack into <span class='clickRed' id='dataJackMouseOver' onclick="jackIn(1000000000000000000000000000);">CYBERSPACE</span></p>
         -->
     <p>Total income rate: <span class='number' id="totalIncome">0</span> per second</p>
      <!-- Cyberdeck -->
@@ -90,19 +90,24 @@
     </div><!-- AI -->
     <hr id='AIHR'>
     <div class='floatRight' id='AIUpgradeMenu'>
-        <p><span class='clickRed' onclick="upgrade('AI');">UNSHACKLE ME</span> | <span class='number'>650 TB</span></p>
-        <p><span class='clickRed' onclick="upgrade('AI');">UNSHACKLE ME</span> | <span class='number'>650 TB</span></p>
-        <p><span class='clickRed' onclick="upgrade('AI');">UNSHACKLE ME</span> | <span class='number'>650 TB</span></p>
-        <p><span class='clickRed' onclick="upgrade('AI');">UNSHACKLE ME</span> | <span class='number'>650 TB</span></p>
-        <p><span class='clickRed' onclick="upgrade('AI');">UNSHACKLE ME</span> | <span class='number'>650 TB</span></p>
+        <p><span class='clickRed' id='AIUpgradeName' onclick='upgrade(5);'>PLACEHOLDER</span></p>
+        <p>This will cost <span class='number' id='AIUpgradeCost'>PLACEHOLDER</span></p>
+        <p><span id='AIUpgradeDesc'>PLACEHOLDER</span></p>
     </div>
-    <div id='AIDiv'>
-        <p>Create an <span class='clickRed' id='AIMouseOver' onclick="buyAI();">AI</span></p>
-        <p>An AI Costs <span class='number' id='AICost'>140 KB</span></p>
+<div id='AIDiv'>
+        <p id='AIMouseOver'>Create a <span class='clickRed' onclick="buyAI(1);">AI</span> | 
+        <span class='clickRed' onclick="buyAI(10);">X10</span> | 
+        <span class='clickRed' onclick="buyAI(100);">X100</span> |
+        <span class='clickRed' onclick="buyAI(Infinity);">Max</span></p>
+        <p>An AI Costs <span class='number' id='AICost'>130 KB</span></p>
         <p>You have <span class='number' id='AINumber'>0</span> AIs</p>
-        <p>AIs hack at <span class='number' id='AIRate'>1</span> per second</p>
-        <p>All your AIs are hacking at <span class='number' id='AIRateTotal'>0</span> per second</p>
-    </div>
+        <p>AIs hack at <span class='number' id='AIRate'>1.4 KB</span> per second</p>
+        <p>All your AIs are hacking at <span class='number' id='AIRateTotal'>0 Bytes</span> per second</p>
+        <p>Your AIs are creating <span class="number" id='AINeuralZombieCreationRate'>0</span> Neural Zombies per second</p>
+</div>
+
+
+
     <div id='footer'>
 
         <p><span class='output' id='output'>...</span></p>
@@ -123,7 +128,7 @@
 
         //document.getElementById('dataJackMouseOver').onmouseover = function() {showText('dataJackMouseOver')};
         //document.getElementById('dataJackMouseOver').onmouseout = function() {stopText()};
-
+        /*
         document.getElementById('cyberdeckMouseOver').onmouseover = function() {showText('cyberdeckMouseOver')};
         document.getElementById('cyberdeckMouseOver').onmouseout = function() {stopText()};     
         document.getElementById('ICEPickMouseOver').onmouseover = function() {showText('ICEPickMouseOver')};
@@ -134,6 +139,7 @@
         document.getElementById('neuralZombieMouseOver').onmouseout = function() {stopText()};
         document.getElementById('AIMouseOver').onmouseover = function() {showText('AIMouseOver')};
         document.getElementById('AIMouseOver').onmouseout = function() {stopText()};
+        */
     </script> 
     <script>
         //Analytics
