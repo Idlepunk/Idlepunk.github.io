@@ -1,4 +1,5 @@
 var tickRate = 10; //Ticks per second, this does not actually change
+var lastTick = (new Date).getTime(); // global at top of code
 var autoSaveCount = 0;
 var autoBuyCount = 0;
 var dataHacked = 0;
@@ -28,7 +29,7 @@ function startUp() {
     //visibilityLoader('all', 0); //Hides the entire body until individual elements have been loaded.
     document.getElementById('all').style.display = 'inline'; //display is set to none by default to hide stuff while loading.
     dataHacked = 10;
-    totalDataHacked = 10;
+    totalDataHacked = 0;
     load(); //Loads the save, remove to disable autoloading on refresh.
     var startUpElements = [
      'cyberdeckMenu',
@@ -51,6 +52,7 @@ function startUp() {
         visibilityLoader(startUpElements[i], 0);
     }
     //visibilityLoader('all', 1);
+    window.requestAnimationFrame(updateGame);
 }
 
 function save() {
@@ -267,23 +269,38 @@ function jackIn(number) {
     HTMLEditor('dataHacked', formatBytes(dataHacked));
     totalDataHacked += number;
 }
-window.setInterval(function() {
-    increment();
-    checkForReveal();
+
+function updateGame(){
+    var now = (new Date).getTime(); // current time in ms
+    var deltaTime = now - lastTick; // amount of time elapsed since last tick
+    deltaTime = Math.floor(deltaTime / 100);
+    for (var i=0; i<deltaTime; i++) {
+        lastTick = now;
+        autoBuyCount++;
+        if (autoBuyCount >= 10) {
+            autoBuy();
+            autoBuyCount = 0;
+        }
+        increment();
+        checkForReveal(); 
+    }
     autoSaveCount++;
-    if (autoSaveCount >= 100) {
+    if (autoSaveCount >= 1000){ //Once every 10 seconds.
         save();
         autoSaveCount = 0;
-    }
-    autoBuyCount++;
-    if (autoBuyCount >= 10) {
-        autoBuy();
-        autoBuyCount = 0;
-    }
-}, 100); //100 = 10 ticks per second
+    }   
+
+    window.requestAnimationFrame(updateGame);
+}
+
+window.requestAnimationFrame(updateGame);
+
+
+
+
 function checkForReveal() {
     //Decks Base
-    if (totalDataHacked >= 10) {
+    if (totalDataHacked >= 0) {
         visibilityLoader('cyberdeckMenu', 1);
         visibilityLoader('cyberdeckHR', 1);
     }
@@ -345,7 +362,7 @@ function incrementItem(baseRate, numberOfItems, itemUpgradeCount, itemRateDiv, i
     var incomePerTick;
     var incomePerSecond;
     var incomePerSecondTotal;
-    var incomePerTick;
+    //var incomePerTick;
     incomePerItem = calculateIncome(itemUpgradeCount, baseRate);
     incomePerSecond = incomePerItem * tickRate;
     incomePerSecondTotal = incomePerSecond * numberOfItems;
@@ -539,7 +556,6 @@ function doUpgrade(input) {
             break;
     }
     cost = getUpgradeCost(input);
-    console.log(cost);
     if (dataHacked >= cost) {
         dataHacked -= cost;
         upgradeCountInt += 1;
