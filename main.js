@@ -226,7 +226,7 @@ function destroyFloats(input) {
 
 function formatBytes(bytes, decimals) {
         bytes = Math.round(bytes);
-        if (bytes < 1000000000000000000000000000) {
+        if (bytes < 999099999999999999999999999) {
             if (bytes === 0) return '0 Bytes';
             if (bytes == 1) return '1 Byte';
             var k = 1000;
@@ -247,8 +247,9 @@ function formatBytes(bytes, decimals) {
         }
         else {
             //bytes = parseFloat(parseFloat(bytes).toFixed(1));
-            bytes = bytes.toExponential();
-            bytes = parseFloat(parseFloat(bytes).toFixed(1));
+            bytes = bytes.toExponential(2);
+            //bytes = parseFloat(parseFloat(bytes).toFixed(1));
+            bytes += ' Bytes';
             return bytes;
 
         }
@@ -278,6 +279,7 @@ function updateGame(){
     autoSaveCount++;
     if (autoSaveCount >= 1000){ //Once every 10 seconds.
         save();
+        console.log('saved');
         autoSaveCount = 0;
     }   
 
@@ -494,11 +496,12 @@ function changeUpgradeText(input) {
                     HTMLEditor('neuralZombieUpgradeDesc', 'Your Zombies can now create Botnets. For every 10 Neural Zombies, you will generate 1 Botnet each second.')
                     break;
                 default:
-                    HTMLEditor('neuralZombieUpgradeName', 'Install more RAM');
+                    HTMLEditor('neuralZombieUpgradeName', 'Fire adrenaline booster');
                     HTMLEditor('neuralZombieUpgradeCost', formatBytes(cost));
-                    HTMLEditor('neuralZombieUpgradeDesc', 'Zombies LOVE RAM')
+                    HTMLEditor('neuralZombieUpgradeDesc', 'Zombies LOVE going fast')
                     break;
             }
+            break;
         case 'AI':
             switch (AIUpgradeCount) {
                 case 0:
@@ -522,6 +525,7 @@ function changeUpgradeText(input) {
                     HTMLEditor('AIUpgradeDesc', 'PLACEHOLDERDEF')
                     break;
             }
+            break;
     }
 }
 
