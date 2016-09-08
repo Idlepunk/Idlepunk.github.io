@@ -27,10 +27,10 @@
         <p><span id='cyberdeckUpgradeDesc'>As part of an initiative to lower employee suicide rates, Chui-Bazhusko Multinational developed the Ergonomic Deck. It gently releases both calming and energizing psychotropics into the palms of users.</span></p>
     </div>
     <div id='cyberdeckMenu'>
-        <p id='CyberdeckMouseOver'>Buy a <span class='clickRed'  onclick="buyCyberdeck(1);">Cyberdeck</span> | 
-        <span class='clickRed' id='CyberdeckMouseOver' onclick="buyCyberdeck(10);">X10</span> | 
-        <span class='clickRed' id='CyberdeckMouseOver' onclick="buyCyberdeck(100);">X100</span> | 
-        <span class='clickRed' id='CyberdeckMouseOver' onclick="buyCyberdeck(Infinity);">All</span></p>
+        <p id='cyberdeckMouseOver'>Buy a <span class='clickRed'  onclick="buyCyberdeck(1);">Cyberdeck</span> | 
+        <span class='clickRed' onclick="buyCyberdeck(10);">X10</span> | 
+        <span class='clickRed' onclick="buyCyberdeck(100);">X100</span> | 
+        <span class='clickRed' onclick="buyCyberdeck(Infinity);">Max</span></p>
         <p>A Cyberdeck costs <span class='number' id='cyberdeckCost'>10 Bytes</span></p>
         <p>You have <span class='number' id='cyberdeckNumber'>0</span> Cyberdecks</p>
         <p>Cyberdecks hack at <span class='number' id='cyberdeckRate'>1 Byte</span> per second</p>
@@ -45,9 +45,9 @@
     </div>
     <div id='ICEDiv'>
         <p id='ICEPickMouseOver'>Create an <span class='clickRed'  onclick="buyICEPick(1);">ICE Pick</span> | 
-        <span class='clickRed' id='ICEPickMouseOver' onclick="buyICEPick(10);">X10</span> | 
-        <span class='clickRed' id='ICEPickMouseOver' onclick="buyICEPick(100);">X100</span> | 
-        <span class='clickRed' id='ICEPickMouseOver' onclick="buyICEPick(Infinity);">All</span></p>
+        <span class='clickRed' onclick="buyICEPick(10);">X10</span> | 
+        <span class='clickRed' onclick="buyICEPick(100);">X100</span> | 
+        <span class='clickRed' onclick="buyICEPick(Infinity);">Max</span></p>
         <p>An ICE Pick Costs <span class='number' id='ICEPickCost'>110 Bytes</span></p>
         <p>You have <span class='number' id='ICEPickNumber'>0</span> ICE Picks</p>
         <p>ICE Picks hack at <span class='number' id='ICEPickRate'>10 Bytes</span> per second</p>
@@ -61,10 +61,10 @@
         <p><span id='botnetUpgradeDesc'>You never know what your Bots will find when then are infiltrating, they can now adapt to changing circumstances.</span></p>
     </div>
     <div id='botnetDiv'>
-        <p d='botnetMouseOver'>Create a <span class='clickRed' i onclick="buyBotnet(1);">Botnet</span> | 
-        <span class='clickRed' id='botnetMo2useOver' onclick="buyBotnet(10);">X10</span> | 
-        <span class='clickRed' id='botnetM2ouseOver' onclick="buyBotnet(100);">X100</span> | 
-        <span class='clickRed' id='bot2netMouseOver' onclick="buyBotnet(Infinity);"All</span></p>
+        <p id='botnetMouseOver'>Create a <span class='clickRed' i onclick="buyBotnet(1);">Botnet</span> | 
+        <span class='clickRed' onclick="buyBotnet(10);">X10</span> | 
+        <span class='clickRed' onclick="buyBotnet(100);">X100</span> | 
+        <span class='clickRed' onclick="buyBotnet(Infinity);">Max</span></p>
         <p>A Botnet Costs <span class='number' id='botnetCost'>1.2 KB</span></p>
         <p>You have <span class='number' id='botnetNumber'>0</span> Botnets</p>
         <p>Botnets hack at <span class='number' id='botnetRate'>10 Bytes</span> per second</p>
@@ -79,9 +79,9 @@
     </div>
     <div id='neuralZombieDiv'>
         <p id='neuralZombieMouseOver'>Create a <span class='clickRed' onclick="buyNeuralZombie(1);">Neural Zombie</span> | 
-        <span class='clickRed' id='neuralZombieMouseOver' onclick="buyNeuralZombie(10);">X10</span> | 
-        <span class='clickRed' id='neuralZombieMouseOver' onclick="buyNeuralZombie(100);">X100</span> | 
-        <span class='clickRed' id='neuralZombieMouseOver' onclick="buyNeuralZombie(Infinity);">X100</span></p>
+        <span class='clickRed' onclick="buyNeuralZombie(10);">X10</span> | 
+        <span class='clickRed' onclick="buyNeuralZombie(100);">X100</span> | 
+        <span class='clickRed' onclick="buyNeuralZombie(Infinity);">Max</span></p>
         <p>A Neural Zombies Cost <span class='number' id='neuralZombieCost'>13 KB</span></p>
         <p>You have <span class='number' id='neuralZombieNumber'>0</span> Neural Zombies</p>
         <p>Neural Zombies hack at <span class='number' id='neuralZombieRate'>10 Bytes</span> per second</p>
@@ -124,8 +124,8 @@
         //document.getElementById('dataJackMouseOver').onmouseover = function() {showText('dataJackMouseOver')};
         //document.getElementById('dataJackMouseOver').onmouseout = function() {stopText()};
 
-        document.getElementById('CyberdeckMouseOver').onmouseover = function() {showText('cyberdeckMouseOver')};
-        document.getElementById('CyberdeckMouseOver').onmouseout = function() {stopText()};     
+        document.getElementById('cyberdeckMouseOver').onmouseover = function() {showText('cyberdeckMouseOver')};
+        document.getElementById('cyberdeckMouseOver').onmouseout = function() {stopText()};     
         document.getElementById('ICEPickMouseOver').onmouseover = function() {showText('ICEPickMouseOver')};
         document.getElementById('ICEPickMouseOver').onmouseout = function() {stopText()};
         document.getElementById('botnetMouseOver').onmouseover = function() {showText('botnetMouseOver')};
