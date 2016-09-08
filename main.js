@@ -616,29 +616,40 @@ function buyItem(item, baseCost) {
         window[itemNumberName] = itemNumberInt;
         window[itemPurchasedName] = itemPurchasedInt;
     }
+    else {
+        return 'break';
+    }
 }
 
 function buyCyberdeck(input) {
     for (var i = 0; i < input; i++) {
-        buyItem('cyberdeck', 10);
+        if (buyItem('cyberdeck', 10) == 'break'){
+            break;
+        }
     }
 }
 
 function buyICEPick(input) {
     for (var i = 0; i < input; i++) {
-        buyItem('ICEPick', 110);
+        if (buyItem('ICEPick', 110) == 'break'){
+            break;
+        }
     }
 }
 
 function buyBotnet(input) {
     for (var i = 0; i < input; i++) {
-        buyItem('botnet', 1200);
+        if (buyItem('botnet', 1200) == 'break'){
+            break;
+        }
     }
 }
 
 function buyNeuralZombie(input) {
     for (var i = 0; i < input; i++) {
-        buyItem('neuralZombie', 13000);
+        if (buyItem('neuralZombie', 13000) == 'break'){
+            break;
+        }
     }
 }
 
