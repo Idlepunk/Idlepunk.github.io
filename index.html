@@ -53,7 +53,8 @@
         <p>ICE Picks hack at <span class='number' id='ICEPickRate'>10 Bytes</span> per second</p>
         <p>All you ICE Picks are hacking at <span class='number' id='ICEPickRateTotal'>0 Bytes</span> per second</p>
         <p>Your ICEPicks are creating <span class="number" id='ICEPickCyberdeckCreationRate'>0</span> Cyberdecks per second</p>
-    </div><!-- Botnet -->
+    </div>
+    <!-- Botnet -->
     <hr id='botnetHR'>
     <div class='floatRight' id='botnetUpgradeMenu'>
         <p><span class='clickRed' id='botnetUpgradeName' onclick='upgrade(3);'>Implement self-modifying code</span></p>
@@ -70,7 +71,8 @@
         <p>Botnets hack at <span class='number' id='botnetRate'>10 Bytes</span> per second</p>
         <p>All your Botnets are hacking at <span class='number' id='botnetRateTotal'>0 Bytes</span> per second</p>
         <p>Your Botnets are creating <span class="number" id='botnetICEPickCreationRate'>0</span> ICE Picks per second</p>
-    </div><!-- Neural Zombie -->
+    </div>
+    <!-- Neural Zombie -->
     <hr id='neuralZombieHR'>
     <div class='floatRight' id='neuralZombieUpgradeMenu'>
         <p><span class='clickRed' id='neuralZombieUpgradeName' onclick='upgrade(4);'>Anti-tamper Zombies</span></p>
@@ -87,7 +89,8 @@
         <p>Neural Zombies hack at <span class='number' id='neuralZombieRate'>10 Bytes</span> per second</p>
         <p>All your Neural Zombies are hacking at <span class='number' id='neuralZombieRateTotal'>0 Bytes</span> per second</p>
         <p>Your Zombies are creating <span class="number" id='nerualZombieBotnetCreationRate'>0</span> Botnets per second</p>
-    </div><!-- AI -->
+    </div>
+    <!-- AI -->
     <hr id='AIHR'>
     <div class='floatRight' id='AIUpgradeMenu'>
         <p><span class='clickRed' id='AIUpgradeName' onclick='upgrade(5);'>PLACEHOLDER</span></p>
@@ -105,13 +108,8 @@
         <p>All your AIs are hacking at <span class='number' id='AIRateTotal'>0 Bytes</span> per second</p>
         <p>Your AIs are creating <span class="number" id='AINeuralZombieCreationRate'>0</span> Neural Zombies per second</p>
 </div>
-
-
-
     <div id='footer'>
-
         <p><span class='output' id='output'>...</span></p>
-
     </div>
     <div id='footerSave'>
         <p><u class='clickRed' onclick='importSave();'>Import Save</u>
@@ -123,7 +121,6 @@
     <script src='main.js' type='text/javascript'>
     </script> 
     <script>
-        //My script
         window.onload = startUp();
 
         //document.getElementById('dataJackMouseOver').onmouseover = function() {showText('dataJackMouseOver')};

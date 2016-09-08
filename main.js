@@ -1,13 +1,13 @@
-var tickRate = 10; //Ticks per second, this does not actually change
-var lastTick = (new Date).getTime(); // global at top of code
-var autoSaveCount = 0;
-var autoBuyCount = 0;
-var dataHacked = 0;
-var totalDataHacked = 0;
+var tickRate = 10; //Ticks per second, this does not actually change the tick rate, it's just used as a reference.
+var lastTick = (new Date).getTime(); //The time that the last tick occurred
+var autoSaveCount = 0; //Increases every tick so that the game doesn't auto save 10 times per second.
+var autoBuyCount = 0; //Increases every tick so that the game doesn't auto buy 10 times per second.
+var dataHacked = 0; //The current amount of data.
+var totalDataHacked = 0; //The all time total amount of data.
 //Cyberdecks
-var cyberdeckNumber = 0;
-var cyberdeckPurchased = 0;
-var cyberdeckUpgradeCount = 0;
+var cyberdeckNumber = 0; //The number of cyberdecks the user has.
+var cyberdeckPurchased = 0; //The number of cyberdecks the user has purchased (autobought ones are not counted.)
+var cyberdeckUpgradeCount = 0; //The number of upgrades cyberdecks have.
 //ICEPicks
 var ICEPickNumber = 0;
 var ICEPickPurchased = 0;
@@ -26,11 +26,12 @@ var AIPurchased = 0;
 var AIUpgradeCount = 0;
 
 function startUp() {
-    //visibilityLoader('all', 0); //Hides the entire body until individual elements have been loaded.
-    document.getElementById('all').style.display = 'inline'; //display is set to none by default to hide stuff while loading.
+    //Runs when the page is loaded.
+    document.getElementById('all').style.display = 'inline'; //Display is set to none in css to hide the body while loading, this makes it visible.
     dataHacked = 10;
     totalDataHacked = 0;
     load(); //Loads the save, remove to disable autoloading on refresh.
+    //These items are hidden when the game loads.
     var startUpElements = [
      'cyberdeckMenu',
      'cyberdeckHR',
@@ -51,11 +52,12 @@ function startUp() {
     for (var i in startUpElements) {
         visibilityLoader(startUpElements[i], 0);
     }
-    //visibilityLoader('all', 1);
+    //Calls the first tick of the game.
     window.requestAnimationFrame(updateGame);
 }
 
 function save() {
+    //Saves these variables to local storage.
     var savegame = {
         dataHacked: dataHacked,
         totalDataHacked: totalDataHacked,
@@ -84,13 +86,14 @@ function save() {
 }
 
 function load() {
-    var savegame = JSON.parse(localStorage.getItem('save')); //Loads the save
-    if (savegame !== null) {
+    //Loads these variables from local storage.
+    var savegame = JSON.parse(localStorage.getItem('save'));
+    if (savegame !== null) { //Will not attempt to load if the save does not exist.
         //dataHacked
         if (typeof savegame.dataHacked !== 'undefined') dataHacked = savegame.dataHacked; //If its an old save it may be undefined.
-        document.getElementById('dataHacked').innerHTML = formatBytes(dataHacked); //Updates the values on the interface.
         //totalDataHacked
         if (typeof savegame.totalDataHacked !== 'undefined') totalDataHacked = savegame.totalDataHacked;
+        
         //cyberdeckNumber
         if (typeof savegame.cyberdeckNumber !== 'undefined') cyberdeckNumber = savegame.cyberdeckNumber; //This must be done for every element.
         document.getElementById('cyberdeckNumber').innerHTML = cyberdeckNumber;
@@ -101,9 +104,8 @@ function load() {
         //cyberdeckUpgradeCount
         if (typeof savegame.cyberdeckUpgradeCount !== 'undefined') cyberdeckUpgradeCount = savegame.cyberdeckUpgradeCount;
         //cyberdecksUpgrades
-        if (cyberdeckUpgradeCount !== 0) {
-            changeUpgradeText('cyberdeck', -1);
-        }
+        if (cyberdeckUpgradeCount !== 0) changeUpgradeText('cyberdeck', -1);
+
         //ICEPickNumber
         if (typeof savegame.ICEPickNumber !== 'undefined') ICEPickNumber = savegame.ICEPickNumber;
         document.getElementById('ICEPickNumber').innerHTML = ICEPickNumber;
@@ -114,9 +116,8 @@ function load() {
         //ICEPickUpgradeCount
         if (typeof savegame.ICEPickUpgradeCount !== 'undefined') ICEPickUpgradeCount = savegame.ICEPickUpgradeCount;
         //ICEPicksUpgrades
-        if (ICEPickUpgradeCount !== 0) {
-            changeUpgradeText('ICEPick', -1);
-        }
+        if (ICEPickUpgradeCount !== 0) changeUpgradeText('ICEPick', -1);
+
         //botnetNumber 
         if (typeof savegame.botnetNumber !== 'undefined') botnetNumber = savegame.botnetNumber;
         document.getElementById('botnetNumber').innerHTML = botnetNumber;
@@ -127,9 +128,8 @@ function load() {
         //BotnetMultipler
         if (typeof savegame.botnetUpgradeCount !== 'undefined') botnetUpgradeCount = savegame.botnetUpgradeCount;
         //Botnet Upgrades
-        if (botnetUpgradeCount !== 0) {
-            changeUpgradeText('botnet', -1);
-        }
+        if (botnetUpgradeCount !== 0) changeUpgradeText('botnet', -1);
+
         //neuralZombieNumber
         if (typeof savegame.neuralZombieNumber !== 'undefined') neuralZombieNumber = savegame.neuralZombieNumber;
         document.getElementById('neuralZombieNumber').innerHTML = neuralZombieNumber;
@@ -140,25 +140,24 @@ function load() {
         //neuralZombieUpgradeCount
         if (typeof savegame.neuralZombieUpgradeCount !== 'undefined') neuralZombieUpgradeCount = savegame.neuralZombieUpgradeCount;
         //neuralZombiesUpgrades
-        if (neuralZombieUpgradeCount !== 0) {
-            changeUpgradeText('neuralZombie', -1);
-        }
+        if (neuralZombieUpgradeCount !== 0) changeUpgradeText('neuralZombie', -1);
+
         //AINumber
         if (typeof savegame.AINumber !== 'undefined') AINumber = savegame.AINumber;
         document.getElementById('AINumber').innerHTML = AINumber;
-        nextCost = Math.floor(130000 * Math.pow(1.15, AINumber));
+        nextCost = Math.floor(140000 * Math.pow(1.15, AINumber));
         document.getElementById('AICost').innerHTML = formatBytes(nextCost);
         //AIPurchased
         if (typeof savegame.AIPurchased !== 'undefined') AIPurchased = savegame.AIPurchased;
         //AIUpgradeCount
         if (typeof savegame.AIUpgradeCount !== 'undefined') AIUpgradeCount = savegame.AIUpgradeCount;
         //AIsUpgrades
-        if (AIUpgradeCount !== 0) {
-            changeUpgradeText('AI', -1);
-        }    }
+        if (AIUpgradeCount !== 0) changeUpgradeText('AI', -1);
+    }
 }
 
 function exportSave() {
+    //Converts the local save to a string.
     save();
     var savegame = JSON.parse(localStorage.getItem('save'));
     savegame = JSON.stringify(savegame);
@@ -167,6 +166,7 @@ function exportSave() {
 }
 
 function importSave() {
+    //Converts a string to a local save.
     var obfuscatedSave = prompt('Paste save here');
     var save = atob(obfuscatedSave);
     localStorage.setItem('save', save);
@@ -174,15 +174,18 @@ function importSave() {
 }
 
 function deleteSave() {
+    //Deletes the save then reloads the game.
     localStorage.removeItem('save');
     location.reload();
 }
 
 function HTMLEditor(elementID, input) {
+    //changes the inner HTML of an element.
     document.getElementById(elementID).innerHTML = input;
 }
 
 function visibilityLoader(elementID, visibility) {
+    //Either hides or shows an element depending on arguments.
     if (visibility === 1) {
         visibility = 'visible';
     } else if (visibility === 0) {
@@ -192,6 +195,8 @@ function visibilityLoader(elementID, visibility) {
 }
 
 function showText(input) {
+    //Shows different text in element depending on what the mouse is hovering over.
+    //Currently not in use.
     var text;
     var quote = '<br><i>- William Gibson, Neuromancer.</i>';
     switch (input) {
@@ -218,15 +223,21 @@ function showText(input) {
 }
 
 function stopText() {
+    //Changes the text to ... when the mouse is not hovering over anything.
+    //Can probably be the default case in showText.
     document.getElementById('output').innerHTML = '...';
 }
 
 function destroyFloats(input) {
+    //Sets dataHacked to 1 decimal place.
+    //Used to avoid float rounding errors.
     dataHacked = parseFloat(parseFloat(dataHacked).toFixed(1));
     totalDataHacked = parseFloat(parseFloat(totalDataHacked).toFixed(1));
 }
 
 function formatBytes(bytes, decimals) {
+    //Converts a number of Bytes into a data format.
+    //If it is larger than the largest data format (9999 Yottabytes), shows scientific notation of Bytes instead.
         bytes = Math.round(bytes);
         if (bytes < 999099999999999999999999999) {
             if (bytes === 0) return '0 Bytes';
@@ -259,17 +270,20 @@ function formatBytes(bytes, decimals) {
     //Main Loop
 
 function jackIn(number) {
+    //Adds a number of data based on argument.
+    //Currently only used for debugging.
     dataHacked = dataHacked + number;
     HTMLEditor('dataHacked', formatBytes(dataHacked));
     totalDataHacked += number;
 }
 
 function updateGame(){
-    var now = (new Date).getTime(); // current time in ms
-    var deltaTime = now - lastTick; // amount of time elapsed since last tick
-    deltaTime = Math.floor(deltaTime / 100);
+    //The main loop, it calls itself at the end.
+    var now = (new Date).getTime(); //The current time.
+    var deltaTime = now - lastTick; //The amount of time since the last time occurred.
+    deltaTime = Math.floor(deltaTime / 100); //(deltaTime / 100) determines the game's tick rate.
     for (var i=0; i<deltaTime; i++) {
-        lastTick = now;
+        lastTick = now; //Updates the time of the most recent tick.
         autoBuyCount++;
         if (autoBuyCount >= 10) {
             autoBuy();
@@ -281,7 +295,6 @@ function updateGame(){
     autoSaveCount++;
     if (autoSaveCount >= 10){ //Once every 10 seconds.
         save();
-        console.log('saved');
         autoSaveCount = 0;
     }   
 
