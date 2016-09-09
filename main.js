@@ -616,45 +616,45 @@ function doUpgrade(input) {
     }
 }
 
-function getUpgradeCost(input, indexModifier) {
+function getUpgradeCost(input, modifier) {
     //Calculates how much an upgrade should cost.
-    if (indexModifier === undefined) {
-        indexModifier = 0;
+    if (modifier === undefined) {
+        modifier = 0;
     }
     var array;
-    var index;
-    var baseUpgrade;
+    var upgradeCount;
+    var baseCost;
+    var cost;
     switch (input) {
         case 'cyberdeck':
-            baseUpgrade = 1000;
-            index = cyberdeckUpgradeCount;
+            baseCost = 1000;
+            upgradeCount = cyberdeckUpgradeCount;
             break;
         case 'ICEPick':
-            baseUpgrade = 6000;
-            index = ICEPickUpgradeCount;
+            baseCost = 6000;
+            upgradeCount = ICEPickUpgradeCount;
             break;
         case 'botnet':
-            baseUpgrade = 10000;
-            index = botnetUpgradeCount;
+            baseCost = 10000;
+            upgradeCount = botnetUpgradeCount;
             break;
         case 'neuralZombie':
-            baseUpgrade = 60000;
-            index = neuralZombieUpgradeCount;
+            baseCost = 60000;
+            upgradeCount = neuralZombieUpgradeCount;
             break;
         case 'AI':
-            baseUpgrade = 100000;
-            index = AIUpgradeCount;
+            baseCost = 100000;
+            upgradeCount = AIUpgradeCount;
             break;
     }
-    //This array is inefficient, a better way is:
-    //Upgrade cost = (numberOfUpgrades + indexMod) * (baseCost * 10).
-    var costArray = [baseUpgrade];
-    for (var i = 1; i < 30; i++) {
-        var c = costArray[i - 1];
-        c *= 10;
-        costArray.push(c);
-    }
-    return costArray[index + indexModifier];
+
+    //cost = baseCost * (10 ^ upgradeCount)
+    //cost = 1000 *     (10 ^ 0) = 1000
+    //cost = 1000 *     (10 ^ 1) = 10000
+    //cost = 1000 *     (10 ^ 2) = 100000
+
+    cost = baseCost * Math.pow(10, upgradeCount + modifier);
+    return cost;
 }
 
 function buyItem(item, baseCost) {
