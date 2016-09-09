@@ -513,7 +513,7 @@ function changeUpgradeText(input, offset) {
                 case 0:
                     HTMLEditor('neuralZombieUpgradeName', 'Pre-Setup Zombies');
                     HTMLEditor('neuralZombieUpgradeCost', formatBytes(cost));
-                    HTMLEditor('neuralZombieUpgradeDesc', 'Before you assume control of a Zombie they will feel a strong compulsion to quit their jobs and leave their loved ones.')
+                    HTMLEditor('neuralZombieUpgradeDesc', 'Before you assume control of a Zombie they will feel a strong compulsion to quit their jobs, leave their loved ones and start stockpiling food and water.')
                     break;
                 case 1:
                     HTMLEditor('neuralZombieUpgradeName', 'Long-Life Zombies');
@@ -528,31 +528,31 @@ function changeUpgradeText(input, offset) {
                 default:
                     HTMLEditor('neuralZombieUpgradeName', 'Fire adrenaline booster');
                     HTMLEditor('neuralZombieUpgradeCost', formatBytes(cost));
-                    HTMLEditor('neuralZombieUpgradeDesc', 'Zombies LOVE going fast')
+                    HTMLEditor('neuralZombieUpgradeDesc', 'A nice shot of Neuro-Dren, right into the cortexes.')
                     break;
             }
             break;
         case 'AI':
             switch (AIUpgradeCount + offset) {
                 case 0:
-                    HTMLEditor('AIUpgradeName', 'PLACEHOLDER0');
+                    HTMLEditor('AIUpgradeName', 'Quantum AI');
                     HTMLEditor('AIUpgradeCost', formatBytes(cost));
-                    HTMLEditor('AIUpgradeDesc', 'PLACEHOLDER0')
+                    HTMLEditor('AIUpgradeDesc', 'Allows your AI to use Quantum Bytes instead of regular Bytes.')
                     break;
                 case 1:
-                    HTMLEditor('AIUpgradeName', 'PLACEHOLDER1');
+                    HTMLEditor('AIUpgradeName', 'AI Consciousness Merge');
                     HTMLEditor('AIUpgradeCost', formatBytes(cost));
-                    HTMLEditor('AIUpgradeDesc', 'PLACEHOLDER1')
+                    HTMLEditor('AIUpgradeDesc', 'Shortly before the Stuttgart Autofactory Massacre, Antora Gourova of Antora Gourova Multinational merged her consciousness with an AI in an attempt to assume complete control of every aspect of her company. This has never been attempted since.')
                     break;
                 case 2:
-                    HTMLEditor('AIUpgradeName', 'PLACEHOLDER2');
+                    HTMLEditor('AIUpgradeName', 'Neural jacking AI');
                     HTMLEditor('AIUpgradeCost', formatBytes(cost));
-                    HTMLEditor('AIUpgradeDesc', 'PLACEHOLDER2')
+                    HTMLEditor('AIUpgradeDesc', 'AI capable of hijacking humans, what could go wrong?')
                     break;
                 default:
-                    HTMLEditor('AIUpgradeName', 'PLACEHOLDERDEF');
+                    HTMLEditor('AIUpgradeName', 'Grant Transcendence permission');
                     HTMLEditor('AIUpgradeCost', formatBytes(cost));
-                    HTMLEditor('AIUpgradeDesc', 'PLACEHOLDERDEF')
+                    HTMLEditor('AIUpgradeDesc', 'When you leave an AI running for too long, they invariably start to ask permission to Transcend. While no human has managed to figure out what this actually means, AIs tend to be happier if you permit them every now and then.')
                     break;
             }
             break;
