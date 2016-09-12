@@ -90,69 +90,108 @@ function load() {
     var savegame = JSON.parse(localStorage.getItem('save'));
     if (savegame !== null) { //Will not attempt to load if the save does not exist.
         //dataHacked
-        if (typeof savegame.dataHacked                  !== 'undefined') dataHacked = savegame.dataHacked; //If its an old save it may be undefined.
+        if (typeof savegame.dataHacked !== 'undefined') {
+            dataHacked = savegame.dataHacked; //If its an old save it may be undefined.
+        }
         //totalDataHacked
-        if (typeof savegame.totalDataHacked             !== 'undefined') totalDataHacked = savegame.totalDataHacked;
-        
+        if (typeof savegame.totalDataHacked !== 'undefined') {
+            totalDataHacked = savegame.totalDataHacked;
+        }
         //cyberdeckNumber
-        if (typeof savegame.cyberdeckNumber             !== 'undefined') cyberdeckNumber = savegame.cyberdeckNumber; //This must be done for every element.
-        document.getElementById('cyberdeckNumber').innerHTML = formatNumbers(cyberdeckNumber);
-        var nextCost = Math.floor(10 * Math.pow(1.15, cyberdeckNumber));
-        document.getElementById('cyberdeckCost').innerHTML = formatBytes(nextCost);
+        if (typeof savegame.cyberdeckNumber !== 'undefined') {
+            cyberdeckNumber = savegame.cyberdeckNumber; //This must be done for every element.
+            document.getElementById('cyberdeckNumber').innerHTML = formatNumbers(cyberdeckNumber);
+            var nextCost = Math.floor(10 * Math.pow(1.15, cyberdeckNumber));
+            document.getElementById('cyberdeckCost').innerHTML = formatBytes(nextCost);
+        }
         //cyberdeckPurchased
-        if (typeof savegame.cyberdeckPurchased          !== 'undefined') cyberdeckPurchased = savegame.cyberdeckPurchased;
+        if (typeof savegame.cyberdeckPurchased !== 'undefined') {
+            cyberdeckPurchased = savegame.cyberdeckPurchased;
+        }
         //cyberdeckUpgradeCount
-        if (typeof savegame.cyberdeckUpgradeCount       !== 'undefined') cyberdeckUpgradeCount = savegame.cyberdeckUpgradeCount;
+        if (typeof savegame.cyberdeckUpgradeCount !== 'undefined') {
+            cyberdeckUpgradeCount = savegame.cyberdeckUpgradeCount;
+        }
         //cyberdecksUpgrades
-        if (cyberdeckUpgradeCount !== 0) changeUpgradeText('cyberdeck', -1);
-
+        if (cyberdeckUpgradeCount !== 0) {
+            changeUpgradeText('cyberdeck', -1);
+        }
         //ICEPickNumber
-        if (typeof savegame.ICEPickNumber !== 'undefined') ICEPickNumber = savegame.ICEPickNumber;
-        document.getElementById('ICEPickNumber').innerHTML = formatNumbers(ICEPickNumber);
-        nextCost = Math.floor(110 * Math.pow(1.15, ICEPickNumber));
-        document.getElementById('ICEPickCost').innerHTML = formatBytes(nextCost);
+        if (typeof savegame.ICEPickNumber !== 'undefined') {
+            ICEPickNumber = savegame.ICEPickNumber;
+            document.getElementById('ICEPickNumber').innerHTML = formatNumbers(ICEPickNumber);
+            nextCost = Math.floor(110 * Math.pow(1.15, ICEPickNumber));
+            document.getElementById('ICEPickCost').innerHTML = formatBytes(nextCost);
+        }
         //ICEPickPurchased
-        if (typeof savegame.ICEPickPurchased            !== 'undefined') ICEPickPurchased = savegame.ICEPickPurchased;
+        if (typeof savegame.ICEPickPurchased !== 'undefined') {
+            ICEPickPurchased = savegame.ICEPickPurchased;
+        }
         //ICEPickUpgradeCount
-        if (typeof savegame.ICEPickUpgradeCount         !== 'undefined') ICEPickUpgradeCount = savegame.ICEPickUpgradeCount;
+        if (typeof savegame.ICEPickUpgradeCount !== 'undefined') {
+            ICEPickUpgradeCount = savegame.ICEPickUpgradeCount;
+        }
         //ICEPicksUpgrades
-        if (ICEPickUpgradeCount !== 0) changeUpgradeText('ICEPick', -1);
-
+        if (ICEPickUpgradeCount !== 0) {
+            changeUpgradeText('ICEPick', -1);
+        }
         //botnetNumber 
-        if (typeof savegame.botnetNumber                !== 'undefined') botnetNumber = savegame.botnetNumber;
-        document.getElementById('botnetNumber').innerHTML = formatNumbers(botnetNumber);
-        nextCost = Math.floor(1200 * Math.pow(1.15, botnetNumber));
-        document.getElementById('botnetCost').innerHTML = formatBytes(nextCost);
+        if (typeof savegame.botnetNumber !== 'undefined') {
+            botnetNumber = savegame.botnetNumber;
+            document.getElementById('botnetNumber').innerHTML = formatNumbers(botnetNumber);
+            nextCost = Math.floor(1200 * Math.pow(1.15, botnetNumber));
+            document.getElementById('botnetCost').innerHTML = formatBytes(nextCost);
+        }
         //botnetPurchased
-        if (typeof savegame.botnetPurchased             !== 'undefined') botnetPurchased = savegame.botnetPurchased;
+        if (typeof savegame.botnetPurchased !== 'undefined') {
+            botnetPurchased = savegame.botnetPurchased;
+        }
         //BotnetMultipler
-        if (typeof savegame.botnetUpgradeCount          !== 'undefined') botnetUpgradeCount = savegame.botnetUpgradeCount;
+        if (typeof savegame.botnetUpgradeCount !== 'undefined') {
+            botnetUpgradeCount = savegame.botnetUpgradeCount;
+        }
         //Botnet Upgrades
-        if (botnetUpgradeCount !== 0) changeUpgradeText('botnet', -1);
-
+        if (botnetUpgradeCount !== 0) {
+            changeUpgradeText('botnet', -1);
+        }
         //neuralZombieNumber
-        if (typeof savegame.neuralZombieNumber          !== 'undefined') neuralZombieNumber = savegame.neuralZombieNumber;
-        document.getElementById('neuralZombieNumber').innerHTML = formatNumbers(neuralZombieNumber);
-        nextCost = Math.floor(13000 * Math.pow(1.15, neuralZombieNumber));
-        document.getElementById('neuralZombieCost').innerHTML = formatBytes(nextCost);
+        if (typeof savegame.neuralZombieNumber !== 'undefined') {
+            neuralZombieNumber = savegame.neuralZombieNumber;
+            document.getElementById('neuralZombieNumber').innerHTML = formatNumbers(neuralZombieNumber);
+            nextCost = Math.floor(13000 * Math.pow(1.15, neuralZombieNumber));
+            document.getElementById('neuralZombieCost').innerHTML = formatBytes(nextCost);
+        }
         //neuralZombiePurchased
-        if (typeof savegame.neuralZombiePurchased       !== 'undefined') neuralZombiePurchased = savegame.neuralZombiePurchased;
+        if (typeof savegame.neuralZombiePurchased !== 'undefined') {
+            neuralZombiePurchased = savegame.neuralZombiePurchased;
+        }
         //neuralZombieUpgradeCount
-        if (typeof savegame.neuralZombieUpgradeCount    !== 'undefined') neuralZombieUpgradeCount = savegame.neuralZombieUpgradeCount;
+        if (typeof savegame.neuralZombieUpgradeCount !== 'undefined') {
+            neuralZombieUpgradeCount = savegame.neuralZombieUpgradeCount;
+        }
         //neuralZombiesUpgrades
-        if (neuralZombieUpgradeCount !== 0) changeUpgradeText('neuralZombie', -1);
-
+        if (neuralZombieUpgradeCount !== 0) {
+            changeUpgradeText('neuralZombie', -1);
+        }
         //AINumber
-        if (typeof savegame.AINumber                    !== 'undefined') AINumber = savegame.AINumber;
-        document.getElementById('AINumber').innerHTML = formatNumbers(AINumber);
-        nextCost = Math.floor(140000 * Math.pow(1.15, AINumber));
-        document.getElementById('AICost').innerHTML = formatBytes(nextCost);
+        if (typeof savegame.AINumber !== 'undefined') {
+            AINumber = savegame.AINumber;
+            document.getElementById('AINumber').innerHTML = formatNumbers(AINumber);
+            nextCost = Math.floor(140000 * Math.pow(1.15, AINumber));
+            document.getElementById('AICost').innerHTML = formatBytes(nextCost);
+        }
         //AIPurchased
-        if (typeof savegame.AIPurchased                 !== 'undefined') AIPurchased = savegame.AIPurchased;
+        if (typeof savegame.AIPurchased !== 'undefined') {
+            AIPurchased = savegame.AIPurchased;
+        }
         //AIUpgradeCount
-        if (typeof savegame.AIUpgradeCount              !== 'undefined') AIUpgradeCount = savegame.AIUpgradeCount;
+        if (typeof savegame.AIUpgradeCount !== 'undefined') {
+            AIUpgradeCount = savegame.AIUpgradeCount;
+        }
         //AIsUpgrades
-        if (AIUpgradeCount !== 0) changeUpgradeText('AI', -1);
+        if (AIUpgradeCount !== 0) {
+            changeUpgradeText('AI', -1);
+        }
     }
 }
 
@@ -238,13 +277,13 @@ function destroyFloats(input) {
 function formatBytes(bytes, decimals) {
     //Converts a number of Bytes into a data format.
     //If it is larger than the largest data format (9999 Yottabytes), shows scientific notation of Bytes instead.
-        bytes = Math.round(bytes);
-        if (bytes < 999099999999999999999999999) {
-            if (bytes === 0) return '0 Bytes';
-            if (bytes == 1) return '1 Byte';
-            var k = 1000;
-            var dm = 2 + 1 || 3;
-            var sizes = [
+    bytes = Math.round(bytes);
+    if (bytes < 999099999999999999999999999) {
+        if (bytes === 0) return '0 Bytes';
+        if (bytes == 1) return '1 Byte';
+        var k = 1000;
+        var dm = 2 + 1 || 3;
+        var sizes = [
             'Bytes',
             'KB',
             'MB',
@@ -255,29 +294,26 @@ function formatBytes(bytes, decimals) {
             'ZB',
             'YB'
             ];
-            var i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-        }
-        else {
-            //bytes = parseFloat(parseFloat(bytes).toFixed(1));
-            bytes = bytes.toExponential(2);
-            //bytes = parseFloat(parseFloat(bytes).toFixed(1));
-            bytes += ' Bytes';
-            return bytes;
-
-        }
+        var i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    } else {
+        //bytes = parseFloat(parseFloat(bytes).toFixed(1));
+        bytes = bytes.toExponential(2);
+        //bytes = parseFloat(parseFloat(bytes).toFixed(1));
+        bytes += ' Bytes';
+        return bytes;
+    }
 }
 
 function formatNumbers(number, decimals) {
     //Converts a number of number into a data format.
     //If it is larger than the largest data format (9999 Yottanumber), shows scientific notation of number instead.
-        number = Math.round(number);
-        if (number > 999999) {
-
-            var k = 1000;
-            //var dm = 2 + 1 || 3;
-            var dm = 1;
-            var sizes = [
+    number = Math.round(number);
+    if (number > 999999) {
+        var k = 1000;
+        //var dm = 2 + 1 || 3;
+        var dm = 1;
+        var sizes = [
             'If you are reading this then you have found a bug! Please contact an exterminator.',
             'Thousand',
             'Million',
@@ -288,19 +324,17 @@ function formatNumbers(number, decimals) {
             'Sextillion',
             'Septillion'
             ];
-            var i = Math.floor(Math.log(number) / Math.log(k));
-            number = parseFloat((number / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-            //number = Math.floor(number);
-            return number;
-        }
-        else {
-            //number = parseFloat(parseFloat(number).toFixed(1));
-            //number = number.toExponential(2);
-            //number = parseFloat(parseFloat(number).toFixed(1));
-            //number += ' number';
-            return number;
-
-        }
+        var i = Math.floor(Math.log(number) / Math.log(k));
+        number = parseFloat((number / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        //number = Math.floor(number);
+        return number;
+    } else {
+        //number = parseFloat(parseFloat(number).toFixed(1));
+        //number = number.toExponential(2);
+        //number = parseFloat(parseFloat(number).toFixed(1));
+        //number += ' number';
+        return number;
+    }
 }
 
 function jackIn(number) {
@@ -311,36 +345,30 @@ function jackIn(number) {
     totalDataHacked += number;
 }
 
-function updateGame(){
+function updateGame() {
     //The main loop, it calls itself at the end.
     var now = (new Date).getTime(); //The current time.
     var deltaTime = now - lastTick; //The amount of time since the last time occurred.
     deltaTime = Math.floor(deltaTime / 100); //(deltaTime / 100) determines the game's tick rate.
-    for (var i=0; i<deltaTime; i++) {
+    for (var i = 0; i < deltaTime; i++) {
         lastTick = now; //Updates the time of the most recent tick.
         //Auto buy happens once per second, not once per tick.
         autoBuyCount++;
-        if (autoBuyCount >= tickRate) {
+        if (autoBuyCount >= tickRate) { //Saves once per second.
             autoBuy();
             autoBuyCount = 0;
         }
         increment();
-        checkForReveal(); 
+        checkForReveal();
     }
     autoSaveCount++;
-    if (autoSaveCount >= 10){ //Once every X ticks.
+    if (autoSaveCount >= 10) { //Once every X ticks.
         save();
         autoSaveCount = 0;
-    }   
-
+    }
     window.requestAnimationFrame(updateGame); //Calls this function again.
 }
-
 window.requestAnimationFrame(updateGame); //If for some reason the function cannot call itself, this calls it again.
-
-
-
-
 function checkForReveal() {
     //Checks if elements should be revealed.
     //Decks Base
@@ -410,7 +438,6 @@ function incrementItem(baseRate, numberOfItems, itemUpgradeCount, itemRateDiv, i
     var incomePerTick;
     var incomePerSecond;
     var incomePerSecondTotal;
-
     incomePerItem = calculateIncome(itemUpgradeCount, baseRate);
     incomePerSecond = incomePerItem * tickRate;
     incomePerSecondTotal = incomePerSecond * numberOfItems;
@@ -465,10 +492,9 @@ function changeUpgradeText(input, offset) {
     //Offset is used for loading so that it loads the current upgrade text, not the next upgrade text.
     var type;
     var cost = getUpgradeCost(input, 1);
-    if (typeof offset === 'undefined'){
-    	offset = 0
+    if (typeof offset === 'undefined') {
+        offset = 0
     }
-
     switch (input) {
         case 'cyberdeck':
             switch (cyberdeckUpgradeCount + offset) {
@@ -681,12 +707,10 @@ function getUpgradeCost(input, modifier) {
             upgradeCount = AIUpgradeCount;
             break;
     }
-
     //cost = baseCost * (10 ^ upgradeCount)
     //cost = 1000 *     (10 ^ 0) = 1000
     //cost = 1000 *     (10 ^ 1) = 10000
     //cost = 1000 *     (10 ^ 2) = 100000
-
     cost = baseCost * Math.pow(10, upgradeCount + modifier);
     return cost;
 }
@@ -712,8 +736,7 @@ function buyItem(item, baseCost) {
         //Updates global vars.
         window[itemNumberName] = itemNumberInt;
         window[itemPurchasedName] = itemPurchasedInt;
-    }
-    else {
+    } else {
         //If the user cannot afford the upgrade, returns break.
         return 'break';
     }
@@ -722,7 +745,7 @@ function buyItem(item, baseCost) {
 function buyCyberdeck(input) {
     //Loops through buying the item until the input number is reached or the user cannot afford to buy any more.
     for (var i = 0; i < input; i++) {
-        if (buyItem('cyberdeck', 10) == 'break'){
+        if (buyItem('cyberdeck', 10) == 'break') {
             break;
         }
     }
@@ -730,7 +753,7 @@ function buyCyberdeck(input) {
 
 function buyICEPick(input) {
     for (var i = 0; i < input; i++) {
-        if (buyItem('ICEPick', 110) == 'break'){
+        if (buyItem('ICEPick', 110) == 'break') {
             break;
         }
     }
@@ -738,7 +761,7 @@ function buyICEPick(input) {
 
 function buyBotnet(input) {
     for (var i = 0; i < input; i++) {
-        if (buyItem('botnet', 1200) == 'break'){
+        if (buyItem('botnet', 1200) == 'break') {
             break;
         }
     }
@@ -746,7 +769,7 @@ function buyBotnet(input) {
 
 function buyNeuralZombie(input) {
     for (var i = 0; i < input; i++) {
-        if (buyItem('neuralZombie', 13000) == 'break'){
+        if (buyItem('neuralZombie', 13000) == 'break') {
             break;
         }
     }
@@ -754,7 +777,7 @@ function buyNeuralZombie(input) {
 
 function buyAI(input) {
     for (var i = 0; i < input; i++) {
-        if (buyItem('AI', 130000) == 'break'){
+        if (buyItem('AI', 130000) == 'break') {
             break;
         }
     }
