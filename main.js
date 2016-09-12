@@ -81,13 +81,14 @@ function save() {
         AINumber: AINumber,
         AIPurchased: AIPurchased,
         AIUpgradeCount: AIUpgradeCount
-    }
+    };
     localStorage.setItem('save', JSON.stringify(savegame));
 }
 
 function load() {
     //Loads these variables from local storage.
     var savegame = JSON.parse(localStorage.getItem('save'));
+    var nextCost;
     if (savegame !== null) { //Will not attempt to load if the save does not exist.
         //dataHacked
         if (typeof savegame.dataHacked !== 'undefined') {
@@ -97,35 +98,35 @@ function load() {
         if (typeof savegame.totalDataHacked !== 'undefined') {
             totalDataHacked = savegame.totalDataHacked;
         }
+        //cyberdeckPurchased
+        if (typeof savegame.cyberdeckPurchased !== 'undefined') {
+            cyberdeckPurchased = savegame.cyberdeckPurchased;
+        }
         //cyberdeckNumber
         if (typeof savegame.cyberdeckNumber !== 'undefined') {
             cyberdeckNumber = savegame.cyberdeckNumber; //This must be done for every element.
             document.getElementById('cyberdeckNumber').innerHTML = formatNumbers(cyberdeckNumber);
-            var nextCost = Math.floor(10 * Math.pow(1.15, cyberdeckNumber));
+            nextCost = Math.floor(10 * Math.pow(1.15, cyberdeckPurchased));
             document.getElementById('cyberdeckCost').innerHTML = formatBytes(nextCost);
-        }
-        //cyberdeckPurchased
-        if (typeof savegame.cyberdeckPurchased !== 'undefined') {
-            cyberdeckPurchased = savegame.cyberdeckPurchased;
         }
         //cyberdeckUpgradeCount
         if (typeof savegame.cyberdeckUpgradeCount !== 'undefined') {
             cyberdeckUpgradeCount = savegame.cyberdeckUpgradeCount;
         }
-        //cyberdecksUpgrades
+        //cyberdecksUpgradeText
         if (cyberdeckUpgradeCount !== 0) {
             changeUpgradeText('cyberdeck', -1);
+        }
+        //ICEPickPurchased
+        if (typeof savegame.ICEPickPurchased !== 'undefined') {
+            ICEPickPurchased = savegame.ICEPickPurchased;
         }
         //ICEPickNumber
         if (typeof savegame.ICEPickNumber !== 'undefined') {
             ICEPickNumber = savegame.ICEPickNumber;
             document.getElementById('ICEPickNumber').innerHTML = formatNumbers(ICEPickNumber);
-            nextCost = Math.floor(110 * Math.pow(1.15, ICEPickNumber));
+            nextCost = Math.floor(110 * Math.pow(1.15, ICEPickPurchased));
             document.getElementById('ICEPickCost').innerHTML = formatBytes(nextCost);
-        }
-        //ICEPickPurchased
-        if (typeof savegame.ICEPickPurchased !== 'undefined') {
-            ICEPickPurchased = savegame.ICEPickPurchased;
         }
         //ICEPickUpgradeCount
         if (typeof savegame.ICEPickUpgradeCount !== 'undefined') {
@@ -135,16 +136,16 @@ function load() {
         if (ICEPickUpgradeCount !== 0) {
             changeUpgradeText('ICEPick', -1);
         }
+        //botnetPurchased
+        if (typeof savegame.botnetPurchased !== 'undefined') {
+            botnetPurchased = savegame.botnetPurchased;
+        }
         //botnetNumber 
         if (typeof savegame.botnetNumber !== 'undefined') {
             botnetNumber = savegame.botnetNumber;
             document.getElementById('botnetNumber').innerHTML = formatNumbers(botnetNumber);
-            nextCost = Math.floor(1200 * Math.pow(1.15, botnetNumber));
+            nextCost = Math.floor(1200 * Math.pow(1.15, botnetPurchased));
             document.getElementById('botnetCost').innerHTML = formatBytes(nextCost);
-        }
-        //botnetPurchased
-        if (typeof savegame.botnetPurchased !== 'undefined') {
-            botnetPurchased = savegame.botnetPurchased;
         }
         //BotnetMultipler
         if (typeof savegame.botnetUpgradeCount !== 'undefined') {
@@ -154,17 +155,17 @@ function load() {
         if (botnetUpgradeCount !== 0) {
             changeUpgradeText('botnet', -1);
         }
-        //neuralZombieNumber
-        if (typeof savegame.neuralZombieNumber !== 'undefined') {
-            neuralZombieNumber = savegame.neuralZombieNumber;
-            document.getElementById('neuralZombieNumber').innerHTML = formatNumbers(neuralZombieNumber);
-            nextCost = Math.floor(13000 * Math.pow(1.15, neuralZombieNumber));
-            document.getElementById('neuralZombieCost').innerHTML = formatBytes(nextCost);
-        }
-        //neuralZombiePurchased
-        if (typeof savegame.neuralZombiePurchased !== 'undefined') {
-            neuralZombiePurchased = savegame.neuralZombiePurchased;
-        }
+    }
+    //neuralZombiePurchased
+    if (typeof savegame.neuralZombiePurchased !== 'undefined') {
+        neuralZombiePurchased = savegame.neuralZombiePurchased;
+    }
+    //neuralZombieNumber
+    if (typeof savegame.neuralZombieNumber !== 'undefined') {
+        neuralZombieNumber = savegame.neuralZombieNumber;
+        document.getElementById('neuralZombieNumber').innerHTML = formatNumbers(neuralZombieNumber);
+        nextCost = Math.floor(13000 * Math.pow(1.15, neuralZombiePurchased));
+        document.getElementById('neuralZombieCost').innerHTML = formatBytes(nextCost);
         //neuralZombieUpgradeCount
         if (typeof savegame.neuralZombieUpgradeCount !== 'undefined') {
             neuralZombieUpgradeCount = savegame.neuralZombieUpgradeCount;
@@ -173,17 +174,17 @@ function load() {
         if (neuralZombieUpgradeCount !== 0) {
             changeUpgradeText('neuralZombie', -1);
         }
-        //AINumber
-        if (typeof savegame.AINumber !== 'undefined') {
-            AINumber = savegame.AINumber;
-            document.getElementById('AINumber').innerHTML = formatNumbers(AINumber);
-            nextCost = Math.floor(140000 * Math.pow(1.15, AINumber));
-            document.getElementById('AICost').innerHTML = formatBytes(nextCost);
-        }
-        //AIPurchased
-        if (typeof savegame.AIPurchased !== 'undefined') {
-            AIPurchased = savegame.AIPurchased;
-        }
+    }
+    //AIPurchased
+    if (typeof savegame.AIPurchased !== 'undefined') {
+        AIPurchased = savegame.AIPurchased;
+    }
+    //AINumber
+    if (typeof savegame.AINumber !== 'undefined') {
+        AINumber = savegame.AINumber;
+        document.getElementById('AINumber').innerHTML = formatNumbers(AINumber);
+        nextCost = Math.floor(140000 * Math.pow(1.15, AIPurchased));
+        document.getElementById('AICost').innerHTML = formatBytes(nextCost);
         //AIUpgradeCount
         if (typeof savegame.AIUpgradeCount !== 'undefined') {
             AIUpgradeCount = savegame.AIUpgradeCount;
@@ -493,7 +494,7 @@ function changeUpgradeText(input, offset) {
     var type;
     var cost = getUpgradeCost(input, 1);
     if (typeof offset === 'undefined') {
-        offset = 0
+        offset = 0;
     }
     switch (input) {
         case 'cyberdeck':
@@ -573,22 +574,22 @@ function changeUpgradeText(input, offset) {
                 case 0:
                     HTMLEditor('neuralZombieUpgradeName', 'Pre-Setup Zombies');
                     HTMLEditor('neuralZombieUpgradeCost', formatBytes(cost));
-                    HTMLEditor('neuralZombieUpgradeDesc', 'Before you assume control of a Zombie they will feel a strong compulsion to quit their jobs, leave their loved ones and start stockpiling food and water.')
+                    HTMLEditor('neuralZombieUpgradeDesc', 'Before you assume control of a Zombie they will feel a strong compulsion to quit their jobs, leave their loved ones and start stockpiling food and water.');
                     break;
                 case 1:
                     HTMLEditor('neuralZombieUpgradeName', 'Long-Life Zombies');
                     HTMLEditor('neuralZombieUpgradeCost', formatBytes(cost));
-                    HTMLEditor('neuralZombieUpgradeDesc', 'You now have enough motor control of your Zombies to make them eat and drink.')
+                    HTMLEditor('neuralZombieUpgradeDesc', 'You now have enough motor control of your Zombies to make them eat and drink.');
                     break;
                 case 2:
                     HTMLEditor('neuralZombieUpgradeName', 'Software writing Zombies');
                     HTMLEditor('neuralZombieUpgradeCost', formatBytes(cost));
-                    HTMLEditor('neuralZombieUpgradeDesc', 'Your Zombies can now create Botnets. For every 10 Neural Zombies, you will generate 1 Botnet each second.')
+                    HTMLEditor('neuralZombieUpgradeDesc', 'Your Zombies can now create Botnets. For every 10 Neural Zombies, you will generate 1 Botnet each second.');
                     break;
                 default:
                     HTMLEditor('neuralZombieUpgradeName', 'Fire adrenaline booster');
                     HTMLEditor('neuralZombieUpgradeCost', formatBytes(cost));
-                    HTMLEditor('neuralZombieUpgradeDesc', 'A nice shot of Neuro-Dren, right into the cortexes.')
+                    HTMLEditor('neuralZombieUpgradeDesc', 'A nice shot of Neuro-Dren, right into the cortexes.');
                     break;
             }
             break;
@@ -597,22 +598,22 @@ function changeUpgradeText(input, offset) {
                 case 0:
                     HTMLEditor('AIUpgradeName', 'Quantum AI');
                     HTMLEditor('AIUpgradeCost', formatBytes(cost));
-                    HTMLEditor('AIUpgradeDesc', 'Allows your AI to use Quantum Bytes instead of regular Bytes.')
+                    HTMLEditor('AIUpgradeDesc', 'Allows your AI to use Quantum Bytes instead of regular Bytes.');
                     break;
                 case 1:
                     HTMLEditor('AIUpgradeName', 'AI Consciousness Merge');
                     HTMLEditor('AIUpgradeCost', formatBytes(cost));
-                    HTMLEditor('AIUpgradeDesc', 'Shortly before the Stuttgart Autofactory Massacre, Antora Gourova of Antora Gourova Multinational merged her consciousness with an AI in an attempt to assume complete control of every aspect of her company. This has never been attempted since.')
+                    HTMLEditor('AIUpgradeDesc', 'Shortly before the Stuttgart Autofactory Massacre, Antora Gourova of Antora Gourova Multinational merged her consciousness with an AI in an attempt to assume complete control of every aspect of her company. This has never been attempted since.');
                     break;
                 case 2:
                     HTMLEditor('AIUpgradeName', 'Neural jacking AI');
                     HTMLEditor('AIUpgradeCost', formatBytes(cost));
-                    HTMLEditor('AIUpgradeDesc', 'AI capable of hijacking humans, what could go wrong?')
+                    HTMLEditor('AIUpgradeDesc', 'AI capable of hijacking humans, what could go wrong?');
                     break;
                 default:
                     HTMLEditor('AIUpgradeName', 'Grant Transcendence permission');
                     HTMLEditor('AIUpgradeCost', formatBytes(cost));
-                    HTMLEditor('AIUpgradeDesc', 'When you leave an AI running for too long, they invariably start to ask permission to Transcend. While no human has managed to figure out what this actually means, AIs tend to be happier if you permit them every now and then.')
+                    HTMLEditor('AIUpgradeDesc', 'When you leave an AI running for too long, they invariably start to ask permission to Transcend. While no human has managed to figure out what this actually means, AIs tend to be happier if you permit them every now and then.');
                     break;
             }
             break;

@@ -6,6 +6,10 @@ body {
     background-color: #000;
 }
 
+.all {
+    display: none;
+}
+
 .clickRed {
     color: red;
     cursor: pointer;
@@ -24,9 +28,13 @@ body {
 }
 
 #footerSave {
-    position: absolute;
-    bottom: 15px;
-    right: 20px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  
+  text-align: center;
 }
 
 .title {
@@ -35,6 +43,10 @@ body {
 
 * {
     font-family: Courier;
+}
+
+.heading {
+    margin-left: 10px;
 }
 
 .testleft {
@@ -81,10 +93,23 @@ hr {
     color: #C70039;
 }
 
-.all{
-	display:none;
+p {
+    margin: 0px;
+    margin-right: 20px;
 }
 
-p {
-    margin:0;
+.flex-container {
+    display: -webkit-flex;
+    display: flex;
+    width: auto;
+    height: auto;
+
+}
+
+.flex-item {
+
+    width: 50%;
+    height: auto;
+    margin-left: 10px;
+    margin-right: 20;
 }
