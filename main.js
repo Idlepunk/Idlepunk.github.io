@@ -90,67 +90,67 @@ function load() {
     var savegame = JSON.parse(localStorage.getItem('save'));
     if (savegame !== null) { //Will not attempt to load if the save does not exist.
         //dataHacked
-        if (typeof savegame.dataHacked !== 'undefined') dataHacked = savegame.dataHacked; //If its an old save it may be undefined.
+        if (typeof savegame.dataHacked                  !== 'undefined') dataHacked = savegame.dataHacked; //If its an old save it may be undefined.
         //totalDataHacked
-        if (typeof savegame.totalDataHacked !== 'undefined') totalDataHacked = savegame.totalDataHacked;
+        if (typeof savegame.totalDataHacked             !== 'undefined') totalDataHacked = savegame.totalDataHacked;
         
         //cyberdeckNumber
-        if (typeof savegame.cyberdeckNumber !== 'undefined') cyberdeckNumber = savegame.cyberdeckNumber; //This must be done for every element.
-        document.getElementById('cyberdeckNumber').innerHTML = cyberdeckNumber;
+        if (typeof savegame.cyberdeckNumber             !== 'undefined') cyberdeckNumber = savegame.cyberdeckNumber; //This must be done for every element.
+        document.getElementById('cyberdeckNumber').innerHTML = formatNumbers(cyberdeckNumber);
         var nextCost = Math.floor(10 * Math.pow(1.15, cyberdeckNumber));
         document.getElementById('cyberdeckCost').innerHTML = formatBytes(nextCost);
         //cyberdeckPurchased
-        if (typeof savegame.cyberdeckPurchased !== 'undefined') cyberdeckPurchased = savegame.cyberdeckPurchased;
+        if (typeof savegame.cyberdeckPurchased          !== 'undefined') cyberdeckPurchased = savegame.cyberdeckPurchased;
         //cyberdeckUpgradeCount
-        if (typeof savegame.cyberdeckUpgradeCount !== 'undefined') cyberdeckUpgradeCount = savegame.cyberdeckUpgradeCount;
+        if (typeof savegame.cyberdeckUpgradeCount       !== 'undefined') cyberdeckUpgradeCount = savegame.cyberdeckUpgradeCount;
         //cyberdecksUpgrades
         if (cyberdeckUpgradeCount !== 0) changeUpgradeText('cyberdeck', -1);
 
         //ICEPickNumber
         if (typeof savegame.ICEPickNumber !== 'undefined') ICEPickNumber = savegame.ICEPickNumber;
-        document.getElementById('ICEPickNumber').innerHTML = ICEPickNumber;
+        document.getElementById('ICEPickNumber').innerHTML = formatNumbers(ICEPickNumber);
         nextCost = Math.floor(110 * Math.pow(1.15, ICEPickNumber));
         document.getElementById('ICEPickCost').innerHTML = formatBytes(nextCost);
         //ICEPickPurchased
-        if (typeof savegame.ICEPickPurchased !== 'undefined') ICEPickPurchased = savegame.ICEPickPurchased;
+        if (typeof savegame.ICEPickPurchased            !== 'undefined') ICEPickPurchased = savegame.ICEPickPurchased;
         //ICEPickUpgradeCount
-        if (typeof savegame.ICEPickUpgradeCount !== 'undefined') ICEPickUpgradeCount = savegame.ICEPickUpgradeCount;
+        if (typeof savegame.ICEPickUpgradeCount         !== 'undefined') ICEPickUpgradeCount = savegame.ICEPickUpgradeCount;
         //ICEPicksUpgrades
         if (ICEPickUpgradeCount !== 0) changeUpgradeText('ICEPick', -1);
 
         //botnetNumber 
-        if (typeof savegame.botnetNumber !== 'undefined') botnetNumber = savegame.botnetNumber;
-        document.getElementById('botnetNumber').innerHTML = botnetNumber;
+        if (typeof savegame.botnetNumber                !== 'undefined') botnetNumber = savegame.botnetNumber;
+        document.getElementById('botnetNumber').innerHTML = formatNumbers(botnetNumber);
         nextCost = Math.floor(1200 * Math.pow(1.15, botnetNumber));
         document.getElementById('botnetCost').innerHTML = formatBytes(nextCost);
         //botnetPurchased
-        if (typeof savegame.botnetPurchased !== 'undefined') botnetPurchased = savegame.botnetPurchased;
+        if (typeof savegame.botnetPurchased             !== 'undefined') botnetPurchased = savegame.botnetPurchased;
         //BotnetMultipler
-        if (typeof savegame.botnetUpgradeCount !== 'undefined') botnetUpgradeCount = savegame.botnetUpgradeCount;
+        if (typeof savegame.botnetUpgradeCount          !== 'undefined') botnetUpgradeCount = savegame.botnetUpgradeCount;
         //Botnet Upgrades
         if (botnetUpgradeCount !== 0) changeUpgradeText('botnet', -1);
 
         //neuralZombieNumber
-        if (typeof savegame.neuralZombieNumber !== 'undefined') neuralZombieNumber = savegame.neuralZombieNumber;
-        document.getElementById('neuralZombieNumber').innerHTML = neuralZombieNumber;
+        if (typeof savegame.neuralZombieNumber          !== 'undefined') neuralZombieNumber = savegame.neuralZombieNumber;
+        document.getElementById('neuralZombieNumber').innerHTML = formatNumbers(neuralZombieNumber);
         nextCost = Math.floor(13000 * Math.pow(1.15, neuralZombieNumber));
         document.getElementById('neuralZombieCost').innerHTML = formatBytes(nextCost);
         //neuralZombiePurchased
-        if (typeof savegame.neuralZombiePurchased !== 'undefined') neuralZombiePurchased = savegame.neuralZombiePurchased;
+        if (typeof savegame.neuralZombiePurchased       !== 'undefined') neuralZombiePurchased = savegame.neuralZombiePurchased;
         //neuralZombieUpgradeCount
-        if (typeof savegame.neuralZombieUpgradeCount !== 'undefined') neuralZombieUpgradeCount = savegame.neuralZombieUpgradeCount;
+        if (typeof savegame.neuralZombieUpgradeCount    !== 'undefined') neuralZombieUpgradeCount = savegame.neuralZombieUpgradeCount;
         //neuralZombiesUpgrades
         if (neuralZombieUpgradeCount !== 0) changeUpgradeText('neuralZombie', -1);
 
         //AINumber
-        if (typeof savegame.AINumber !== 'undefined') AINumber = savegame.AINumber;
-        document.getElementById('AINumber').innerHTML = AINumber;
+        if (typeof savegame.AINumber                    !== 'undefined') AINumber = savegame.AINumber;
+        document.getElementById('AINumber').innerHTML = formatNumbers(AINumber);
         nextCost = Math.floor(140000 * Math.pow(1.15, AINumber));
         document.getElementById('AICost').innerHTML = formatBytes(nextCost);
         //AIPurchased
-        if (typeof savegame.AIPurchased !== 'undefined') AIPurchased = savegame.AIPurchased;
+        if (typeof savegame.AIPurchased                 !== 'undefined') AIPurchased = savegame.AIPurchased;
         //AIUpgradeCount
-        if (typeof savegame.AIUpgradeCount !== 'undefined') AIUpgradeCount = savegame.AIUpgradeCount;
+        if (typeof savegame.AIUpgradeCount              !== 'undefined') AIUpgradeCount = savegame.AIUpgradeCount;
         //AIsUpgrades
         if (AIUpgradeCount !== 0) changeUpgradeText('AI', -1);
     }
@@ -266,8 +266,42 @@ function formatBytes(bytes, decimals) {
             return bytes;
 
         }
-    }
-    //Main Loop
+}
+
+function formatNumbers(number, decimals) {
+    //Converts a number of number into a data format.
+    //If it is larger than the largest data format (9999 Yottanumber), shows scientific notation of number instead.
+        number = Math.round(number);
+        if (number > 999999) {
+
+            var k = 1000;
+            //var dm = 2 + 1 || 3;
+            var dm = 1;
+            var sizes = [
+            'If you are reading this then you have found a bug! Please contact an exterminator.',
+            'Thousand',
+            'Million',
+            'Billion',
+            'Trillion',
+            'Quadrillion',
+            'Quintillion',
+            'Sextillion',
+            'Septillion'
+            ];
+            var i = Math.floor(Math.log(number) / Math.log(k));
+            number = parseFloat((number / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            //number = Math.floor(number);
+            return number;
+        }
+        else {
+            //number = parseFloat(parseFloat(number).toFixed(1));
+            //number = number.toExponential(2);
+            //number = parseFloat(parseFloat(number).toFixed(1));
+            //number += ' number';
+            return number;
+
+        }
+}
 
 function jackIn(number) {
     //Adds a number of data based on argument.
@@ -407,22 +441,22 @@ function autoBuy() {
     if (ICEPickUpgradeCount >= 4) {
         cyberdeckNumber += Math.floor(ICEPickNumber / 10);
         HTMLEditor('ICEPickCyberdeckCreationRate', Math.floor(ICEPickNumber / 10));
-        HTMLEditor('cyberdeckNumber', cyberdeckNumber);
+        HTMLEditor('cyberdeckNumber', formatNumbers(cyberdeckNumber));
     }
     if (botnetUpgradeCount >= 4) {
         ICEPickNumber += Math.floor(botnetNumber / 10);
         HTMLEditor('botnetICEPickCreationRate', Math.floor(botnetNumber / 10));
-        HTMLEditor('ICEPickNumber', ICEPickNumber);
+        HTMLEditor('ICEPickNumber', formatNumbers(ICEPickNumber));
     }
     if (neuralZombieUpgradeCount >= 4) {
         botnetNumber += Math.floor(neuralZombieNumber / 10); //Creates 1 botnet for every 2 zombies, * 10 so its per second.
         HTMLEditor('nerualZombieBotnetCreationRate', Math.floor(neuralZombieNumber / 10));
-        HTMLEditor('botnetNumber', botnetNumber);
+        HTMLEditor('botnetNumber', formatNumbers(botnetNumber));
     }
     if (AIUpgradeCount >= 4) {
         neuralZombieNumber += Math.floor(AINumber / 10);
         HTMLEditor('AINeuralZombieCreationRate', Math.floor(AINumber / 10));
-        HTMLEditor('neuralZombieNumber', neuralZombieNumber);
+        HTMLEditor('neuralZombieNumber', formatNumbers(neuralZombieNumber));
     }
 }
 
