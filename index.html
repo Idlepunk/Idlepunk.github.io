@@ -13,7 +13,7 @@
     <p class='heading'>Data Avaliable: <span class='number' id='dataHacked'>10 Bytes</span></p>
     <hr>
     <p class='heading'>Total income rate: <span class='number' id="totalIncome">0</span> per second</p>
-    <!--<p><span class='clickRed' onclick='jackIn(100000000000000000);'>CHEAT</span></p> -->
+    <--<p><span class='clickRed' onclick='jackIn(100000000000000000);'>CHEAT</span></p> -->
     <!-- Cyberdeck -->
     <hr id='cyberdeckHR'>
     <div class="flex-container">
@@ -29,7 +29,7 @@
             <p>All Cyberdecks are hacking at <span class='number' id='cyberdeckRateTotal'>0 Bytes</span> per second</p>
         </div>
         <div class="flex-item" id='cyberdeckUpgradeMenu'>
-            <p><span class='clickRed' id='cyberdeckUpgradeName' onclick='upgrade(1);'>Upgrade to an Ergonomic Deck</span></p>
+            <p><span class='clickRed' id='cyberdeckUpgradeName' onclick='doUpgrade("cyberdeck");'>Upgrade to an Ergonomic Deck</span></p>
             <p>This will cost <span class='number' id='cyberdeckUpgradeCost'>1 KB</span></p>
             <p><span id='cyberdeckUpgradeDesc'>As part of an initiative to lower employee suicide rates, Chui-Bazhusko Multinational developed the Ergonomic Deck. It gently releases both calming and energizing psychotropics into the palms of users.</span></p>
         </div>
@@ -49,7 +49,7 @@
             <p>Your ICEPicks are creating <span class="number" id='ICEPickCyberdeckCreationRate'>0</span> Cyberdecks per second</p>
         </div>
         <div class="flex-item" id='ICEPickUpgradeMenu'>
-            <p><span class='clickRed' id='ICEPickUpgradeName' onclick='upgrade(2);'>Update to an ICEBREAKER</span></p>
+            <p><span class='clickRed' id='ICEPickUpgradeName' onclick='doUpgrade("ICEPick");'>Update to an ICEBREAKER</span></p>
             <p>This will cost <span class='number' id='ICEPickUpgradeCost'>6 KB</span></p>
             <p><span id='ICEPickUpgradeDesc'>Supposedly developed by legendary netrunner Strange Switch, the ICEBREAKER is the next generation of penetration software.</span></p>
         </div>
@@ -69,7 +69,7 @@
             <p>Your Botnets are creating <span class="number" id='botnetICEPickCreationRate'>0</span> ICE Picks per second</p>
         </div>
         <div class="flex-item" id='botnetUpgradeMenu'>
-            <p><span class='clickRed' id='botnetUpgradeName' onclick='upgrade(3);'>Implement self-modifying code</span></p>
+            <p><span class='clickRed' id='botnetUpgradeName' onclick='doUpgrade("botnet");'>Implement self-modifying code</span></p>
             <p>This will cost <span class='number' id='botnetUpgradeCost'>10 KB</span></p>
             <p><span id='botnetUpgradeDesc'>You never know what your Bots will find when then are infiltrating, they can now adapt to changing circumstances.</span></p>
         </div>
@@ -89,7 +89,7 @@
             <p>Your Zombies are creating <span class="number" id='neuralZombieBotnetCreationRate'>0</span> Botnets per second</p>
         </div>
         <div class="flex-item" id="neuralZombieUpgradeMenu">
-            <p><span class='clickRed' id='neuralZombieUpgradeName' onclick='upgrade(4);'>Anti-tamper Zombies</span></p>
+            <p><span class='clickRed' id='neuralZombieUpgradeName' onclick='doUpgrade("neuralZombie");'>Anti-tamper Zombies</span></p>
             <p>This will cost <span class='number' id='neuralZombieUpgradeCost'>60 KB</span></p>
             <p><span id='neuralZombieUpgradeDesc'>A BioWipe Amalgamated Anti-tamper System&trade; will ensure that any evidence located inside your Zombies will be unrecoverable.</span></p>
         </div>
@@ -103,13 +103,13 @@
             <span class='clickRed' onclick="buyAI(100);">X100</span> | 
             <span class='clickRed' onclick="buyAI(Infinity);">Max</span></p>
             <p>An AI Costs <span class='number' id='AICost'>130 KB</span></p>
-            <p>You have <span class='number' id='AINumber'>0</span> AIs</p>
+            <p>You have <span class='number' id='AINumber'>0</span>/<span class='number' id='AINumberMax'>100</span> AIs</p>
             <p>AIs hack at <span class='number' id='AIRate'>1.4 KB</span> per second</p>
             <p>All your AIs are hacking at <span class='number' id='AIRateTotal'>0 Bytes</span> per second</p>
             <p>Your AIs are creating <span class="number" id='AINeuralZombieCreationRate'>0</span> Neural Zombies per second</p>
         </div>
         <div class="flex-item" id='AIUpgradeMenu'>
-            <p><span class='clickRed' id='AIUpgradeName' onclick='upgrade(5);'>Unlock Turing Registry Codes</span></p>
+            <p><span class='clickRed' id='AIUpgradeName' onclick='doUpgrade("AI");'>Unlock Turing Registry Codes</span></p>
             <p>This will cost <span class='number' id='AIUpgradeCost'>100 KB</span></p>
             <p><span id='AIUpgradeDesc'>In the aftermath of the Matto Grosso Space Elevator alightment, it was made illegal for AI to immitate humans. All AI personalities are locked behind a Turing Registry, WINTERMUTE codes are required to unlock them.</span></p>
         </div>

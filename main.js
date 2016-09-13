@@ -27,7 +27,7 @@ function startUp() {
     totalDataHacked = 0;
     load(); //Loads the save, remove to disable autoloading on refresh.
     //These items are hidden when the game loads.
-    var startUpElements = ['cyberdeckMenu', 'cyberdeckHR', 'cyberdeckUpgradeMenu', 'ICEDiv', 'ICEPickHR', 'ICEPickUpgradeMenu', 
+    var startUpElements = ['cyberdeckMenu', 'cyberdeckHR', 'cyberdeckUpgradeMenu', 'ICEDiv', 'ICEPickHR', 'ICEPickUpgradeMenu',
     'botnetDiv', 'botnetHR', 'botnetUpgradeMenu', 'neuralZombieDiv', 'neuralZombieHR', 'neuralZombieUpgradeMenu', 'AIDiv', 'AIHR', 'AIUpgradeMenu'];
     for (var i in startUpElements) {
         visibilityLoader(startUpElements[i], 0);
@@ -62,8 +62,8 @@ function save() {
 
 function load() {
     var savegame = JSON.parse(localStorage.getItem('save'));
-    if (savegame !== null){ //If savegame exists.
-        Object.keys(savegame).forEach(function(key,index) {
+    if (savegame !== null) { //If savegame exists.
+        Object.keys(savegame).forEach(function(key, index) {
             window[key] = savegame[key]; //Load each value of each property of object into global vars.
         });
     }
@@ -145,7 +145,7 @@ function formatNumbers(number, decimals) {
         var k = 1000;
         var dm = 1;
         var sizes = [
-        'If you are reading this then you have found a bug! Please contact an exterminator.', 
+        'If you are reading this then you have found a bug! Please contact an exterminator.',
         'Thousand', 'Million', 'Billion', 'Trillion', 'Quadrillion', 'Quintillion', 'Sextillion', 'Septillion'];
         var i = Math.floor(Math.log(number) / Math.log(k));
         number = parseFloat((number / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
@@ -179,6 +179,8 @@ function refreshUI() {
     HTMLEditor('botnetNumberMax', formatNumbers(maxItem('botnet')));
     //Zombies
     HTMLEditor('neuralZombieNumberMax', formatNumbers(maxItem('neuralZombie')));
+    //AI
+    HTMLEditor('AINumberMax', formatNumbers(maxItem('AI')));
     var nextCost;
     //Cyberdecks
     HTMLEditor('cyberdeckNumber', formatNumbers(cyberdeckNumber));
@@ -200,7 +202,6 @@ function refreshUI() {
     HTMLEditor('AINumber', formatNumbers(AINumber));
     nextCost = Math.floor(140000 * Math.pow(1.15, AINumber));
     HTMLEditor('AICost', formatBytes(nextCost));
-
     if (cyberdeckUpgradeCount !== 0) {
         changeUpgradeText('cyberdeck', -1);
     }
@@ -528,28 +529,6 @@ function changeUpgradeText(input, offset) {
     }
 }
 
-function upgrade(input) {
-    //This is a hacky workaround
-    //No longer needed, will be removed at some point.
-    switch (input) {
-        case 1:
-            doUpgrade('cyberdeck');
-            break;
-        case 2:
-            doUpgrade('ICEPick');
-            break;
-        case 3:
-            doUpgrade('botnet');
-            break;
-        case 4:
-            doUpgrade('neuralZombie');
-            break;
-        case 5:
-            doUpgrade('AI');
-            break;
-    }
-}
-
 function doUpgrade(input) {
     //Upgrades an item.
     var costElement;
@@ -630,7 +609,7 @@ function buyItem(item, baseCost) {
     var itemNumberName = item + 'Number';
     //Gets global vars.
     var itemNumberInt = window[itemNumberName];
-    var max = maxItem('item');
+    var max = maxItem(item);
     //Calculates cost of item.
     var cost = Math.floor(baseCost * Math.pow(1.15, itemNumberInt));
     //Checks if user can afford item and has below max number of items.
@@ -646,43 +625,30 @@ function buyItem(item, baseCost) {
     }
 }
 
-//This is pretty WET, should be DRYer.
-function buyCyberdeck(input) {
-    //Loops through buying the item until the input number is reached or the user cannot afford to buy any more.
-    for (var i = 0; i < input; i++) {
-        if (buyItem('cyberdeck', 10) == 'break') {
-            break;
-        }
-    }
+function buyCyberdeck(itemCount) {
+    buyNumberOfItems('cyberdeck', 10, itemCount);
 }
 
-function buyICEPick(input) {
-    for (var i = 0; i < input; i++) {
-        if (buyItem('ICEPick', 110) == 'break') {
-            break;
-        }
-    }
+function buyICEPick(itemCount) {
+    buyNumberOfItems('ICEPick', 110, itemCount);
 }
 
-function buyBotnet(input) {
-    for (var i = 0; i < input; i++) {
-        if (buyItem('botnet', 1200) == 'break') {
-            break;
-        }
-    }
+function buyBotnet(itemCount) {
+    buyNumberOfItems('botnet', 1200, itemCount);
 }
 
-function buyNeuralZombie(input) {
-    for (var i = 0; i < input; i++) {
-        if (buyItem('neuralZombie', 13000) == 'break') {
-            break;
-        }
-    }
+function buyNeuralZombie(itemCount) {
+    buyNumberOfItems('neuralZombie', 13000, itemCount);
 }
 
-function buyAI(input) {
-    for (var i = 0; i < input; i++) {
-        if (buyItem('AI', 130000) == 'break') {
+function buyAI(itemCount) {
+    buyNumberOfItems('AI', 130000, itemCount);
+}
+
+function buyNumberOfItems(itemName, itemBaseCost, itemCount) {
+    //Loops through buying the item until the itemCount number is reached or the user cannot afford to buy any more.
+    for (var i = 0; i < itemCount; i++) {
+        if (buyItem(itemName, itemBaseCost) == 'break') {
             break;
         }
     }
