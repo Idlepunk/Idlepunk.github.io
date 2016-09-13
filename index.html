@@ -12,7 +12,9 @@
     <p class='heading'>Total Data Hacked: <span class='number' id='totalDataHacked'>0 Bytes</span></p>
     <p class='heading'>Data Avaliable: <span class='number' id='dataHacked'>10 Bytes</span></p>
     <hr>
-    <p class='heading'>Total income rate: <span class='number' id="totalIncome">0</span> per second</p><!-- Cyberdeck -->
+    <p class='heading'>Total income rate: <span class='number' id="totalIncome">0</span> per second</p>
+    <!--<p><span class='clickRed' onclick='jackIn(100000000000000000);'>CHEAT</span></p> -->
+    <!-- Cyberdeck -->
     <hr id='cyberdeckHR'>
     <div class="flex-container">
         <!-- Cyberdeck Buy Menu -->
@@ -22,7 +24,7 @@
             <span class='clickRed' onclick="buyCyberdeck(100);">X100</span> | 
             <span class='clickRed' onclick="buyCyberdeck(Infinity);">Max</span></p>
             <p>A Cyberdeck costs <span class='number' id='cyberdeckCost'>10 Bytes</span></p>
-            <p>You have <span class='number' id='cyberdeckNumber'>0</span> Cyberdecks</p>
+            <p>You have <span class='number' id='cyberdeckNumber'>0</span>/<span class='number' id='cyberdeckNumberMax'>100</span> Cyberdecks</p>
             <p>Cyberdecks hack at <span class='number' id='cyberdeckRate'>1 Byte</span> per second</p>
             <p>All Cyberdecks are hacking at <span class='number' id='cyberdeckRateTotal'>0 Bytes</span> per second</p>
         </div>
@@ -31,7 +33,8 @@
             <p>This will cost <span class='number' id='cyberdeckUpgradeCost'>1 KB</span></p>
             <p><span id='cyberdeckUpgradeDesc'>As part of an initiative to lower employee suicide rates, Chui-Bazhusko Multinational developed the Ergonomic Deck. It gently releases both calming and energizing psychotropics into the palms of users.</span></p>
         </div>
-    </div><!-- ICE Pick -->
+    </div>
+    <!-- ICE Pick -->
     <hr id='ICEPickHR'>
     <div class="flex-container">
         <div class="flex-item" id='ICEDiv'>
@@ -40,7 +43,7 @@
             <span class='clickRed' onclick="buyICEPick(100);">X100</span> | 
             <span class='clickRed' onclick="buyICEPick(Infinity);">Max</span></p>
             <p>An ICE Pick Costs <span class='number' id='ICEPickCost'>110 Bytes</span></p>
-            <p>You have <span class='number' id='ICEPickNumber'>0</span> ICE Picks</p>
+            <p>You have <span class='number' id='ICEPickNumber'>0</span>/<span class='number' id='ICEPickNumberMax'>100</span> ICE Picks</p>
             <p>ICE Picks hack at <span class='number' id='ICEPickRate'>10 Bytes</span> per second</p>
             <p>All you ICE Picks are hacking at <span class='number' id='ICEPickRateTotal'>0 Bytes</span> per second</p>
             <p>Your ICEPicks are creating <span class="number" id='ICEPickCyberdeckCreationRate'>0</span> Cyberdecks per second</p>
@@ -50,7 +53,8 @@
             <p>This will cost <span class='number' id='ICEPickUpgradeCost'>6 KB</span></p>
             <p><span id='ICEPickUpgradeDesc'>Supposedly developed by legendary netrunner Strange Switch, the ICEBREAKER is the next generation of penetration software.</span></p>
         </div>
-    </div><!-- Botnet -->
+    </div>
+    <!-- Botnet -->
     <hr id='botnetHR'>
     <div class="flex-container">
         <div class="flex-item" id='botnetDiv'>
@@ -59,7 +63,7 @@
             <span class='clickRed' onclick="buyBotnet(100);">X100</span> | 
             <span class='clickRed' onclick="buyBotnet(Infinity);">Max</span></p>
             <p>A Botnet Costs <span class='number' id='botnetCost'>1.2 KB</span></p>
-            <p>You have <span class='number' id='botnetNumber'>0</span> Botnets</p>
+            <p>You have <span class='number' id='botnetNumber'>0</span>/<span class='number' id='botnetNumberMax'>100</span> Botnets</p>
             <p>Botnets hack at <span class='number' id='botnetRate'>10 Bytes</span> per second</p>
             <p>All your Botnets are hacking at <span class='number' id='botnetRateTotal'>0 Bytes</span> per second</p>
             <p>Your Botnets are creating <span class="number" id='botnetICEPickCreationRate'>0</span> ICE Picks per second</p>
@@ -69,7 +73,8 @@
             <p>This will cost <span class='number' id='botnetUpgradeCost'>10 KB</span></p>
             <p><span id='botnetUpgradeDesc'>You never know what your Bots will find when then are infiltrating, they can now adapt to changing circumstances.</span></p>
         </div>
-    </div><!-- Neural Zombie -->
+    </div>
+    <!-- Neural Zombie -->
     <hr id='neuralZombieHR'>
     <div class="flex-container">
         <div class="flex-item" id="neuralZombieDiv">
@@ -78,17 +83,18 @@
             <span class='clickRed' onclick="buyNeuralZombie(100);">X100</span> | 
             <span class='clickRed' onclick="buyNeuralZombie(Infinity);">Max</span></p>
             <p>A Neural Zombies Cost <span class='number' id='neuralZombieCost'>13 KB</span></p>
-            <p>You have <span class='number' id='neuralZombieNumber'>0</span> Neural Zombies</p>
+            <p>You have <span class='number' id='neuralZombieNumber'>0</span>/<span class='number' id='neuralZombieNumberMax'>100</span> Neural Zombies</p>
             <p>Neural Zombies hack at <span class='number' id='neuralZombieRate'>10 Bytes</span> per second</p>
             <p>All your Neural Zombies are hacking at <span class='number' id='neuralZombieRateTotal'>0 Bytes</span> per second</p>
-            <p>Your Zombies are creating <span class="number" id='nerualZombieBotnetCreationRate'>0</span> Botnets per second</p>
+            <p>Your Zombies are creating <span class="number" id='neuralZombieBotnetCreationRate'>0</span> Botnets per second</p>
         </div>
         <div class="flex-item" id="neuralZombieUpgradeMenu">
             <p><span class='clickRed' id='neuralZombieUpgradeName' onclick='upgrade(4);'>Anti-tamper Zombies</span></p>
             <p>This will cost <span class='number' id='neuralZombieUpgradeCost'>60 KB</span></p>
             <p><span id='neuralZombieUpgradeDesc'>A BioWipe Amalgamated Anti-tamper System&trade; will ensure that any evidence located inside your Zombies will be unrecoverable.</span></p>
         </div>
-    </div><!-- AI -->
+    </div>
+    <!-- AI -->
     <hr id='AIHR'>
     <div class="flex-container">
         <div class="flex-item" id="AIDiv">
