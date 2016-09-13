@@ -155,17 +155,17 @@ function load() {
         if (botnetUpgradeCount !== 0) {
             changeUpgradeText('botnet', -1);
         }
-    }
-    //neuralZombiePurchased
-    if (typeof savegame.neuralZombiePurchased !== 'undefined') {
-        neuralZombiePurchased = savegame.neuralZombiePurchased;
-    }
-    //neuralZombieNumber
-    if (typeof savegame.neuralZombieNumber !== 'undefined') {
-        neuralZombieNumber = savegame.neuralZombieNumber;
-        document.getElementById('neuralZombieNumber').innerHTML = formatNumbers(neuralZombieNumber);
-        nextCost = Math.floor(13000 * Math.pow(1.15, neuralZombiePurchased));
-        document.getElementById('neuralZombieCost').innerHTML = formatBytes(nextCost);
+        //neuralZombiePurchased
+        if (typeof savegame.neuralZombiePurchased !== 'undefined') {
+            neuralZombiePurchased = savegame.neuralZombiePurchased;
+        }
+        //neuralZombieNumber
+        if (typeof savegame.neuralZombieNumber !== 'undefined') {
+            neuralZombieNumber = savegame.neuralZombieNumber;
+            document.getElementById('neuralZombieNumber').innerHTML = formatNumbers(neuralZombieNumber);
+            nextCost = Math.floor(13000 * Math.pow(1.15, neuralZombiePurchased));
+            document.getElementById('neuralZombieCost').innerHTML = formatBytes(nextCost);
+        }
         //neuralZombieUpgradeCount
         if (typeof savegame.neuralZombieUpgradeCount !== 'undefined') {
             neuralZombieUpgradeCount = savegame.neuralZombieUpgradeCount;
@@ -174,17 +174,17 @@ function load() {
         if (neuralZombieUpgradeCount !== 0) {
             changeUpgradeText('neuralZombie', -1);
         }
-    }
-    //AIPurchased
-    if (typeof savegame.AIPurchased !== 'undefined') {
-        AIPurchased = savegame.AIPurchased;
-    }
-    //AINumber
-    if (typeof savegame.AINumber !== 'undefined') {
-        AINumber = savegame.AINumber;
-        document.getElementById('AINumber').innerHTML = formatNumbers(AINumber);
-        nextCost = Math.floor(140000 * Math.pow(1.15, AIPurchased));
-        document.getElementById('AICost').innerHTML = formatBytes(nextCost);
+        //AIPurchased
+        if (typeof savegame.AIPurchased !== 'undefined') {
+            AIPurchased = savegame.AIPurchased;
+        }
+        //AINumber
+        if (typeof savegame.AINumber !== 'undefined') {
+            AINumber = savegame.AINumber;
+            document.getElementById('AINumber').innerHTML = formatNumbers(AINumber);
+            nextCost = Math.floor(140000 * Math.pow(1.15, AIPurchased));
+            document.getElementById('AICost').innerHTML = formatBytes(nextCost);
+        }
         //AIUpgradeCount
         if (typeof savegame.AIUpgradeCount !== 'undefined') {
             AIUpgradeCount = savegame.AIUpgradeCount;
