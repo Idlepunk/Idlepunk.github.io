@@ -62,76 +62,10 @@ function save() {
 function load() {
     //Loads these variables from local storage.
     var savegame = JSON.parse(localStorage.getItem('save'));
-    var nextCost;
-    if (savegame !== null) { //Will not attempt to load if the save does not exist.
-        //dataHacked
-        if (typeof savegame.dataHacked !== 'undefined') {
-            dataHacked = savegame.dataHacked; //If its an old save it may be undefined.
-        }
-        //totalDataHacked
-        if (typeof savegame.totalDataHacked !== 'undefined') {
-            totalDataHacked = savegame.totalDataHacked;
-        }
-        //cyberdeckNumber
-        if (typeof savegame.cyberdeckNumber !== 'undefined') {
-            cyberdeckNumber = savegame.cyberdeckNumber; //This must be done for every element.
-        }
-        //cyberdeckUpgradeCount
-        if (typeof savegame.cyberdeckUpgradeCount !== 'undefined') {
-            cyberdeckUpgradeCount = savegame.cyberdeckUpgradeCount;
-        }
-        //cyberdecksUpgradeText
-        if (cyberdeckUpgradeCount !== 0) {
-            changeUpgradeText('cyberdeck', -1);
-        }
-        //ICEPickNumber
-        if (typeof savegame.ICEPickNumber !== 'undefined') {
-            ICEPickNumber = savegame.ICEPickNumber;
-        }
-        //ICEPickUpgradeCount
-        if (typeof savegame.ICEPickUpgradeCount !== 'undefined') {
-            ICEPickUpgradeCount = savegame.ICEPickUpgradeCount;
-        }
-        //ICEPicksUpgrades
-        if (ICEPickUpgradeCount !== 0) {
-            changeUpgradeText('ICEPick', -1);
-        }
-        //botnetNumber 
-        if (typeof savegame.botnetNumber !== 'undefined') {
-            botnetNumber = savegame.botnetNumber;
-        }
-        //BotnetMultipler
-        if (typeof savegame.botnetUpgradeCount !== 'undefined') {
-            botnetUpgradeCount = savegame.botnetUpgradeCount;
-        }
-        //Botnet Upgrades
-        if (botnetUpgradeCount !== 0) {
-            changeUpgradeText('botnet', -1);
-        }
-        //neuralZombieNumber
-        if (typeof savegame.neuralZombieNumber !== 'undefined') {
-            neuralZombieNumber = savegame.neuralZombieNumber;
-        }
-        //neuralZombieUpgradeCount
-        if (typeof savegame.neuralZombieUpgradeCount !== 'undefined') {
-            neuralZombieUpgradeCount = savegame.neuralZombieUpgradeCount;
-        }
-        //neuralZombiesUpgrades
-        if (neuralZombieUpgradeCount !== 0) {
-            changeUpgradeText('neuralZombie', -1);
-        }
-        //AINumber
-        if (typeof savegame.AINumber !== 'undefined') {
-            AINumber = savegame.AINumber;
-        }
-        //AIUpgradeCount
-        if (typeof savegame.AIUpgradeCount !== 'undefined') {
-            AIUpgradeCount = savegame.AIUpgradeCount;
-        }
-        //AIsUpgrades
-        if (AIUpgradeCount !== 0) {
-            changeUpgradeText('AI', -1);
-        }
+    if (savegame !== null){
+        Object.keys(savegame).forEach(function(key,index) {
+            window[key] = savegame[key];
+        });
     }
     refreshUI();
 }
@@ -261,6 +195,22 @@ function refreshUI() {
     HTMLEditor('AINumber', formatNumbers(AINumber));
     nextCost = Math.floor(140000 * Math.pow(1.15, AINumber));
     HTMLEditor('AICost', formatBytes(nextCost));
+
+    if (cyberdeckUpgradeCount !== 0) {
+        changeUpgradeText('cyberdeck', -1);
+    }
+    if (ICEPickUpgradeCount !== 0) {
+        changeUpgradeText('ICEPick', -1);
+    }
+    if (botnetUpgradeCount !== 0) {
+        changeUpgradeText('botnet', -1);
+    }
+    if (neuralZombieUpgradeCount !== 0) {
+        changeUpgradeText('neuralZombie', -1);
+    }
+    if (AIUpgradeCount !== 0) {
+        changeUpgradeText('AI', -1);
+    }
 }
 
 function updateGame() {
