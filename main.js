@@ -1,5 +1,5 @@
 var tickRate = 10; //Ticks per second, this does not actually change the tick rate, it's just used as a reference. Calculated by 1000 / Acutal refresh rate.
-var lastTick = (new Date).getTime(); //The time that the last tick occurred
+var lastTick = new Date().getTime(); //The time that the last tick occurred
 var autoSaveCount = 0; //Increases every tick so that the game doesn't auto save 10 times per second.
 var autoBuyCount = 0; //Increases every tick so that the game doesn't auto buy 10 times per second.
 var dataHacked = 0; //The current amount of data.
@@ -27,7 +27,8 @@ function startUp() {
     totalDataHacked = 0;
     load(); //Loads the save, remove to disable autoloading on refresh.
     //These items are hidden when the game loads.
-    var startUpElements = ['cyberdeckMenu', 'cyberdeckHR', 'cyberdeckUpgradeMenu', 'ICEDiv', 'ICEPickHR', 'ICEPickUpgradeMenu', 'botnetDiv', 'botnetHR', 'botnetUpgradeMenu', 'neuralZombieDiv', 'neuralZombieHR', 'neuralZombieUpgradeMenu', 'AIDiv', 'AIHR', 'AIUpgradeMenu'];
+    var startUpElements = ['cyberdeckMenu', 'cyberdeckHR', 'cyberdeckUpgradeMenu', 'ICEDiv', 'ICEPickHR', 'ICEPickUpgradeMenu', 
+    'botnetDiv', 'botnetHR', 'botnetUpgradeMenu', 'neuralZombieDiv', 'neuralZombieHR', 'neuralZombieUpgradeMenu', 'AIDiv', 'AIHR', 'AIUpgradeMenu'];
     for (var i in startUpElements) {
         visibilityLoader(startUpElements[i], 0);
     }
@@ -60,11 +61,10 @@ function save() {
 }
 
 function load() {
-    //Loads these variables from local storage.
     var savegame = JSON.parse(localStorage.getItem('save'));
-    if (savegame !== null){
+    if (savegame !== null){ //If savegame exists.
         Object.keys(savegame).forEach(function(key,index) {
-            window[key] = savegame[key];
+            window[key] = savegame[key]; //Load each value of each property of object into global vars.
         });
     }
     refreshUI();
@@ -138,12 +138,15 @@ function formatBytes(bytes, decimals) {
 
 function formatNumbers(number, decimals) {
     //Converts a number of number into a data format.
-    //If it is larger than the largest data format (9999 Yottanumber), shows scientific notation of number instead.
+    //if it is less than 1 million it shows the normal number.
+    //if it is greater than 1 million it shows the number name, e.g. 1.34 million.
     number = Math.round(number);
     if (number > 999999) {
         var k = 1000;
         var dm = 1;
-        var sizes = ['If you are reading this then you have found a bug! Please contact an exterminator.', 'Thousand', 'Million', 'Billion', 'Trillion', 'Quadrillion', 'Quintillion', 'Sextillion', 'Septillion'];
+        var sizes = [
+        'If you are reading this then you have found a bug! Please contact an exterminator.', 
+        'Thousand', 'Million', 'Billion', 'Trillion', 'Quadrillion', 'Quintillion', 'Sextillion', 'Septillion'];
         var i = Math.floor(Math.log(number) / Math.log(k));
         number = parseFloat((number / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
         return number;
@@ -161,6 +164,8 @@ function jackIn(number) {
 }
 
 function refreshUI() {
+    //Updates most UI elements.
+    //Some elements that require heavy calculations are not updated here.
     //DataHacked
     HTMLEditor('dataHacked', formatBytes(Math.floor(dataHacked)));
     HTMLEditor('totalDataHacked', formatBytes(Math.floor(totalDataHacked)));
@@ -215,8 +220,8 @@ function refreshUI() {
 
 function updateGame() {
     //The main loop, it calls itself at the end.
-    var now = (new Date).getTime(); //The current time.
-    var deltaTime = now - lastTick; //The amount of time since the last time occurred.
+    var now = new Date().getTime(); //The current time.
+    var deltaTime = now - lastTick; //The amount of time since the last tick occurred.
     deltaTime = Math.floor(deltaTime / 100); //(deltaTime / 100) determines the game's tick rate.
     for (var i = 0; i < deltaTime; i++) {
         lastTick = now; //Updates the time of the most recent tick.
@@ -288,7 +293,7 @@ function checkForReveal() {
 }
 
 function increment() {
-    //Increments all items.
+    //Increments income for items.
     var incomePerSecondTotal = 0;
     incomePerSecondTotal += incrementItem(1, cyberdeckNumber, cyberdeckUpgradeCount, 'cyberdeckRate', 'cyberdeckRateTotal');
     incomePerSecondTotal += incrementItem(8, ICEPickNumber, ICEPickUpgradeCount, 'ICEPickRate', 'ICEPickRateTotal');
@@ -304,19 +309,22 @@ function incrementItem(baseRate, numberOfItems, itemUpgradeCount, itemRateDiv, i
     var incomePerTick;
     var incomePerSecond;
     var incomePerSecondTotal;
-    incomePerItem = calculateIncome(itemUpgradeCount, baseRate);
-    incomePerSecond = incomePerItem * tickRate;
-    incomePerSecondTotal = incomePerSecond * numberOfItems;
-    incomePerTick = incomePerItem * numberOfItems;
+    incomePerItem = calculateIncome(itemUpgradeCount, baseRate); //1 item generates this much each tick.
+    incomePerSecond = incomePerItem * tickRate; //1 item generates this much per second.
+    incomePerSecondTotal = incomePerSecond * numberOfItems; //all items of this type generate this much per second.
+    incomePerTick = incomePerItem * numberOfItems; //all items of this type generate this much per tick.
+    //Updates UI.
     HTMLEditor(itemRateDiv, formatBytes(incomePerSecond));
     HTMLEditor(itemRateTotalDiv, formatBytes(incomePerSecondTotal));
+    //Updates global vars.
     dataHacked += incomePerTick;
     totalDataHacked += incomePerTick;
-    destroyFloats();
+    destroyFloats(); //Fixes rounding.
     return incomePerSecondTotal;
 }
 
 function calculateIncome(upgradeCount, baseRate) {
+    //Calculates how much an item should generate based on the base rate and the number of upgrades.
     //BR = Base Rate
     //TR = Ticks Per Second
     //UC = Number Of Upgrades
@@ -330,6 +338,16 @@ function calculateIncome(upgradeCount, baseRate) {
 }
 
 function maxItem(item) {
+    //Calculates the maximum number of items based on upgrades
+    //Number of upgrades = maximum items
+    //0 = 100
+    //1 = 100
+    //2 = 100
+    //3 = 100
+    //4 = 1000
+    //5 = 10000
+    //6 = 100000
+    //etc 
     var itemUpgradeCountName = item + 'UpgradeCount';
     var itemUpgradeCountInt = window[itemUpgradeCountName];
     if (itemUpgradeCountInt > 3) {
@@ -348,13 +366,12 @@ function autoBuy() {
     max = maxItem('cyberdeck');
     //Checks that the requirements for autobuying are met.
     if (ICEPickUpgradeCount >= 4 && cyberdeckNumber < max) {
-        //Autobuys
+        //Every 10 ICEPicks increases cyberdecks by 1
         cyberdeckNumber += Math.floor(ICEPickNumber / 10);
         //If the above buys more than the max this sets it to the max.
         if (cyberdeckNumber > max) cyberdeckNumber = max;
         //Updates UI
         HTMLEditor('ICEPickCyberdeckCreationRate', Math.floor(ICEPickNumber / 10));
-        //HTMLEditor('cyberdeckNumber', formatNumbers(cyberdeckNumber));
     }
     //ICEPicks
     max = maxItem('ICEPick');
@@ -362,7 +379,6 @@ function autoBuy() {
         ICEPickNumber += Math.floor(botnetNumber / 10);
         if (ICEPickNumber > max) ICEPickNumber = max;
         HTMLEditor('botnetICEPickCreationRate', Math.floor(botnetNumber / 10));
-        //HTMLEditor('ICEPickNumber', formatNumbers(ICEPickNumber));
     }
     //Botnets
     max = maxItem('botnet');
@@ -370,7 +386,6 @@ function autoBuy() {
         botnetNumber += Math.floor(neuralZombieNumber / 10); //Creates 1 botnet for every 2 zombies, * 10 so its per second.
         if (botnetNumber > max) botnetNumber = max;
         HTMLEditor('neuralZombieBotnetCreationRate', Math.floor(neuralZombieNumber / 10));
-        //HTMLEditor('botnetNumber', formatNumbers(botnetNumber));
     }
     //Neural Zombies
     max = maxItem('neuralZombie');
@@ -378,7 +393,6 @@ function autoBuy() {
         neuralZombieNumber += Math.floor(AINumber / 10);
         if (neuralZombieNumber > max) neuralZombieNumber = max;
         HTMLEditor('AINeuralZombieCreationRate', Math.floor(AINumber / 10));
-        //HTMLEditor('neuralZombieNumber', formatNumbers(neuralZombieNumber));
     }
 }
 
@@ -515,6 +529,8 @@ function changeUpgradeText(input, offset) {
 }
 
 function upgrade(input) {
+    //This is a hacky workaround
+    //No longer needed, will be removed at some point.
     switch (input) {
         case 1:
             doUpgrade('cyberdeck');
@@ -539,6 +555,7 @@ function doUpgrade(input) {
     var costElement;
     var cost;
     var nextCost;
+    //Will replace switch with string concats at some point.
     switch (input) {
         case 'cyberdeck':
             upgradeCountInt = cyberdeckUpgradeCount;
@@ -629,6 +646,7 @@ function buyItem(item, baseCost) {
     }
 }
 
+//This is pretty WET, should be DRYer.
 function buyCyberdeck(input) {
     //Loops through buying the item until the input number is reached or the user cannot afford to buy any more.
     for (var i = 0; i < input; i++) {
