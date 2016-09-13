@@ -6,23 +6,18 @@ var dataHacked = 0; //The current amount of data.
 var totalDataHacked = 0; //The all time total amount of data.
 //Cyberdecks
 var cyberdeckNumber = 0; //The number of cyberdecks the user has.
-var cyberdeckPurchased = 0; //The number of cyberdecks the user has purchased (autobought ones are not counted.)
 var cyberdeckUpgradeCount = 0; //The number of upgrades cyberdecks have.
 //ICEPicks
 var ICEPickNumber = 0;
-var ICEPickPurchased = 0;
 var ICEPickUpgradeCount = 0;
 //Botnets
 var botnetNumber = 0;
-var botnetPurchased = 0;
 var botnetUpgradeCount = 0;
 //Zombies
 var neuralZombieNumber = 0;
-var neuralZombiePurchased = 0;
 var neuralZombieUpgradeCount = 0;
 //AIs
 var AINumber = 0;
-var AIPurchased = 0;
 var AIUpgradeCount = 0;
 
 function startUp() {
@@ -32,23 +27,7 @@ function startUp() {
     totalDataHacked = 0;
     load(); //Loads the save, remove to disable autoloading on refresh.
     //These items are hidden when the game loads.
-    var startUpElements = [
-     'cyberdeckMenu',
-     'cyberdeckHR',
-     'cyberdeckUpgradeMenu',
-     'ICEDiv',
-     'ICEPickHR',
-     'ICEPickUpgradeMenu',
-     'botnetDiv',
-     'botnetHR',
-     'botnetUpgradeMenu',
-     'neuralZombieDiv',
-     'neuralZombieHR',
-     'neuralZombieUpgradeMenu',
-     'AIDiv',
-     'AIHR',
-     'AIUpgradeMenu'
-     ];
+    var startUpElements = ['cyberdeckMenu', 'cyberdeckHR', 'cyberdeckUpgradeMenu', 'ICEDiv', 'ICEPickHR', 'ICEPickUpgradeMenu', 'botnetDiv', 'botnetHR', 'botnetUpgradeMenu', 'neuralZombieDiv', 'neuralZombieHR', 'neuralZombieUpgradeMenu', 'AIDiv', 'AIHR', 'AIUpgradeMenu'];
     for (var i in startUpElements) {
         visibilityLoader(startUpElements[i], 0);
     }
@@ -63,23 +42,18 @@ function save() {
         totalDataHacked: totalDataHacked,
         //Cyberdecks
         cyberdeckNumber: cyberdeckNumber,
-        cyberdeckPurchased: cyberdeckPurchased,
         cyberdeckUpgradeCount: cyberdeckUpgradeCount,
         //ICEPicks
         ICEPickNumber: ICEPickNumber,
-        ICEPickPurchased: ICEPickPurchased,
         ICEPickUpgradeCount: ICEPickUpgradeCount,
         //Bots
         botnetNumber: botnetNumber,
-        botnetPurchased: botnetPurchased,
         botnetUpgradeCount: botnetUpgradeCount,
         //Zomies
         neuralZombieNumber: neuralZombieNumber,
-        neuralZombiePurchased: neuralZombiePurchased,
         neuralZombieUpgradeCount: neuralZombieUpgradeCount,
         //AIs
         AINumber: AINumber,
-        AIPurchased: AIPurchased,
         AIUpgradeCount: AIUpgradeCount
     };
     localStorage.setItem('save', JSON.stringify(savegame));
@@ -98,10 +72,6 @@ function load() {
         if (typeof savegame.totalDataHacked !== 'undefined') {
             totalDataHacked = savegame.totalDataHacked;
         }
-        //cyberdeckPurchased
-        if (typeof savegame.cyberdeckPurchased !== 'undefined') {
-            cyberdeckPurchased = savegame.cyberdeckPurchased;
-        }
         //cyberdeckNumber
         if (typeof savegame.cyberdeckNumber !== 'undefined') {
             cyberdeckNumber = savegame.cyberdeckNumber; //This must be done for every element.
@@ -113,10 +83,6 @@ function load() {
         //cyberdecksUpgradeText
         if (cyberdeckUpgradeCount !== 0) {
             changeUpgradeText('cyberdeck', -1);
-        }
-        //ICEPickPurchased
-        if (typeof savegame.ICEPickPurchased !== 'undefined') {
-            ICEPickPurchased = savegame.ICEPickPurchased;
         }
         //ICEPickNumber
         if (typeof savegame.ICEPickNumber !== 'undefined') {
@@ -130,10 +96,6 @@ function load() {
         if (ICEPickUpgradeCount !== 0) {
             changeUpgradeText('ICEPick', -1);
         }
-        //botnetPurchased
-        if (typeof savegame.botnetPurchased !== 'undefined') {
-            botnetPurchased = savegame.botnetPurchased;
-        }
         //botnetNumber 
         if (typeof savegame.botnetNumber !== 'undefined') {
             botnetNumber = savegame.botnetNumber;
@@ -146,10 +108,6 @@ function load() {
         if (botnetUpgradeCount !== 0) {
             changeUpgradeText('botnet', -1);
         }
-        //neuralZombiePurchased
-        if (typeof savegame.neuralZombiePurchased !== 'undefined') {
-            neuralZombiePurchased = savegame.neuralZombiePurchased;
-        }
         //neuralZombieNumber
         if (typeof savegame.neuralZombieNumber !== 'undefined') {
             neuralZombieNumber = savegame.neuralZombieNumber;
@@ -161,10 +119,6 @@ function load() {
         //neuralZombiesUpgrades
         if (neuralZombieUpgradeCount !== 0) {
             changeUpgradeText('neuralZombie', -1);
-        }
-        //AIPurchased
-        if (typeof savegame.AIPurchased !== 'undefined') {
-            AIPurchased = savegame.AIPurchased;
         }
         //AINumber
         if (typeof savegame.AINumber !== 'undefined') {
@@ -236,17 +190,7 @@ function formatBytes(bytes, decimals) {
         if (bytes == 1) return '1 Byte';
         var k = 1000;
         var dm = 2 + 1 || 3;
-        var sizes = [
-            'Bytes',
-            'KB',
-            'MB',
-            'GB',
-            'TB',
-            'PB',
-            'EB',
-            'ZB',
-            'YB'
-            ];
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
         var i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     } else {
@@ -265,17 +209,7 @@ function formatNumbers(number, decimals) {
     if (number > 999999) {
         var k = 1000;
         var dm = 1;
-        var sizes = [
-            'If you are reading this then you have found a bug! Please contact an exterminator.',
-            'Thousand',
-            'Million',
-            'Billion',
-            'Trillion',
-            'Quadrillion',
-            'Quintillion',
-            'Sextillion',
-            'Septillion'
-            ];
+        var sizes = ['If you are reading this then you have found a bug! Please contact an exterminator.', 'Thousand', 'Million', 'Billion', 'Trillion', 'Quadrillion', 'Quintillion', 'Sextillion', 'Septillion'];
         var i = Math.floor(Math.log(number) / Math.log(k));
         number = parseFloat((number / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
         return number;
@@ -299,37 +233,33 @@ function refreshUI() {
     //Maximum items
     var max;
     //Cyberdecks
-    max = 100 * Math.pow(10, cyberdeckUpgradeCount);
-    HTMLEditor('cyberdeckNumberMax', formatNumbers(max));
+    HTMLEditor('cyberdeckNumberMax', formatNumbers(maxItem('cyberdeck')));
     //ICEPicks
-    max = 100 * Math.pow(10, ICEPickUpgradeCount);
-    HTMLEditor('ICEPickNumberMax', formatNumbers(max));
+    HTMLEditor('ICEPickNumberMax', formatNumbers(maxItem('ICEPick')));
     //Botnets
-    max = 100 * Math.pow(10, botnetUpgradeCount);
-    HTMLEditor('botnetNumberMax', formatNumbers(max));
+    HTMLEditor('botnetNumberMax', formatNumbers(maxItem('botnet')));
     //Zombies
-    max = 100 * Math.pow(10, neuralZombieUpgradeCount);
-    HTMLEditor('neuralZombieNumberMax', formatNumbers(max));
+    HTMLEditor('neuralZombieNumberMax', formatNumbers(maxItem('neuralZombie')));
     var nextCost;
     //Cyberdecks
     HTMLEditor('cyberdeckNumber', formatNumbers(cyberdeckNumber));
-    nextCost = Math.floor(10 * Math.pow(1.15, cyberdeckPurchased));
+    nextCost = Math.floor(10 * Math.pow(1.15, cyberdeckNumber));
     HTMLEditor('cyberdeckCost', formatBytes(nextCost));
     //ICEPicks
     HTMLEditor('ICEPickNumber', formatNumbers(ICEPickNumber));
-    nextCost = Math.floor(110 * Math.pow(1.15, ICEPickPurchased));
+    nextCost = Math.floor(110 * Math.pow(1.15, ICEPickNumber));
     HTMLEditor('ICEPickCost', formatBytes(nextCost));
-        //Botnets
+    //Botnets
     HTMLEditor('botnetNumber', formatNumbers(botnetNumber));
-    nextCost = Math.floor(1200 * Math.pow(1.15, botnetPurchased));
+    nextCost = Math.floor(1200 * Math.pow(1.15, botnetNumber));
     HTMLEditor('botnetCost', formatBytes(nextCost));
     //Zombies
     HTMLEditor('neuralZombieNumber', formatNumbers(neuralZombieNumber));
-    nextCost = Math.floor(13000 * Math.pow(1.15, neuralZombiePurchased));
+    nextCost = Math.floor(13000 * Math.pow(1.15, neuralZombieNumber));
     HTMLEditor('neuralZombieCost', formatBytes(nextCost));
     //AI
     HTMLEditor('AINumber', formatNumbers(AINumber));
-    nextCost = Math.floor(140000 * Math.pow(1.15, AIPurchased));
+    nextCost = Math.floor(140000 * Math.pow(1.15, AINumber));
     HTMLEditor('AICost', formatBytes(nextCost));
 }
 
@@ -449,12 +379,23 @@ function calculateIncome(upgradeCount, baseRate) {
     return incomePerTick;
 }
 
+function maxItem(item) {
+    var itemUpgradeCountName = item + 'UpgradeCount';
+    var itemUpgradeCountInt = window[itemUpgradeCountName];
+    if (itemUpgradeCountInt > 3) {
+        max = 100 * Math.pow(10, (itemUpgradeCountInt - 3));
+        return max;
+    } else {
+        return 100;
+    }
+}
+
 function autoBuy() {
     var max;
     //Every 10 of an item will create 1 item of the tier below it.
     //Cyberdecks
     //Calculates maximum possible items
-    max = 100 * Math.pow(10, cyberdeckUpgradeCount);
+    max = maxItem('cyberdeck');
     //Checks that the requirements for autobuying are met.
     if (ICEPickUpgradeCount >= 4 && cyberdeckNumber < max) {
         //Autobuys
@@ -466,7 +407,7 @@ function autoBuy() {
         //HTMLEditor('cyberdeckNumber', formatNumbers(cyberdeckNumber));
     }
     //ICEPicks
-    max = 100 * Math.pow(10, ICEPickUpgradeCount);
+    max = maxItem('ICEPick');
     if (botnetUpgradeCount >= 4 && ICEPickNumber < max) {
         ICEPickNumber += Math.floor(botnetNumber / 10);
         if (ICEPickNumber > max) ICEPickNumber = max;
@@ -474,7 +415,7 @@ function autoBuy() {
         //HTMLEditor('ICEPickNumber', formatNumbers(ICEPickNumber));
     }
     //Botnets
-    max = 100 * Math.pow(10, botnetUpgradeCount);
+    max = maxItem('botnet');
     if (neuralZombieUpgradeCount >= 4 && botnetNumber < max) {
         botnetNumber += Math.floor(neuralZombieNumber / 10); //Creates 1 botnet for every 2 zombies, * 10 so its per second.
         if (botnetNumber > max) botnetNumber = max;
@@ -482,7 +423,7 @@ function autoBuy() {
         //HTMLEditor('botnetNumber', formatNumbers(botnetNumber));
     }
     //Neural Zombies
-    max = 100 * Math.pow(10, neuralZombieUpgradeCount);
+    max = maxItem('neuralZombie');
     if (AIUpgradeCount >= 4 && neuralZombieNumber < max) {
         neuralZombieNumber += Math.floor(AINumber / 10);
         if (neuralZombieNumber > max) neuralZombieNumber = max;
@@ -720,22 +661,20 @@ function getUpgradeCost(input, modifier) {
 
 function buyItem(item, baseCost) {
     var itemNumberName = item + 'Number';
-    var itemPurchasedName = item + 'Purchased';
     //Gets global vars.
     var itemNumberInt = window[itemNumberName];
-    var itemPurchasedInt = window[itemPurchasedName];
+    var max = maxItem('item');
     //Calculates cost of item.
-    var cost = Math.floor(baseCost * Math.pow(1.15, itemPurchasedInt));
-    if (dataHacked >= cost) { //Checks if user can afford item.
+    var cost = Math.floor(baseCost * Math.pow(1.15, itemNumberInt));
+    //Checks if user can afford item and has below max number of items.
+    if (dataHacked >= cost && itemNumberInt < max) {
         dataHacked -= cost; //Subtracts cost of item.
         itemNumberInt += 1; //Adds an item.
-        itemPurchasedInt += 1;
-        var nextCost = Math.floor(baseCost * Math.pow(1.15, itemPurchasedInt));
+        var nextCost = Math.floor(baseCost * Math.pow(1.15, itemNumberInt));
         var itemCost = item + 'Cost';
         window[itemNumberName] = itemNumberInt;
-        window[itemPurchasedName] = itemPurchasedInt;
     } else {
-        //If the user cannot afford the upgrade, returns break.
+        //If the user cannot afford the item or has the max number of items, returns break.
         return 'break';
     }
 }
