@@ -135,7 +135,7 @@ function destroyFloats(input) {
     totalDataHacked = parseFloat(parseFloat(totalDataHacked).toFixed(1));
 }
 
-function formatBytes(bytes, decimals) {
+function formatBytes(bytes) {
     //Converts a number of Bytes into a data format.
     //If it is larger than the largest data format (9999 Yottabytes), shows scientific notation of Bytes instead.
     bytes = Math.round(bytes);
@@ -143,7 +143,7 @@ function formatBytes(bytes, decimals) {
         if (bytes === 0) return '0 Bytes';
         if (bytes == 1) return '1 Byte';
         var k = 1000;
-        var dm = 2 + 1 || 3;
+        var dm = 3;
         var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
         var i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
@@ -154,7 +154,7 @@ function formatBytes(bytes, decimals) {
     }
 }
 
-function formatNumbers(number, decimals) {
+function formatNumbers(number) {
     //Converts a number of number into a data format.
     //if it is less than 1 million it shows the normal number.
     //if it is greater than 1 million it shows the number name, e.g. 1.34 million.
