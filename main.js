@@ -1,4 +1,4 @@
-var tickRate = 10; //Ticks per second, this does not actually change the tick rate, it's just used as a reference. Calculated by 1000 / Acutal refresh rate.
+var tickRate = 10; //The number of ticks per second.
 var lastTick = new Date().getTime(); //The time that the last tick occurred
 var autoSaveCount = 0; //Increases every tick so that the game doesn't auto save 10 times per second.
 var autoBuyCount = 0; //Increases every tick so that the game doesn't auto buy 10 times per second.
@@ -205,7 +205,7 @@ function updateGame() {
     //The main loop, it calls itself at the end.
     var now = new Date().getTime(); //The current time.
     var deltaTime = now - lastTick; //The amount of time since the last tick occurred.
-    deltaTime = Math.floor(deltaTime / 100); //(deltaTime / 100) determines the game's tick rate.
+    deltaTime = Math.floor(deltaTime / (1000 / tickRate)); //tickRate is how many ticks per second in MS, 1000 MS per second.
     for (var i = 0; i < deltaTime; i++) {
         lastTick = now; //Updates the time of the most recent tick.
         //Auto buy happens once per second, not once per tick.
@@ -214,7 +214,7 @@ function updateGame() {
             autoBuy();
             autoBuyCount = 0;
         }
-        OOPIncrement();
+        Increment();
         checkForReveal();
         autoSaveCount++;
         if (autoSaveCount >= tickRate) { //Once per second.
@@ -239,7 +239,7 @@ function checkForReveal() {
     }
 }
 
-function OOPIncrement() {
+function Increment() {
     var totalIncome = 0;
     var incomePerSecondTotal;
     var incomePerItem;
