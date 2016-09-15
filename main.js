@@ -24,12 +24,12 @@ var item = function(name, baseCost, upgradeCost, baseIncome) {
     this.itemHRDiv = this.name + 'HR';
 };
 
-var item1 = new item('cyberdeck', 10, 1000, 1);
-var item2 = new item('ICEPick', 160, 8000, 8);
-var item3 = new item('botnet', 3200, 64000, 64);
-var item4 = new item('neuralZombie', 25600, 512000, 512);
-var item5 = new item('AI', 102400, 4096000, 4096);
-var itemList = [item1, item2, item3, item4, item5];
+var item0 = new item('cyberdeck', 10, 1000, 1);
+var item1 = new item('ICEPick', 160, 8000, 8);
+var item2 = new item('botnet', 3200, 64000, 64);
+var item3 = new item('neuralZombie', 25600, 512000, 512);
+var item4 = new item('AI', 102400, 4096000, 4096);
+var itemList = [item0, item1, item2, item3, item4];
 
 function startUp() {
     //Runs when the page is loaded.
@@ -88,23 +88,6 @@ function load() {
     }
     checkForReveal();
     refreshUI();
-}
-
-function exportSave() {
-    //Converts the local save to a string.
-    save();
-    var savegame = JSON.parse(localStorage.getItem('save'));
-    savegame = JSON.stringify(savegame);
-    var obfuscatedSave = window.btoa(savegame);
-    window.prompt('Your save: ', obfuscatedSave);
-}
-
-function importSave() {
-    //Converts a string to a local save.
-    var obfuscatedSave = prompt('Paste save here');
-    var save = atob(obfuscatedSave);
-    localStorage.setItem('save', save);
-    load();
 }
 
 function deleteSave() {
@@ -273,8 +256,8 @@ function maxItem(item) {
     //5 = 10000
     //6 = 100000
     //etc 
-    if (item.upgradeCount >= 3) {
-        max = 100 * Math.pow(10, (item.upgradeCount - 3));
+    if (item.upgradeCount >= 2) {
+        max = 100 * Math.pow(10, (item.upgradeCount - 2));
         return max;
     } else {
         return 100;
