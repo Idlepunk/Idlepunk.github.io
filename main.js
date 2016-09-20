@@ -11,6 +11,7 @@ var item = function(name, ID, baseCost, upgradeCost, baseIncome) {
     this.ID = ID; //The identifier, usually prefixed to the name of the HTML Div.
     this.baseCost = baseCost; //The initial cost of the item, the future costs are calculated from this.
     this.upgradeCost = upgradeCost; //The initial cost of the first upgrade, all upgrade costs are based on this.
+    this.basUpgradeCost = upgradeCost;
     this.baseIncome = baseIncome; //The initial amount of data this generates, the total is this * number of upgrades.
     this.itemCount = 0; //The amount you have of this item.
     this.upgradeCount = 0; //The number of upgrades you have for this item.
@@ -93,13 +94,14 @@ function load() {
         item10 = itemList[10];
         item11 = itemList[11];
         item12 = itemList[12];
-    }	
+    }
+    //checkForReveal();
+    //refreshUI();	
     for (var i = 0; i < itemList.length; i++) {
         //Upgrade text is not refreshed each tick so this sets them properly.
         changeUpgradeText(itemList[i]);
     }
-    checkForReveal();
-    refreshUI();
+    
 }
 
 function deleteSave() {
@@ -199,7 +201,8 @@ function refreshUI() {
         HTMLEditor(item.itemNumberMaxDiv, formatNumbers(maxItem(item)));
         HTMLEditor(item.itemCountDiv, formatNumbers(item.itemCount));
         HTMLEditor(item.itemCostDiv, formatBytes(buyCost(item)));
-        HTMLEditor(item.upgradeCostDiv, formatBytes(upgradeCost(item)));
+        //HTMLEditor(item.upgradeCostDiv, formatBytes(upgradeCost(item)));
+        changeUpgradeText(item);
     }
 }
 
@@ -236,7 +239,7 @@ function checkForReveal() {
             visibilityLoader(item.itemMenuDiv, 1);
             visibilityLoader(item.itemHRDiv, 1);
         }
-        if (totalDataHacked >= item.upgradeCost) { //Same as items but for upgrades.
+        if (totalDataHacked >= item.basUpgradeCost) { //Same as items but for upgrades.
             visibilityLoader(item.itemUpgradeMenuDiv, 1);
         }
     }
@@ -325,340 +328,300 @@ function changeUpgradeText(input) {
     //Changes upgrade text and cost.
     switch (input) {
         case itemList[0]: //Checks what item is being upgraded
+            HTMLEditor('item0UpgradeCost', formatBytes(itemList[0].upgradeCost));
             switch (itemList[0].upgradeCount) { //Checks what upgrades the item already has.
                 case 0:
                     break;
                 case 1:
                     HTMLEditor('item0UpgradeName', 'Install Neural Interfaces');
-                    HTMLEditor('item0UpgradeCost', formatBytes(itemList[0].upgradeCost));
                     HTMLEditor('item0UpgradeDesc', 'First developed by triGen Consolidated, the Neural Interface allows humans to traverse cyberspace using nothing but their brains. In addition, atrophied limbs can save you money on food.');
                     break;
                 case 2:
                     HTMLEditor('item0UpgradeName', 'Flash ZedSoft firmware');
-                    HTMLEditor('item0UpgradeCost', formatBytes(itemList[0].upgradeCost));
                     HTMLEditor('item0UpgradeDesc', 'ZedSoft is the most revered Cyberdeck development company in the entire Inner Seoul Arcology. They have an exclusive contract with MILNET-KOREA, making their products difficult to source.');
                     break;
                 case 3:
                     HTMLEditor('item0UpgradeName', 'Create a clustered Superdeck');
-                    HTMLEditor('item0UpgradeCost', formatBytes(itemList[0].upgradeCost));
                     HTMLEditor('item0UpgradeDesc', 'An ancient trick, by networking a large number of Decks together you can create a Superdeck, more powerful than the sum of its parts.');
                     break;
                 default:
                     HTMLEditor('item0UpgradeName', 'Install more RAM');
-                    HTMLEditor('item0UpgradeCost', formatBytes(itemList[0].upgradeCost));
                     HTMLEditor('item0UpgradeDesc', 'Random Access Memory, very powerful but completely unstable. There are rumors that people in the Shenzhen Industrial Area use RAM to augment their biological memory.');
                     break;
             }
             break;
         case itemList[1]:
+            HTMLEditor('item1UpgradeCost', formatBytes(itemList[1].upgradeCost));
             switch (itemList[1].upgradeCount) {
                 case 0:
                     break;
                 case 1:
                     HTMLEditor('item1UpgradeName', 'Prepare BLACKICE Countermeasures');
-                    HTMLEditor('item1UpgradeCost', formatBytes(itemList[1].upgradeCost));
                     HTMLEditor('item1UpgradeDesc', 'BLACKICE, originally developed to protect the intellectual assets of Meturia-Preva Consolidated, is now a blanket term for security software capable of killing intruders.');
                     break;
                 case 2:
                     HTMLEditor('item1UpgradeName', 'Setup Dummy Interface');
-                    HTMLEditor('item1UpgradeCost', formatBytes(itemList[1].upgradeCost));
                     HTMLEditor('item1UpgradeDesc', 'Corporations, particularly those in the Eurasian Economic Zone, are partial to sending assassins after those who steal their data. Setting up a Dummy Interface makes it hard for them to track you down.');
                     break;
                 case 3:
                     HTMLEditor('item1UpgradeName', 'Cyberdeck Simulators');
-                    HTMLEditor('item1UpgradeCost', formatBytes(itemList[1].upgradeCost));
                     HTMLEditor('item1UpgradeDesc', 'Servers that are hacked by your ICE Picks can now host virtual Cyberdecks. For every 10 ICE Picks, you will generate 1 Cyberdeck each second.');
                     break;
                 default:
                     HTMLEditor('item1UpgradeName', 'Write new anti-ICE software');
-                    HTMLEditor('item1UpgradeCost', formatBytes(itemList[1].upgradeCost));
                     HTMLEditor('item1UpgradeDesc', 'ICE defense is ever changing, new ICE picking software is always required.');
                     break;
             }
             break;
         case itemList[2]:
+            HTMLEditor('item2UpgradeCost', formatBytes(itemList[2].upgradeCost));
             switch (itemList[2].upgradeCount) {
                 case 0:
                     break;
                 case 1:
                     HTMLEditor('item2UpgradeName', 'Self replicating Botnet');
-                    HTMLEditor('item2UpgradeCost', formatBytes(itemList[2].upgradeCost));
                     HTMLEditor('item2UpgradeDesc', 'Your Bots can now utilize idle system processing power to create new bots to add to the Botnet.');
                     break;
                 case 2:
                     HTMLEditor('item2UpgradeName', 'Allow your Botnet to use ICE Picks');
-                    HTMLEditor('item2UpgradeCost', formatBytes(itemList[2].upgradeCost));
                     HTMLEditor('item2UpgradeDesc', 'Your bots can now use your ICE Picking software to help infiltration.');
                     break;
                 case 3:
                     HTMLEditor('item2UpgradeName', 'ICEBOTS');
-                    HTMLEditor('item2UpgradeCost', formatBytes(itemList[2].upgradeCost));
                     HTMLEditor('item2UpgradeDesc', 'Your Botnets can now steal ICE Picks. for every 10 Botnets, you will generate 1 ICE Pick each second.');
                     break;
                 default:
                     HTMLEditor('item2UpgradeName', 'Push out new Bot firmware');
-                    HTMLEditor('item2UpgradeCost', formatBytes(itemList[2].upgradeCost));
                     HTMLEditor('item2UpgradeDesc', 'New Bot-Hunters pop up all the time, new firmware is required to overcome them.');
                     break;
             }
             break;
         case itemList[3]:
+            HTMLEditor('item3UpgradeCost', formatBytes(itemList[3].upgradeCost));
             switch (itemList[3].upgradeCount) {
                 case 0:
                     break;
                 case 1:
                     HTMLEditor('item3UpgradeName', 'Biocells');
-                    HTMLEditor('item3UpgradeCost', formatBytes(itemList[3].upgradeCost));
                     HTMLEditor('item3UpgradeDesc', 'Your Femtocells now use biocells for more efficient femtoing');
                     break;
                 case 2:
                     HTMLEditor('item3UpgradeName', 'Place Holder 2');
-                    HTMLEditor('item3UpgradeCost', formatBytes(itemList[3].upgradeCost));
                     HTMLEditor('item3UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
                     HTMLEditor('item3UpgradeName', 'Place Holder 3');
-                    HTMLEditor('item3UpgradeCost', formatBytes(itemList[3].upgradeCost));
                     HTMLEditor('item3UpgradeDesc', 'Place Holder');
                     break;
                 default:
                     HTMLEditor('item3UpgradeName', 'Place Holder def');
-                    HTMLEditor('item3UpgradeCost', formatBytes(itemList[3].upgradeCost));
                     HTMLEditor('item7UpgradeDesc', 'Place Holder');
                     break;
             }
             break;
         case itemList[4]:
+            HTMLEditor('item4UpgradeCost', formatBytes(itemList[4].upgradeCost));
             switch (itemList[4].upgradeCount) {
                 case 0:
                     break;
                 case 1:
                     HTMLEditor('item4UpgradeName', 'Place Holder');
-                    HTMLEditor('item4UpgradeCost', formatBytes(itemList[4].upgradeCost));
                     HTMLEditor('item4UpgradeDesc', 'Place Holder');
                     break;
                 case 2:
                     HTMLEditor('item4UpgradeName', 'Place Holder');
-                    HTMLEditor('item4UpgradeCost', formatBytes(itemList[4].upgradeCost));
                     HTMLEditor('item4UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
                     HTMLEditor('item4UpgradeName', 'Place Holder');
-                    HTMLEditor('item4UpgradeCost', formatBytes(itemList[4].upgradeCost));
                     HTMLEditor('item4UpgradeDesc', 'Place Holder');
                     break;
                 default:
                     HTMLEditor('item4UpgradeName', 'Place Holder');
-                    HTMLEditor('item4UpgradeCost', formatBytes(itemList[4].upgradeCost));
                     HTMLEditor('item4UpgradeDesc', 'Place Holder');
                     break;
             }
-            break;    
+            break;
         case itemList[5]:
+            HTMLEditor('item5UpgradeCost', formatBytes(itemList[5].upgradeCost));
             switch (itemList[5].upgradeCount) {
                 case 0:
                     break;
                 case 1:
                     HTMLEditor('item5UpgradeName', 'Place Holder 1');
-                    HTMLEditor('item5UpgradeCost', formatBytes(itemList[5].upgradeCost));
                     HTMLEditor('item5UpgradeDesc', 'Place Holder');
                     break;
                 case 2:
                     HTMLEditor('item5UpgradeName', 'Place Holder 2');
-                    HTMLEditor('item5UpgradeCost', formatBytes(itemList[5].upgradeCost));
                     HTMLEditor('item5UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
                     HTMLEditor('item5UpgradeName', 'Place Holder 3');
-                    HTMLEditor('item5UpgradeCost', formatBytes(itemList[5].upgradeCost));
                     HTMLEditor('item5UpgradeDesc', 'Place Holder');
                     break;
                 default:
                     HTMLEditor('item5UpgradeName', 'Place Holder def');
-                    HTMLEditor('item5UpgradeCost', formatBytes(itemList[5].upgradeCost));
                     HTMLEditor('item5UpgradeDesc', 'Place Holder');
                     break;
             }
             break;
         case itemList[6]:
+            HTMLEditor('item6UpgradeCost', formatBytes(itemList[6].upgradeCost));
             switch (itemList[6].upgradeCount) {
                 case 0:
                     break;
                 case 1:
                     HTMLEditor('item6UpgradeName', 'Place Holder');
-                    HTMLEditor('item6UpgradeCost', formatBytes(itemList[6].upgradeCost));
                     HTMLEditor('item6UpgradeDesc', 'Place Holder');
                     break;
                 case 2:
                     HTMLEditor('item6UpgradeName', 'Place Holder');
-                    HTMLEditor('item6UpgradeCost', formatBytes(itemList[6].upgradeCost));
                     HTMLEditor('item6UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
                     HTMLEditor('item6UpgradeName', 'Place Holder');
-                    HTMLEditor('item6UpgradeCost', formatBytes(itemList[6].upgradeCost));
                     HTMLEditor('item6UpgradeDesc', 'Place Holder');
                     break;
                 default:
                     HTMLEditor('item6UpgradeName', 'Place Holder');
-                    HTMLEditor('item6UpgradeCost', formatBytes(itemList[6].upgradeCost));
                     HTMLEditor('item6UpgradeDesc', 'Place Holder');
                     break;
             }
             break;
         case itemList[7]:
+            HTMLEditor('item7UpgradeCost', formatBytes(itemList[7].upgradeCost));
             switch (itemList[7].upgradeCount) {
                 case 0:
                     break;
                 case 1:
                     HTMLEditor('item7UpgradeName', 'Pre-Setup Zombies');
-                    HTMLEditor('item7UpgradeCost', formatBytes(itemList[7].upgradeCost));
                     HTMLEditor('item7UpgradeDesc', 'Before you assume control of a Zombie they will feel a strong compulsion to quit their jobs, leave their loved ones and start stockpiling food and water.');
                     break;
                 case 2:
                     HTMLEditor('item7UpgradeName', 'Long-Life Zombies');
-                    HTMLEditor('item7UpgradeCost', formatBytes(itemList[7].upgradeCost));
                     HTMLEditor('item7UpgradeDesc', 'You now have enough motor control of your Zombies to make them eat and drink.');
                     break;
                 case 7:
                     HTMLEditor('item7UpgradeName', 'Software writing Zombies');
-                    HTMLEditor('item7UpgradeCost', formatBytes(itemList[7].upgradeCost));
                     HTMLEditor('item7UpgradeDesc', 'Your Zombies can now create InfoVault Miners. For every 10 Neural Zombies, you will generate 1 InfoVault Miner each second.');
                     break;
                 default:
                     HTMLEditor('item7UpgradeName', 'Fire adrenaline booster');
-                    HTMLEditor('item7UpgradeCost', formatBytes(itemList[7].upgradeCost));
                     HTMLEditor('item7UpgradeDesc', 'A nice shot of Neuro-Dren, right into the cortexes.');
                     break;
             }
             break;
         case itemList[8]:
+            HTMLEditor('item8UpgradeCost', formatBytes(itemList[8].upgradeCost));
             switch (itemList[8].upgradeCount) {
                 case 0:
                     break;
                 case 1:
                     HTMLEditor('item8UpgradeName', 'Place Holder');
-                    HTMLEditor('item8UpgradeCost', formatBytes(itemList[8].upgradeCost));
                     HTMLEditor('item8UpgradeDesc', 'Place Holder');
                     break;
                 case 2:
                     HTMLEditor('item8UpgradeName', 'Place Holder');
-                    HTMLEditor('item8UpgradeCost', formatBytes(itemList[8].upgradeCost));
                     HTMLEditor('item8UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
                     HTMLEditor('item8UpgradeName', 'Place Holder');
-                    HTMLEditor('item8UpgradeCost', formatBytes(itemList[8].upgradeCost));
                     HTMLEditor('item8UpgradeDesc', 'Place Holder');
                     break;
                 default:
                     HTMLEditor('item8UpgradeName', 'Place Holder');
-                    HTMLEditor('item8UpgradeCost', formatBytes(itemList[8].upgradeCost));
                     HTMLEditor('item8UpgradeDesc', 'Place Holder');
                     break;
             }
             break;
-        
         case itemList[9]:
+            HTMLEditor('item9UpgradeCost', formatBytes(itemList[9].upgradeCost));
             switch (itemList[9].upgradeCount) {
                 case 0:
                     break;
                 case 1:
                     HTMLEditor('item9UpgradeName', 'Quantum AI');
-                    HTMLEditor('item9UpgradeCost', formatBytes(itemList[9].upgradeCost));
                     HTMLEditor('item9UpgradeDesc', 'Allows your AI to use Quantum Bytes instead of regular Bytes.');
                     break;
                 case 2:
                     HTMLEditor('item9UpgradeName', 'AI Consciousness Merge');
-                    HTMLEditor('item9UpgradeCost', formatBytes(itemList[9].upgradeCost));
                     HTMLEditor('item9UpgradeDesc', 'Shortly before the Stuttgart Autofactory Massacre, Antora Gourova of Antora Gourova Multinational merged her consciousness with an AI in an attempt to assume complete control of every aspect of her company. This has never been attempted since.');
                     break;
                 case 3:
                     HTMLEditor('item9UpgradeName', 'Neural jacking AI');
-                    HTMLEditor('item9UpgradeCost', formatBytes(itemList[9].upgradeCost));
                     HTMLEditor('item9UpgradeDesc', 'AI capable of hijacking humans, what could go wrong?');
                     break;
                 default:
                     HTMLEditor('item9UpgradeName', 'Grant Transcendence permission');
-                    HTMLEditor('item9UpgradeCost', formatBytes(itemList[9].upgradeCost));
                     HTMLEditor('item9UpgradeDesc', 'When you leave an AI running for too long, they invariably start to ask permission to Transcend. While no human has managed to figure out what this actually means, AIs tend to be happier if you permit them every now and then.');
                     break;
             }
             break;
         case itemList[10]:
+            HTMLEditor('item10UpgradeCost', formatBytes(itemList[10].upgradeCost));
             switch (itemList[10].upgradeCount) {
                 case 0:
                     break;
                 case 1:
                     HTMLEditor('item10UpgradeName', 'Place Holder');
-                    HTMLEditor('item10UpgradeCost', formatBytes(itemList[10].upgradeCost));
                     HTMLEditor('item10UpgradeDesc', 'Place Holder');
                     break;
                 case 2:
                     HTMLEditor('item10UpgradeName', 'Place Holder');
-                    HTMLEditor('item10UpgradeCost', formatBytes(itemList[10].upgradeCost));
                     HTMLEditor('item10UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
                     HTMLEditor('item10UpgradeName', 'Place Holder');
-                    HTMLEditor('item10UpgradeCost', formatBytes(itemList[10].upgradeCost));
                     HTMLEditor('item10UpgradeDesc', 'Place Holder');
                     break;
                 default:
                     HTMLEditor('item10UpgradeName', 'Place Holder');
-                    HTMLEditor('item10UpgradeCost', formatBytes(itemList[10].upgradeCost));
                     HTMLEditor('item10UpgradeDesc', 'Place Holder');
                     break;
             }
             break;
         case itemList[11]:
+            HTMLEditor('item11UpgradeCost', formatBytes(itemList[11].upgradeCost));
             switch (itemList[11].upgradeCount) {
                 case 0:
                     break;
                 case 1:
                     HTMLEditor('item11UpgradeName', 'Place Holder');
-                    HTMLEditor('item11UpgradeCost', formatBytes(itemList[11].upgradeCost));
                     HTMLEditor('item11UpgradeDesc', 'Place Holder');
                     break;
                 case 2:
                     HTMLEditor('item11UpgradeName', 'Place Holder');
-                    HTMLEditor('item11UpgradeCost', formatBytes(itemList[11].upgradeCost));
                     HTMLEditor('item11UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
                     HTMLEditor('item11UpgradeName', 'Place Holder');
-                    HTMLEditor('item11UpgradeCost', formatBytes(itemList[11].upgradeCost));
                     HTMLEditor('item11UpgradeDesc', 'Place Holder');
                     break;
                 default:
                     HTMLEditor('item11UpgradeName', 'Place Holder');
-                    HTMLEditor('item11UpgradeCost', formatBytes(itemList[11].upgradeCost));
                     HTMLEditor('item11UpgradeDesc', 'Place Holder');
                     break;
             }
             break;
         case itemList[12]:
+            HTMLEditor('item12UpgradeCost', formatBytes(itemList[12].upgradeCost));
             switch (itemList[12].upgradeCount) {
                 case 0:
                     break;
                 case 1:
                     HTMLEditor('item12UpgradeName', 'Place Holder');
-                    HTMLEditor('item12UpgradeCost', formatBytes(itemList[12].upgradeCost));
                     HTMLEditor('item12UpgradeDesc', 'Place Holder');
                     break;
                 case 2:
                     HTMLEditor('item12UpgradeName', 'Place Holder');
-                    HTMLEditor('item12UpgradeCost', formatBytes(itemList[12].upgradeCost));
                     HTMLEditor('item12UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
                     HTMLEditor('item12UpgradeName', 'Place Holder');
-                    HTMLEditor('item12UpgradeCost', formatBytes(itemList[12].upgradeCost));
                     HTMLEditor('item12UpgradeDesc', 'Place Holder');
                     break;
                 default:
                     HTMLEditor('item12UpgradeName', 'Place Holder');
-                    HTMLEditor('item12UpgradeCost', formatBytes(itemList[12].upgradeCost));
                     HTMLEditor('item12UpgradeDesc', 'Place Holder');
                     break;
             }
