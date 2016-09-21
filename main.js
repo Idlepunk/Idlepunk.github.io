@@ -39,7 +39,7 @@ var item9  = new item('Artificial Intelligence',    'item9',  19000000000,      
 var item10 = new item('Actual Intelligence',        'item10', 200000000000,     20000000000000,     900000000);
 var item11 = new item('Dark Matter Semiconductors', 'item11', 2100000000000,    210000000000000,    80000000000);
 var item12 = new item('Simulated Universes',        'item12', 22000000000000,   2200000000000000,   700000000000);
-
+var itemList = [item0, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12];
 function startUp() {
     //Runs when the page is loaded.
     document.getElementById('all').style.display = 'inline'; //Display is set to none in css to hide the body while loading, this makes it visible.
