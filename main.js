@@ -79,19 +79,14 @@ function load() {
         totalDataHacked = savegame.totalDataHacked //Single var.
         itemList = savegame.itemList; //Loads itemList.
         //ItemList only references items, so they have to be loaded as well.
-        item0  = itemList[0];
-        item1  = itemList[1];
-        item2  = itemList[2];
-        item3  = itemList[3];
-        item4  = itemList[4];
-        item5  = itemList[5];
-        item6  = itemList[6];
-        item7  = itemList[7];
-        item8  = itemList[8];
-        item9  = itemList[9];
-        item10 = itemList[10];
-        item11 = itemList[11];
-        item12 = itemList[12];
+        for (var i = itemList.length - 1; i >= 0; i--) {
+            var item = window['item' + i];
+            item = itemList[i];
+        }
+
+
+
+
     }
 
     for (var i = itemList.length - 1; i >= 0; i--) {
