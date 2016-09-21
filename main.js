@@ -2,10 +2,8 @@ var tickRate = 10; //The number of ticks per second.
 var lastTick = new Date().getTime(); //The time that the last tick occurred
 var autoSaveCount = 0; //Increases every tick so that the game doesn't auto save every tick.
 var autoBuyCount = 0; //Increases every tick so that the game doesn't auto buy every tick.
-
 var dataHacked = 0; //The current amount of data.
 var totalDataHacked = 0; //The all time total amount of data.
-
 var item = function(name, ID, baseCost, upgradeCost, baseIncome) {
     this.name = name; //The name of the item, not really used for anything except debugging.
     this.ID = ID; //The identifier, usually prefixed to the name of the HTML Div.
@@ -41,9 +39,6 @@ var item9  = new item('Artificial Intelligence',    'item9',  19000000000,      
 var item10 = new item('Actual Intelligence',        'item10', 200000000000,     20000000000000,     900000000);
 var item11 = new item('Dark Matter Semiconductors', 'item11', 2100000000000,    210000000000000,    80000000000);
 var item12 = new item('Simulated Universes',        'item12', 22000000000000,   2200000000000000,   700000000000);
-
-var itemList = [item0, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12];
-
 
 function startUp() {
     //Runs when the page is loaded.
@@ -83,17 +78,11 @@ function load() {
             var item = window['item' + i];
             item = itemList[i];
         }
-
-
-
-
     }
-
     for (var i = itemList.length - 1; i >= 0; i--) {
         //Upgrade text is not refreshed each tick so this sets them properly.
         changeUpgradeText(itemList[i]);
     }
-    
 }
 
 function deleteSave() {
@@ -115,8 +104,7 @@ function visibilityLoader(elementID, visibility) {
         visibility = 'visible';
     } else if (visibility === 0) {
         visibility = 'hidden';
-    }
-    else {
+    } else {
         console.log('visibilityLoader broke. elementID: ' + elementID);
     }
     document.getElementById(elementID).style.visibility = visibility;
@@ -142,7 +130,7 @@ function formatBytes(bytes) {
         var i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     } else {
-    //If it is larger than the largest data format (9999 Yottabytes), shows scientific notation of Bytes instead.
+        //If it is larger than the largest data format (9999 Yottabytes), shows scientific notation of Bytes instead.
         bytes = bytes.toExponential(2);
         bytes += ' Bytes';
         return bytes;
@@ -207,7 +195,7 @@ function updateGame() {
         //Auto buy happens once per second, not once per tick.
         //autoBuyCount++;
         //if (autoBuyCount >= tickRate) { //once per second.
-            autoBuyLoader();
+        autoBuyLoader();
         //    autoBuyCount = 0;
         //}
         Increment();
@@ -297,7 +285,7 @@ function autoBuyLoader() {
     autoBuy(itemList[8], itemList[9]);
     autoBuy(itemList[9], itemList[10]);
     autoBuy(itemList[10], itemList[11]);
-    autoBuy(itemList[11], itemList[12 ]);
+    autoBuy(itemList[11], itemList[12]);
 }
 
 function autoBuy(firstItem, secondItem) {
@@ -320,7 +308,7 @@ function changeUpgradeText(input) {
     switch (input) {
         //Checks what item is being upgraded
         //Cyberdeck
-        case itemList[0]: 
+        case itemList[0]:
             HTMLEditor('item0UpgradeCost', formatBytes(itemList[0].upgradeCost));
             switch (itemList[0].upgradeCount) { //Checks what upgrades the item already has.
                 case 0:
@@ -343,7 +331,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-        //ICE Pick
+            //ICE Pick
         case itemList[1]:
             HTMLEditor('item1UpgradeCost', formatBytes(itemList[1].upgradeCost));
             switch (itemList[1].upgradeCount) {
@@ -367,7 +355,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-        //Botnet
+            //Botnet
         case itemList[2]:
             HTMLEditor('item2UpgradeCost', formatBytes(itemList[2].upgradeCost));
             switch (itemList[2].upgradeCount) {
@@ -391,7 +379,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-        //Femtocell
+            //Femtocell
         case itemList[3]:
             HTMLEditor('item3UpgradeCost', formatBytes(itemList[3].upgradeCost));
             switch (itemList[3].upgradeCount) {
@@ -404,7 +392,6 @@ function changeUpgradeText(input) {
                 case 2:
                     HTMLEditor('item3UpgradeName', 'Cybernetic Implant Repeaters');
                     HTMLEditor('item3UpgradeDesc', 'A lot of implants these days are set to auto-connect to the nearest cellular station. By converting adapters to two virtual adapters, your Femtocells can use almost any cybernetic implant as a repeater.');
-                    
                     break;
                 case 3:
                     HTMLEditor('item3UpgradeName', 'Place Holder 3');
@@ -416,7 +403,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-        //TETRA
+            //TETRA
         case itemList[4]:
             HTMLEditor('item4UpgradeCost', formatBytes(itemList[4].upgradeCost));
             switch (itemList[4].upgradeCount) {
@@ -440,7 +427,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-        //Quantum Crypto
+            //Quantum Crypto
         case itemList[5]:
             HTMLEditor('item5UpgradeCost', formatBytes(itemList[5].upgradeCost));
             switch (itemList[5].upgradeCount) {
@@ -464,7 +451,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-        //Infovault Mining
+            //Infovault Mining
         case itemList[6]:
             HTMLEditor('item6UpgradeCost', formatBytes(itemList[6].upgradeCost));
             switch (itemList[6].upgradeCount) {
@@ -488,7 +475,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-        //Neural ZOmbies
+            //Neural ZOmbies
         case itemList[7]:
             HTMLEditor('item7UpgradeCost', formatBytes(itemList[7].upgradeCost));
             switch (itemList[7].upgradeCount) {
@@ -512,7 +499,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-        //Satellite Jumpers
+            //Satellite Jumpers
         case itemList[8]:
             HTMLEditor('item8UpgradeCost', formatBytes(itemList[8].upgradeCost));
             switch (itemList[8].upgradeCount) {
@@ -536,7 +523,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-        //Art Int
+            //Art Int
         case itemList[9]:
             HTMLEditor('item9UpgradeCost', formatBytes(itemList[9].upgradeCost));
             switch (itemList[9].upgradeCount) {
@@ -560,7 +547,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-        //Act Int
+            //Act Int
         case itemList[10]:
             HTMLEditor('item10UpgradeCost', formatBytes(itemList[10].upgradeCost));
             switch (itemList[10].upgradeCount) {
@@ -584,7 +571,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-        //Dark Matter Semiconductors
+            //Dark Matter Semiconductors
         case itemList[11]:
             HTMLEditor('item11UpgradeCost', formatBytes(itemList[11].upgradeCost));
             switch (itemList[11].upgradeCount) {
@@ -608,7 +595,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-        //Sim Universe
+            //Sim Universe
         case itemList[12]:
             HTMLEditor('item12UpgradeCost', formatBytes(itemList[12].upgradeCost));
             switch (itemList[12].upgradeCount) {
@@ -662,9 +649,8 @@ function buyItem(item, count) {
         cost = buyCost(item); //Calculates cost of item.
         if (dataHacked >= cost && item.itemCount < max) { //Checks if player can afford cost.
             dataHacked -= cost; //Subtracts cost of item.
-            item.itemCount ++; //Increments item.
-        } 
-        else break;
+            item.itemCount++; //Increments item.
+        } else break;
     }
 }
 
