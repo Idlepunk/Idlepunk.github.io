@@ -1,7 +1,7 @@
 var tickRate = 10; //The number of ticks per second.
 var lastTick = new Date().getTime(); //The time that the last tick occurred
 var autoSaveCount = 0; //Increases every tick so that the game doesn't auto save every tick.
-var autoBuyCount = 0; //Increases every tick so that the game doesn't auto buy every tick.
+//var autoBuyCount = 0; //Increases every tick so that the game doesn't auto buy every tick.
 var dataHacked = 0; //The current amount of data.
 var totalDataHacked = 0; //The all time total amount of data.
 var item = function(name, ID, baseCost, upgradeCost, baseIncome) {
@@ -40,6 +40,7 @@ var item10 = new item('Actual Intelligence',        'item10', 200000000000,     
 var item11 = new item('Dark Matter Semiconductors', 'item11', 2100000000000,    210000000000000,    80000000000);
 var item12 = new item('Simulated Universes',        'item12', 22000000000000,   2200000000000000,   700000000000);
 var itemList = [item0, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12];
+
 function startUp() {
     //Runs when the page is loaded.
     document.getElementById('all').style.display = 'inline'; //Display is set to none in css to hide the body while loading, this makes it visible.
@@ -69,17 +70,18 @@ function save() {
 function load() {
     //Loads objects + vars from local storage.
     var savegame = JSON.parse(localStorage.getItem('save'));
+    var i;
     if (savegame) { //If save is not null or undefined, load.
         dataHacked = savegame.dataHacked; //Single var.
-        totalDataHacked = savegame.totalDataHacked //Single var.
+        totalDataHacked = savegame.totalDataHacked; //Single var.
         itemList = savegame.itemList; //Loads itemList.
         //ItemList only references items, so they have to be loaded as well.
-        for (var i = itemList.length - 1; i >= 0; i--) {
+        for (i = itemList.length - 1; i >= 0; i--) {
             var item = window['item' + i];
             item = itemList[i];
         }
     }
-    for (var i = itemList.length - 1; i >= 0; i--) {
+    for (i = itemList.length - 1; i >= 0; i--) {
         //Upgrade text is not refreshed each tick so this sets them properly.
         changeUpgradeText(itemList[i]);
     }
@@ -264,7 +266,7 @@ function maxItem(item) {
     //6 = 1000000
     //etc 
     if (item.upgradeCount >= 2) {
-        // max = 100 * 10^(items-2)
+        var max;
         max = 100 * Math.pow(10, (item.upgradeCount - 2));
         return max;
     } else {
