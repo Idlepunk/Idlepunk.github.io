@@ -27,20 +27,20 @@ var item = function(name, ID, baseCost, upgradeCost, baseIncome) {
     this.itemHRDiv = this.ID + 'HR';
     this.upgradeCostDiv = this.ID + 'UpgradeCost';
 };
-//                   name                           ID        cost              Upgrade             Income
+//                     name                          ID       cost              Upgrade             Income
 var item0  = new item('Cyberdeck',                  'item0',  10,               1000,               1);
-var item1  = new item('ICE Pick',                   'item1',  110,              11000,              11);
-var item2  = new item('Botnet',                     'item2',  1200,             120000,             120);
-var item3  = new item('Femtocell Hijacker',         'item3',  13000,            1300000,            1300);
-var item4  = new item('Neural TETRA',               'item4',  140000,           14000000,           14000);
-var item5  = new item('Quantum Cryptograph',        'item5',  1500000,          150000000,          150000);
-var item6  = new item('Infovault Mining',           'item6',  16000000,         1600000000,         1600000);
-var item7  = new item('Neural Zombies',             'item7',  170000000,        17000000000,        17000000);
-var item8  = new item('Satellite Jumpers',          'item8',  1800000000,       180000000000,       180000000);
-var item9  = new item('Artificial Intelligence',    'item9',  19000000000,      1900000000000,      1900000000);
-var item10 = new item('Actual Intelligence',        'item10', 200000000000,     20000000000000,     20000000000);
-var item11 = new item('Dark Matter Semiconductors', 'item11', 2100000000000,    210000000000000,    210000000000);
-var item12 = new item('Simulated Universes',        'item12', 22000000000000,   2200000000000000,   2200000000000);
+var item1  = new item('ICE Pick',                   'item1',  110,              11000,              9);
+var item2  = new item('Botnet',                     'item2',  1200,             120000,             80);
+var item3  = new item('Femtocell Hijacker',         'item3',  13000,            1300000,            700);
+var item4  = new item('Neural TETRA',               'item4',  140000,           14000000,           6000);
+var item5  = new item('Quantum Cryptograph',        'item5',  1500000,          150000000,          50000);
+var item6  = new item('Infovault Mining',           'item6',  16000000,         1600000000,         400000);
+var item7  = new item('Neural Zombies',             'item7',  170000000,        17000000000,        3000000);
+var item8  = new item('Satellite Jumpers',          'item8',  1800000000,       180000000000,       20000000);
+var item9  = new item('Artificial Intelligence',    'item9',  19000000000,      1900000000000,      100000000);
+var item10 = new item('Actual Intelligence',        'item10', 200000000000,     20000000000000,     900000000);
+var item11 = new item('Dark Matter Semiconductors', 'item11', 2100000000000,    210000000000000,    80000000000);
+var item12 = new item('Simulated Universes',        'item12', 22000000000000,   2200000000000000,   700000000000);
 
 var itemList = [item0, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12];
 
@@ -59,8 +59,6 @@ function startUp() {
         visibilityLoader(item.itemHRDiv, 0);
         visibilityLoader(item.itemUpgradeMenuDiv, 0);
     }
-    //Calls the first tick of the game.
-    window.requestAnimationFrame(updateGame);
 }
 
 function save() {
@@ -95,8 +93,6 @@ function load() {
         item11 = itemList[11];
         item12 = itemList[12];
     }
-    //checkForReveal();
-    //refreshUI();	
     for (var i = 0; i < itemList.length; i++) {
         //Upgrade text is not refreshed each tick so this sets them properly.
         changeUpgradeText(itemList[i]);
@@ -279,10 +275,10 @@ function maxItem(item) {
     //0 = 100
     //1 = 100
     //2 = 100
-    //3 = 100
-    //4 = 1000
-    //5 = 10000
-    //6 = 100000
+    //3 = 1000
+    //4 = 10000
+    //5 = 100000
+    //6 = 1000000
     //etc 
     if (item.upgradeCount >= 2) {
         // max = 100 * 10^(items-2)
@@ -327,7 +323,9 @@ function autoBuy(firstItem, secondItem) {
 function changeUpgradeText(input) {
     //Changes upgrade text and cost.
     switch (input) {
-        case itemList[0]: //Checks what item is being upgraded
+        //Checks what item is being upgraded
+        //Cyberdeck
+        case itemList[0]: 
             HTMLEditor('item0UpgradeCost', formatBytes(itemList[0].upgradeCost));
             switch (itemList[0].upgradeCount) { //Checks what upgrades the item already has.
                 case 0:
@@ -350,6 +348,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
+        //ICE Pick
         case itemList[1]:
             HTMLEditor('item1UpgradeCost', formatBytes(itemList[1].upgradeCost));
             switch (itemList[1].upgradeCount) {
@@ -373,6 +372,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
+        //Botnet
         case itemList[2]:
             HTMLEditor('item2UpgradeCost', formatBytes(itemList[2].upgradeCost));
             switch (itemList[2].upgradeCount) {
@@ -396,6 +396,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
+        //Femtocell
         case itemList[3]:
             HTMLEditor('item3UpgradeCost', formatBytes(itemList[3].upgradeCost));
             switch (itemList[3].upgradeCount) {
@@ -406,8 +407,9 @@ function changeUpgradeText(input) {
                     HTMLEditor('item3UpgradeDesc', 'Your Femtocells now use biocells for more efficient femtoing');
                     break;
                 case 2:
-                    HTMLEditor('item3UpgradeName', 'Place Holder 2');
-                    HTMLEditor('item3UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item3UpgradeName', 'Cybernetic Implant Repeaters');
+                    HTMLEditor('item3UpgradeDesc', 'A lot of implants these days are set to auto-connect to the nearest cellular station. By converting adapters to two virtual adapters, your Femtocells can use almost any cybernetic implant as a repeater.');
+                    
                     break;
                 case 3:
                     HTMLEditor('item3UpgradeName', 'Place Holder 3');
@@ -415,10 +417,11 @@ function changeUpgradeText(input) {
                     break;
                 default:
                     HTMLEditor('item3UpgradeName', 'Place Holder def');
-                    HTMLEditor('item7UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item3UpgradeDesc', 'Place Holder');
                     break;
             }
             break;
+        //TETRA
         case itemList[4]:
             HTMLEditor('item4UpgradeCost', formatBytes(itemList[4].upgradeCost));
             switch (itemList[4].upgradeCount) {
@@ -442,6 +445,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
+        //Quantum Crypto
         case itemList[5]:
             HTMLEditor('item5UpgradeCost', formatBytes(itemList[5].upgradeCost));
             switch (itemList[5].upgradeCount) {
@@ -465,6 +469,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
+        //Infovault Mining
         case itemList[6]:
             HTMLEditor('item6UpgradeCost', formatBytes(itemList[6].upgradeCost));
             switch (itemList[6].upgradeCount) {
@@ -488,6 +493,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
+        //Neural ZOmbies
         case itemList[7]:
             HTMLEditor('item7UpgradeCost', formatBytes(itemList[7].upgradeCost));
             switch (itemList[7].upgradeCount) {
@@ -511,6 +517,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
+        //Satellite Jumpers
         case itemList[8]:
             HTMLEditor('item8UpgradeCost', formatBytes(itemList[8].upgradeCost));
             switch (itemList[8].upgradeCount) {
@@ -534,6 +541,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
+        //Art Int
         case itemList[9]:
             HTMLEditor('item9UpgradeCost', formatBytes(itemList[9].upgradeCost));
             switch (itemList[9].upgradeCount) {
@@ -557,6 +565,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
+        //Act Int
         case itemList[10]:
             HTMLEditor('item10UpgradeCost', formatBytes(itemList[10].upgradeCost));
             switch (itemList[10].upgradeCount) {
@@ -580,14 +589,15 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
+        //Dark Matter Semiconductors
         case itemList[11]:
             HTMLEditor('item11UpgradeCost', formatBytes(itemList[11].upgradeCost));
             switch (itemList[11].upgradeCount) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor('item11UpgradeName', 'Place Holder');
-                    HTMLEditor('item11UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item11UpgradeName', 'Dark Thermoelectric Cooling');
+                    HTMLEditor('item11UpgradeDesc', 'Dark Semiconductors create a lot of dark heat, DTECs create a heat flux between this universe and the abyss. While we do not know what is on the other side of the abyss, we are confident that it getting a little hotter over there will not matter');
                     break;
                 case 2:
                     HTMLEditor('item11UpgradeName', 'Place Holder');
@@ -603,14 +613,15 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
+        //Sim Universe
         case itemList[12]:
             HTMLEditor('item12UpgradeCost', formatBytes(itemList[12].upgradeCost));
             switch (itemList[12].upgradeCount) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor('item12UpgradeName', 'Place Holder');
-                    HTMLEditor('item12UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item12UpgradeName', 'Time Dilation');
+                    HTMLEditor('item12UpgradeDesc', 'By implementing time dilation around simulated humans we can gather more data from them without using much more processing power. One side effect is that it may appear that the expansion of their universe is accelerating.');
                     break;
                 case 2:
                     HTMLEditor('item12UpgradeName', 'Place Holder');
@@ -621,8 +632,8 @@ function changeUpgradeText(input) {
                     HTMLEditor('item12UpgradeDesc', 'Place Holder');
                     break;
                 default:
-                    HTMLEditor('item12UpgradeName', 'Place Holder');
-                    HTMLEditor('item12UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item12UpgradeName', 'Simulated Simulated Universe');
+                    HTMLEditor('item12UpgradeDesc', 'Convince the inhabitants of your simulated universe to simulate a universe, when they collect data from it you can collect data from them.');
                     break;
             }
             break;
