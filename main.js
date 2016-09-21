@@ -25,6 +25,7 @@ var item = function(name, ID, baseCost, upgradeCost, baseIncome) {
     this.itemHRDiv = this.ID + 'HR';
     this.upgradeCostDiv = this.ID + 'UpgradeCost';
 };
+
 //                     name                          ID       cost              Upgrade             Income
 var item0  = new item('Cyberdeck',                  'item0',  10,               1000,               1);
 var item1  = new item('ICE Pick',                   'item1',  110,              11000,              9);
@@ -160,7 +161,8 @@ function formatNumbers(number) {
         var i = Math.floor(Math.log(number) / Math.log(k));
         number = parseFloat((number / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
         return number;
-    } else {
+    } 
+    else {
         return number;
     }
 }
@@ -194,13 +196,8 @@ function updateGame() {
     deltaTime = Math.floor(deltaTime / (1000 / tickRate)); //tickRate is how many ticks per second in MS, 1000 MS per second.
     for (var i = 0; i < deltaTime; i++) {
         lastTick = now; //Updates the time of the most recent tick.
-        //Auto buy happens once per second, not once per tick.
-        //autoBuyCount++;
-        //if (autoBuyCount >= tickRate) { //once per second.
         autoBuyLoader();
-        //    autoBuyCount = 0;
-        //}
-        Increment();
+        increment();
         checkForReveal();
         autoSaveCount++;
         if (autoSaveCount >= tickRate) { //Once per second.
@@ -211,7 +208,7 @@ function updateGame() {
     refreshUI();
     window.requestAnimationFrame(updateGame); //Calls this function again.
 }
-window.requestAnimationFrame(updateGame); //If for some reason the function cannot call itself, this calls it again.
+window.requestAnimationFrame(updateGame); //If for some reason updateGame cannot call itself, this will call it.
 function checkForReveal() {
     //Checks if any elements should be revealed.
     for (var i = itemList.length - 1; i >= 0; i--) {
@@ -226,7 +223,7 @@ function checkForReveal() {
     }
 }
 
-function Increment() {
+function increment() {
     //Generates income based on items.
     var totalIncome = 0; //The total amount for all items for this tick.
     var incomePerSecondTotal; //The amount that all items of a single type will generate in 1 second.
@@ -234,13 +231,13 @@ function Increment() {
     var incomePerTick; //The amount that all items of a single type will generate in a single tick.
     var incomePerItemPerSecond; //The amount that a single item will generate in one second.
     var item;
-    for (var i = itemList.length - 1; i >= 0; i--) {
+    for (var i = itemList.length - 1; i >= 0; i--) { //Iterating through loops backwards is more efficient as the array length only has to be calculated once.
         item = itemList[i];
         //Maths!
-        incomePerItem = (item.baseIncome / tickRate) * Math.pow(2, item.upgradeCount);
-        incomePerTick = incomePerItem * item.itemCount;
-        incomePerItemPerSecond = incomePerItem * tickRate;
-        incomePerSecondTotal = incomePerItemPerSecond * item.itemCount;
+        incomePerItem           = (item.baseIncome / tickRate) * Math.pow(2, item.upgradeCount);
+        incomePerItemPerSecond  = incomePerItem * tickRate;
+        incomePerSecondTotal    = incomePerItemPerSecond * item.itemCount;
+        incomePerTick           = incomePerItem * item.itemCount;
         //Increases the data.
         dataHacked += incomePerTick;
         totalDataHacked += incomePerTick;
@@ -624,7 +621,7 @@ function changeUpgradeText(input) {
     }
 }
 
-function Upgrade(item) {
+function upgrade(item) {
     //Upgrades an item.
     var cost;
     if (dataHacked >= item.upgradeCost) { //Checks if player can afford upgrade.
