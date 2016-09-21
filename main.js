@@ -53,7 +53,7 @@ function startUp() {
     totalDataHacked = 10;
     load(); //Loads the save, remove to disable autoloading on refresh.
     //This hides the item menus, HRs and upgrades when the game loads.
-    for (var i = 0; i < itemList.length; i++) {
+    for (var i = itemList.length - 1; i >= 0; i--) {
         var item = itemList[i];
         visibilityLoader(item.itemMenuDiv, 0);
         visibilityLoader(item.itemHRDiv, 0);
@@ -93,7 +93,8 @@ function load() {
         item11 = itemList[11];
         item12 = itemList[12];
     }
-    for (var i = 0; i < itemList.length; i++) {
+
+    for (var i = itemList.length - 1; i >= 0; i--) {
         //Upgrade text is not refreshed each tick so this sets them properly.
         changeUpgradeText(itemList[i]);
     }
@@ -192,12 +193,11 @@ function refreshUI() {
     //Some elements that require heavy calculations are not updated here.
     HTMLEditor('dataHacked', formatBytes(Math.floor(dataHacked)));
     HTMLEditor('totalDataHacked', formatBytes(Math.floor(totalDataHacked)));
-    for (var i = 0; i < itemList.length; i++) {
+    for (var i = itemList.length - 1; i >= 0; i--) {
         var item = itemList[i];
         HTMLEditor(item.itemNumberMaxDiv, formatNumbers(maxItem(item)));
         HTMLEditor(item.itemCountDiv, formatNumbers(item.itemCount));
         HTMLEditor(item.itemCostDiv, formatBytes(buyCost(item)));
-        //HTMLEditor(item.upgradeCostDiv, formatBytes(upgradeCost(item)));
         changeUpgradeText(item);
     }
 }
@@ -229,7 +229,7 @@ function updateGame() {
 window.requestAnimationFrame(updateGame); //If for some reason the function cannot call itself, this calls it again.
 function checkForReveal() {
     //Checks if any elements should be revealed.
-    for (var i = 0; i < itemList.length; i++) {
+    for (var i = itemList.length - 1; i >= 0; i--) {
         item = itemList[i];
         if (totalDataHacked >= item.baseCost) { //Items are revealed when the all time amount of data surpasses the base cost of the item.
             visibilityLoader(item.itemMenuDiv, 1);
@@ -249,7 +249,7 @@ function Increment() {
     var incomePerTick; //The amount that all items of a single type will generate in a single tick.
     var incomePerItemPerSecond; //The amount that a single item will generate in one second.
     var item;
-    for (var i = 0; i < itemList.length; i++) {
+    for (var i = itemList.length - 1; i >= 0; i--) {
         item = itemList[i];
         //Maths!
         incomePerItem = (item.baseIncome / tickRate) * Math.pow(2, item.upgradeCount);
