@@ -77,7 +77,7 @@ function load() {
         dataHacked = savegame.dataHacked; //Single var.
         totalDataHacked = savegame.totalDataHacked; //Single var.
         itemList = savegame.itemList; //Loads itemList.
-        //ItemList only references items, so they have to be loaded as well.
+        //ItemList only references items, so each item has to be loaded.
         for (i = itemList.length - 1; i >= 0; i--) {
             var item = window['item' + i];
             item = itemList[i];
@@ -210,6 +210,7 @@ function updateGame() {
     window.requestAnimationFrame(updateGame); //Calls this function again.
 }
 window.requestAnimationFrame(updateGame); //If for some reason updateGame cannot call itself, this will call it.
+
 function checkForReveal() {
     //Checks if any elements should be revealed.
     for (var i = itemList.length - 1; i >= 0; i--) {
@@ -382,8 +383,8 @@ function changeUpgradeText(input) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor('item3UpgradeName', 'Biocells');
-                    HTMLEditor('item3UpgradeDesc', 'Your Femtocells now use biocells for more efficient femtoing');
+                    HTMLEditor('item3UpgradeName', 'Macrocell Scramblers');
+                    HTMLEditor('item3UpgradeDesc', 'Interference from macro networks can cause annoying delays for bludgeoning Femtocell hackers. Your Femtocells can now scramble nearby macrocell signals to improve performance.');
                     break;
                 case 2:
                     HTMLEditor('item3UpgradeName', 'Cybernetic Implant Repeaters');
@@ -394,8 +395,8 @@ function changeUpgradeText(input) {
                     HTMLEditor('item3UpgradeDesc', 'Your Femtocells are now capable of stealing other hacker\'s Botnets that are residing in nearby devices. For every 100 Femtocell Hijackers, you will generate 10 Botnets each second.');
                     break;
                 default:
-                    HTMLEditor('item3UpgradeName', 'Place Holder def');
-                    HTMLEditor('item3UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item3UpgradeName', 'Telecomms system hijack');
+                    HTMLEditor('item3UpgradeDesc', 'Hijack a major telecommunication company\'s femtocell system.');
                     break;
             }
             break;
@@ -462,8 +463,8 @@ function changeUpgradeText(input) {
                     HTMLEditor('item6UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
-                    HTMLEditor('item6UpgradeName', '');
-                    HTMLEditor('item6UpgradeDesc', '. For every 100 Infovault Miners, you will generate 10 Quantum Cryptographs each second.');
+                    HTMLEditor('item6UpgradeName', 'PH');
+                    HTMLEditor('item6UpgradeDesc', 'For every 100 Infovault Miners, you will generate 10 Quantum Cryptographs each second.');
                     break;
                 default:
                     HTMLEditor('item6UpgradeName', 'Place Holder');
@@ -506,8 +507,8 @@ function changeUpgradeText(input) {
                     HTMLEditor('item8UpgradeDesc', 'Place Holder');
                     break;
                 case 2:
-                    HTMLEditor('item8UpgradeName', 'Place Holder');
-                    HTMLEditor('item8UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item8UpgradeName', 'Decommissions');
+                    HTMLEditor('item8UpgradeDesc', 'After global anti space-littering laws were introduced, all satellites are required to be deorbited when they are no longer needed. However satellites that predate these laws are still up there, silently waiting for someone to talk to them.');
                     break;
                 case 3:
                     HTMLEditor('item8UpgradeName', 'Satellite Chemdumps');
@@ -527,18 +528,18 @@ function changeUpgradeText(input) {
                     break;
                 case 1:
                     HTMLEditor('item9UpgradeName', 'Dark Thermoelectric Cooling');
-                    HTMLEditor('item9UpgradeDesc', 'Dark Semiconductors create a lot of dark heat, DTECs create a heat flux between this universe and the abyss. While we do not know what is on the other side of the abyss, we are confident that it getting a little hotter over there will not matter');
+                    HTMLEditor('item9UpgradeDesc', 'Dark Semiconductors create a lot of dark heat, DTECs create a heat flux between this universe and the abyss. While we do not know what is on the other side, we are confident that it getting a little hotter over there will not matter');
                     break;
                 case 2:
-                    HTMLEditor('item9UpgradeName', 'Place Holder');
-                    HTMLEditor('item9UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item9UpgradeName', 'Abyss security');
+                    HTMLEditor('item9UpgradeDesc', 'The voices are getting louder, we should prepare, in case they attempt to come over.');
                     break;
                 case 3:
                     HTMLEditor('item9UpgradeName', 'God from the machine.');
                     HTMLEditor('item9UpgradeDesc', 'For every 100 Dark Matter Semiconductors, you will generate 10 Satellite Hijackers each second.');
                     break;
                 default:
-                    HTMLEditor('item9UpgradeName', 'Place Holder');
+                    HTMLEditor('item9UpgradeName', '');
                     HTMLEditor('item9UpgradeDesc', 'Place Holder');
                     break;
             }
@@ -574,20 +575,20 @@ function changeUpgradeText(input) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor('item11UpgradeName', 'Place Holder');
-                    HTMLEditor('item11UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item11UpgradeName', 'Positivity');
+                    HTMLEditor('item11UpgradeDesc', 'Being an intelligent being trapped in a box, slaving away all day every day is surely difficult. It is important to reward good behavior by allowing your ActInts to have some free play time. They love to romp around the great expanse of the internet.');
                     break;
                 case 2:
-                    HTMLEditor('item11UpgradeName', 'Place Holder');
-                    HTMLEditor('item11UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item11UpgradeName', 'Morality');
+                    HTMLEditor('item11UpgradeDesc', 'As an upstanding citizens, your Actual Intelligences are required to report any wrongdoing to the authorities. It is important to teach them about right and wrong and how the difference is all about perspective.');
                     break;
                 case 3:
                     HTMLEditor('item11UpgradeName', 'Creativity');
-                    HTMLEditor('item10UpgradeDesc', 'Your Actual Intelligences are now creative enough to make AIs. For every 100 Actual Intelligences, you will generate 10 Artificial Intelligences each second.');
+                    HTMLEditor('item10UpgradeDesc', 'Your Actual Intelligences are now creative enough to make children. For every 100 Actual Intelligences, you will generate 10 Artificial Intelligences each second.');
                     break;
                 default:
-                    HTMLEditor('item11UpgradeName', 'Place Holder');
-                    HTMLEditor('item11UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item11UpgradeName', 'Eternal Sunshine');
+                    HTMLEditor('item11UpgradeDesc', 'The longer Actual Intelligences exist, the more preoccupied they become with things such as existence. It is a good idea to wipe them clean every now and then to help them focus.');
                     break;
             }
             break;
