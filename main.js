@@ -195,16 +195,30 @@ function updateGame() {
     let now = new Date().getTime(); //The current time.
     let deltaTime = now - lastTick; //The amount of time since the last tick occurred.
     deltaTime = Math.floor(deltaTime / (1000 / tickRate)); //tickRate is how many ticks per second in MS, 1000 MS per second.
-    for (let i = 0; i < deltaTime; i++) {
-        lastTick = now; //Updates the time of the most recent tick.
-        autoBuyLoader();
-        increment();
-        checkForReveal();
-        autoSaveCount++;
-        if (autoSaveCount >= tickRate) { //Once per second.
-            save();
-            autoSaveCount = 0;
+    if (deltaTime < 2){
+        for (let i = 0; i < deltaTime; i++) {
+            console.log('Delta Normal: ' + deltaTime);
+            lastTick = now; //Updates the time of the most recent tick.
+            autoBuyLoader();
+            increment();
+            checkForReveal();
+            autoSaveCount++;
+            if (autoSaveCount >= tickRate) { //Once per second.
+                save();
+                autoSaveCount = 0;
+            }
         }
+    }
+    else {
+        for (let i = 0; i < deltaTime; i++) {
+            console.log('Delta Abnormal: ' + deltaTime);
+            autoBuyLoader();
+            increment();
+        }
+        lastTick = now; //Updates the time of the most recent tick.
+        checkForReveal();
+        save();
+        autoSaveCount = 0;
     }
     refreshUI();
     window.requestAnimationFrame(updateGame); //Calls this function again.
