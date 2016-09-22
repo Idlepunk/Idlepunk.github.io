@@ -584,7 +584,7 @@ function changeUpgradeText(input) {
                     break;
                 case 3:
                     HTMLEditor('item11UpgradeName', 'Creativity');
-                    HTMLEditor('item10UpgradeDesc', 'Your Actual Intelligences are now creative enough to make children. For every 100 Actual Intelligences, you will generate 10 Artificial Intelligences each second.');
+                    HTMLEditor('item11UpgradeDesc', 'Your Actual Intelligences are now creative enough to make children. For every 100 Actual Intelligences, you will generate 10 Artificial Intelligences each second.');
                     break;
                 default:
                     HTMLEditor('item11UpgradeName', 'Eternal Sunshine');
