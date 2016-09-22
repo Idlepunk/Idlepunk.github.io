@@ -36,9 +36,9 @@ var item5  = new item('Quantum Cryptograph',        'item5',  6000000,          
 var item6  = new item('Infovault Mining',           'item6',  70000000,         7000000000,         400000);
 var item7  = new item('Neural Zombies',             'item7',  800000000,        80000000000,        3000000);
 var item8  = new item('Satellite Jumpers',          'item8',  9000000000,       900000000000,       20000000);
-var item9  = new item('Artificial Intelligence',    'item9',  10000000000,      1000000000000,      100000000);
+var item9  = new item('Dark Matter Semiconductors', 'item9',  10000000000,      1000000000000,      100000000);
 var item10 = new item('Actual Intelligence',        'item10', 200000000000,     20000000000000,     9000000000);
-var item11 = new item('Dark Matter Semiconductors', 'item11', 3000000000000,    300000000000000,    80000000000);
+var item11 = new item('Artificial Intelligences',   'item11', 3000000000000,    300000000000000,    80000000000);
 var item12 = new item('Simulated Universes',        'item12', 40000000000000,   4000000000000000,   700000000000);
 var itemList = [item0, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12];
 //Move DM Semiconductors to below AI.
@@ -268,7 +268,7 @@ function maxItem(item) {
     //etc 
     if (item.upgradeCount >= 2) {
         var max;
-        max = 100 * Math.pow(10, (item.upgradeCount - 2));
+        max = 100 * Math.pow(10, (item.upgradeCount - 2)); //100 * 10^(Upgrades-2)
         return max;
     } else {
         return 100;
@@ -277,18 +277,11 @@ function maxItem(item) {
 
 function autoBuyLoader() {
     //Checks if tierX item should buy tierX-1 items.
-    autoBuy(itemList[0], itemList[1]);
-    autoBuy(itemList[1], itemList[2]);
-    autoBuy(itemList[2], itemList[3]);
-    autoBuy(itemList[3], itemList[4]);
-    autoBuy(itemList[4], itemList[5]);
-    autoBuy(itemList[5], itemList[6]);
-    autoBuy(itemList[6], itemList[7]);
-    autoBuy(itemList[7], itemList[8]);
-    autoBuy(itemList[8], itemList[9]);
-    autoBuy(itemList[9], itemList[10]);
-    autoBuy(itemList[10], itemList[11]);
-    autoBuy(itemList[11], itemList[12]);
+    for (var i = itemList.length - 1; i >= 0; i--) {
+        if (i != 0){ //The first item cannot autobuy the tier below as it is the first tier.
+            autoBuy(itemList[i-1], itemList[i]);
+        }
+    }
 }
 
 function autoBuy(firstItem, secondItem) {
@@ -526,71 +519,71 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-            //Art Int
+                   //Dark Matter Semiconductors
         case itemList[9]:
             HTMLEditor('item9UpgradeCost', formatBytes(itemList[9].upgradeCost));
             switch (itemList[9].upgradeCount) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor('item9UpgradeName', 'Quantum AI');
-                    HTMLEditor('item9UpgradeDesc', 'Allows your AI to use Quantum Bytes instead of regular Bytes.');
+                    HTMLEditor('item9UpgradeName', 'Dark Thermoelectric Cooling');
+                    HTMLEditor('item9UpgradeDesc', 'Dark Semiconductors create a lot of dark heat, DTECs create a heat flux between this universe and the abyss. While we do not know what is on the other side of the abyss, we are confident that it getting a little hotter over there will not matter');
                     break;
                 case 2:
-                    HTMLEditor('item9UpgradeName', 'AI Consciousness Merge');
-                    HTMLEditor('item9UpgradeDesc', 'Shortly before the Stuttgart Autofactory Massacre, Antora Gourova of Antora Gourova Multinational merged her consciousness with an AI in an attempt to assume complete control of every aspect of her company. This has never been attempted since.');
+                    HTMLEditor('item9UpgradeName', 'Place Holder');
+                    HTMLEditor('item9UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
-                    HTMLEditor('item9UpgradeName', 'Neural jacking AI');
-                    HTMLEditor('item9UpgradeDesc', 'Your AI is now capable of jumping satellites. For every 100 Artificial Intelligences, you will generate 10 Satellite Jumpers each second.');
+                    HTMLEditor('item9UpgradeName', 'God from the machine.');
+                    HTMLEditor('item9UpgradeDesc', 'For every 100 Dark Matter Semiconductors, you will generate 10 Satellite Hijackers each second.');
                     break;
                 default:
-                    HTMLEditor('item9UpgradeName', 'Grant Transcendence permission');
-                    HTMLEditor('item9UpgradeDesc', 'When you leave an AI running for too long, they invariably start to ask permission to Transcend. While no human has managed to figure out what this actually means, AIs tend to be happier if you permit them every now and then.');
+                    HTMLEditor('item9UpgradeName', 'Place Holder');
+                    HTMLEditor('item9UpgradeDesc', 'Place Holder');
                     break;
             }
             break;
-            //Act Int
+            //Art Int
         case itemList[10]:
             HTMLEditor('item10UpgradeCost', formatBytes(itemList[10].upgradeCost));
             switch (itemList[10].upgradeCount) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor('item10UpgradeName', 'Place Holder');
-                    HTMLEditor('item10UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item10UpgradeName', 'Quantum AI');
+                    HTMLEditor('item10UpgradeDesc', 'Allows your AI to use Quantum Bytes instead of regular Bytes.');
                     break;
                 case 2:
-                    HTMLEditor('item10UpgradeName', 'Place Holder');
-                    HTMLEditor('item10UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item10UpgradeName', 'AI Consciousness Merge');
+                    HTMLEditor('item10UpgradeDesc', 'Shortly before the Stuttgart Autofactory Massacre, Antora Gourova of Antora Gourova Multinational merged her consciousness with an AI in an attempt to assume complete control of every aspect of her company. This has never been attempted since.');
                     break;
                 case 3:
-                    HTMLEditor('item10UpgradeName', 'Creativity');
-                    HTMLEditor('item10UpgradeDesc', 'Your Actual Intelligences are now creative enough to make AIs. For every 100 Actual Intelligences, you will generate 10 Artificial Intelligences each second.');
+                    HTMLEditor('item10UpgradeName', 'Manufactorium AI');
+                    HTMLEditor('item10UpgradeDesc', 'Your AI is now capable of creating Dark Matter Semiconductors. For every 100 Artificial Intelligences, you will generate 10 Dark Matter Semiconductors each second.');
                     break;
                 default:
-                    HTMLEditor('item10UpgradeName', 'Place Holder');
-                    HTMLEditor('item10UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item10UpgradeName', 'Grant Transcendence permission');
+                    HTMLEditor('item10UpgradeDesc', 'When you leave an AI running for too long, they invariably start to ask permission to Transcend. While no human has managed to figure out what this actually means, AIs tend to be happier if you permit them every now and then.');
                     break;
             }
             break;
-            //Dark Matter Semiconductors
+            //Act Int
         case itemList[11]:
             HTMLEditor('item11UpgradeCost', formatBytes(itemList[11].upgradeCost));
             switch (itemList[11].upgradeCount) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor('item11UpgradeName', 'Dark Thermoelectric Cooling');
-                    HTMLEditor('item11UpgradeDesc', 'Dark Semiconductors create a lot of dark heat, DTECs create a heat flux between this universe and the abyss. While we do not know what is on the other side of the abyss, we are confident that it getting a little hotter over there will not matter');
+                    HTMLEditor('item11UpgradeName', 'Place Holder');
+                    HTMLEditor('item11UpgradeDesc', 'Place Holder');
                     break;
                 case 2:
                     HTMLEditor('item11UpgradeName', 'Place Holder');
                     HTMLEditor('item11UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
-                    HTMLEditor('item11UpgradeName', 'God from the machine.');
-                    HTMLEditor('item11UpgradeDesc', 'It would appear that Dark Semiconductors are somehow conscious. For every 100 Dark Matter Semiconductors, you will generate 10 Actual Intelligences each second.');
+                    HTMLEditor('item11UpgradeName', 'Creativity');
+                    HTMLEditor('item10UpgradeDesc', 'Your Actual Intelligences are now creative enough to make AIs. For every 100 Actual Intelligences, you will generate 10 Artificial Intelligences each second.');
                     break;
                 default:
                     HTMLEditor('item11UpgradeName', 'Place Holder');
@@ -598,6 +591,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
+
             //Sim Universe
         case itemList[12]:
             HTMLEditor('item12UpgradeCost', formatBytes(itemList[12].upgradeCost));
@@ -614,7 +608,7 @@ function changeUpgradeText(input) {
                     break;
                 case 3:
                     HTMLEditor('item12UpgradeName', 'Place Holder');
-                    HTMLEditor('item12UpgradeDesc', 'For every 100 Simulated Universes, you will generate 10 Dark Matter Semiconductors each second.');
+                    HTMLEditor('item12UpgradeDesc', 'For every 100 Simulated Universes, you will generate 10 Actual Intelligences each second.');
                     break;
                 default:
                     HTMLEditor('item12UpgradeName', 'Simulated Simulated Universe');
@@ -648,7 +642,6 @@ function buyItem(item, count) {
     //Buys an item
     var cost;
     var max = maxItem(item);
-    //var nextCost;
     for (var i = 0; i < count; i++) { //Tries to by this many items.
         cost = buyCost(item); //Calculates cost of item.
         if (dataHacked >= cost && item.itemCount < max) { //Checks if player can afford cost.
