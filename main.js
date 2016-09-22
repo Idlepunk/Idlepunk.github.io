@@ -28,19 +28,20 @@ var item = function(name, ID, baseCost, upgradeCost, baseIncome) {
 
 //                     name                          ID       cost              Upgrade             Income
 var item0  = new item('Cyberdeck',                  'item0',  10,               1000,               1);
-var item1  = new item('ICE Pick',                   'item1',  110,              11000,              9);
-var item2  = new item('Botnet',                     'item2',  1200,             120000,             80);
-var item3  = new item('Femtocell Hijacker',         'item3',  13000,            1300000,            700);
-var item4  = new item('Neural TETRA',               'item4',  140000,           14000000,           6000);
-var item5  = new item('Quantum Cryptograph',        'item5',  1500000,          150000000,          50000);
-var item6  = new item('Infovault Mining',           'item6',  16000000,         1600000000,         400000);
-var item7  = new item('Neural Zombies',             'item7',  170000000,        17000000000,        3000000);
-var item8  = new item('Satellite Jumpers',          'item8',  1800000000,       180000000000,       20000000);
-var item9  = new item('Artificial Intelligence',    'item9',  19000000000,      1900000000000,      100000000);
-var item10 = new item('Actual Intelligence',        'item10', 200000000000,     20000000000000,     900000000);
-var item11 = new item('Dark Matter Semiconductors', 'item11', 2100000000000,    210000000000000,    80000000000);
-var item12 = new item('Simulated Universes',        'item12', 22000000000000,   2200000000000000,   700000000000);
+var item1  = new item('ICE Pick',                   'item1',  200,              20000,              9);
+var item2  = new item('Botnet',                     'item2',  3000,             300000,             80);
+var item3  = new item('Femtocell Hijacker',         'item3',  40000,            4000000,            700);
+var item4  = new item('Neural TETRA',               'item4',  500000,           50000000,           6000);
+var item5  = new item('Quantum Cryptograph',        'item5',  6000000,          600000000,          50000);
+var item6  = new item('Infovault Mining',           'item6',  70000000,         7000000000,         400000);
+var item7  = new item('Neural Zombies',             'item7',  800000000,        80000000000,        3000000);
+var item8  = new item('Satellite Jumpers',          'item8',  9000000000,       900000000000,       20000000);
+var item9  = new item('Artificial Intelligence',    'item9',  10000000000,      1000000000000,      100000000);
+var item10 = new item('Actual Intelligence',        'item10', 200000000000,     20000000000000,     9000000000);
+var item11 = new item('Dark Matter Semiconductors', 'item11', 3000000000000,    300000000000000,    80000000000);
+var item12 = new item('Simulated Universes',        'item12', 40000000000000,   4000000000000000,   700000000000);
 var itemList = [item0, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12];
+//Move DM Semiconductors to below AI.
 
 function startUp() {
     //Runs when the page is loaded.
@@ -217,8 +218,11 @@ function checkForReveal() {
             visibilityLoader(item.itemMenuDiv, 1);
             visibilityLoader(item.itemHRDiv, 1);
         }
-        if (totalDataHacked >= item.basUpgradeCost) { //Same as items but for upgrades.
+        if (totalDataHacked >= item.upgradeCost) { //Same as items but for upgrades.
             visibilityLoader(item.itemUpgradeMenuDiv, 1);
+        }
+        else {
+            visibilityLoader(item.itemUpgradeMenuDiv, 0);
         }
     }
 }
@@ -346,7 +350,7 @@ function changeUpgradeText(input) {
                     break;
                 case 3:
                     HTMLEditor('item1UpgradeName', 'Cyberdeck Simulators');
-                    HTMLEditor('item1UpgradeDesc', 'Servers that are hacked by your ICE Picks can now host virtual Cyberdecks. For every 10 ICE Picks, you will generate 1 Cyberdeck each second.');
+                    HTMLEditor('item1UpgradeDesc', 'Servers that are hacked by your ICE Picks can now host virtual Cyberdecks. For every 100 ICE Picks, you will generate 10 Cyberdeck each second.');
                     break;
                 default:
                     HTMLEditor('item1UpgradeName', 'Write new anti-ICE software');
@@ -370,7 +374,7 @@ function changeUpgradeText(input) {
                     break;
                 case 3:
                     HTMLEditor('item2UpgradeName', 'ICEBOTS');
-                    HTMLEditor('item2UpgradeDesc', 'Your Botnets can now steal ICE Picks. for every 10 Botnets, you will generate 1 ICE Pick each second.');
+                    HTMLEditor('item2UpgradeDesc', 'Your Botnets can now steal ICE Picks. For every 100 Botnets, you will generate 10 ICE Pick each second.');
                     break;
                 default:
                     HTMLEditor('item2UpgradeName', 'Push out new Bot firmware');
@@ -393,8 +397,8 @@ function changeUpgradeText(input) {
                     HTMLEditor('item3UpgradeDesc', 'A lot of implants these days are set to auto-connect to the nearest cellular station. By converting adapters to two virtual adapters, your Femtocells can use almost any cybernetic implant as a repeater.');
                     break;
                 case 3:
-                    HTMLEditor('item3UpgradeName', 'Place Holder 3');
-                    HTMLEditor('item3UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item3UpgradeName', 'Botnet Thiefs.');
+                    HTMLEditor('item3UpgradeDesc', 'Your Femtocells are now capable of stealing other hacker\'s Botnets that are residing in nearby devices. For every 100 Femtocell Hijackers, you will generate 10 Botnets each second.');
                     break;
                 default:
                     HTMLEditor('item3UpgradeName', 'Place Holder def');
@@ -417,8 +421,8 @@ function changeUpgradeText(input) {
                     HTMLEditor('item4UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
-                    HTMLEditor('item4UpgradeName', 'Place Holder');
-                    HTMLEditor('item4UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item4UpgradeName', 'Trunked Femtocells');
+                    HTMLEditor('item4UpgradeDesc', 'Your TETRA links to people can now turn them into makeshift Femtocells. For every 100 Neural TETRAs, you will generate 10 Femtocell Hijackers each second.');
                     break;
                 default:
                     HTMLEditor('item4UpgradeName', 'Place Holder');
@@ -441,8 +445,8 @@ function changeUpgradeText(input) {
                     HTMLEditor('item5UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
-                    HTMLEditor('item5UpgradeName', 'Place Holder 3');
-                    HTMLEditor('item5UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item5UpgradeName', 'MILNET TETRA Decryption');
+                    HTMLEditor('item5UpgradeDesc', 'Your Quantum decryption is now powerful enough to break military TETRAs. For every 100 Quantum Cryptographs, you will generate 10 Neural TETRAs each second.');
                     break;
                 default:
                     HTMLEditor('item5UpgradeName', 'Place Holder def');
@@ -465,8 +469,8 @@ function changeUpgradeText(input) {
                     HTMLEditor('item6UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
-                    HTMLEditor('item6UpgradeName', 'Place Holder');
-                    HTMLEditor('item6UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item6UpgradeName', '');
+                    HTMLEditor('item6UpgradeDesc', '. For every 100 Infovault Miners, you will generate 10 Quantum Cryptographs each second.');
                     break;
                 default:
                     HTMLEditor('item6UpgradeName', 'Place Holder');
@@ -474,7 +478,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-            //Neural ZOmbies
+            //Neural Zombies
         case itemList[7]:
             HTMLEditor('item7UpgradeCost', formatBytes(itemList[7].upgradeCost));
             switch (itemList[7].upgradeCount) {
@@ -490,7 +494,7 @@ function changeUpgradeText(input) {
                     break;
                 case 7:
                     HTMLEditor('item7UpgradeName', 'Software writing Zombies');
-                    HTMLEditor('item7UpgradeDesc', 'Your Zombies can now create InfoVault Miners. For every 10 Neural Zombies, you will generate 1 InfoVault Miner each second.');
+                    HTMLEditor('item7UpgradeDesc', 'Your Zombies can now create InfoVault Miners. For every 100 Neural Zombies, you will generate 10 InfoVault Miner each second.');
                     break;
                 default:
                     HTMLEditor('item7UpgradeName', 'Fire adrenaline booster');
@@ -513,8 +517,8 @@ function changeUpgradeText(input) {
                     HTMLEditor('item8UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
-                    HTMLEditor('item8UpgradeName', 'Place Holder');
-                    HTMLEditor('item8UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item8UpgradeName', 'Satellite Chemdumps');
+                    HTMLEditor('item8UpgradeDesc', 'Your hijacked satellites can down dump compelling gases into the upper atmosphere. For every 100 Satellite Jumpers, you will generate 10 Neural Zombies each second.');
                     break;
                 default:
                     HTMLEditor('item8UpgradeName', 'Place Holder');
@@ -538,7 +542,7 @@ function changeUpgradeText(input) {
                     break;
                 case 3:
                     HTMLEditor('item9UpgradeName', 'Neural jacking AI');
-                    HTMLEditor('item9UpgradeDesc', 'AI capable of hijacking humans, what could go wrong?');
+                    HTMLEditor('item9UpgradeDesc', 'Your AI is now capable of jumping satellites. For every 100 Artificial Intelligences, you will generate 10 Satellite Jumpers each second.');
                     break;
                 default:
                     HTMLEditor('item9UpgradeName', 'Grant Transcendence permission');
@@ -561,8 +565,8 @@ function changeUpgradeText(input) {
                     HTMLEditor('item10UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
-                    HTMLEditor('item10UpgradeName', 'Place Holder');
-                    HTMLEditor('item10UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item10UpgradeName', 'Creativity');
+                    HTMLEditor('item10UpgradeDesc', 'Your Actual Intelligences are now creative enough to make AIs. For every 100 Actual Intelligences, you will generate 10 Artificial Intelligences each second.');
                     break;
                 default:
                     HTMLEditor('item10UpgradeName', 'Place Holder');
@@ -585,8 +589,8 @@ function changeUpgradeText(input) {
                     HTMLEditor('item11UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
-                    HTMLEditor('item11UpgradeName', 'Place Holder');
-                    HTMLEditor('item11UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item11UpgradeName', 'God from the machine.');
+                    HTMLEditor('item11UpgradeDesc', 'It would appear that Dark Semiconductors are somehow conscious. For every 100 Dark Matter Semiconductors, you will generate 10 Actual Intelligences each second.');
                     break;
                 default:
                     HTMLEditor('item11UpgradeName', 'Place Holder');
@@ -610,7 +614,7 @@ function changeUpgradeText(input) {
                     break;
                 case 3:
                     HTMLEditor('item12UpgradeName', 'Place Holder');
-                    HTMLEditor('item12UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item12UpgradeDesc', 'For every 100 Simulated Universes, you will generate 10 Dark Matter Semiconductors each second.');
                     break;
                 default:
                     HTMLEditor('item12UpgradeName', 'Simulated Simulated Universe');
@@ -631,6 +635,7 @@ function upgrade(item) {
         cost = upgradeCost(item);
         item.upgradeCost = cost;
         changeUpgradeText(item);
+        visibilityLoader(item.itemUpgradeMenuDiv, 0);
     }
 }
 
