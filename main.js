@@ -463,12 +463,12 @@ function changeUpgradeText(input) {
                     HTMLEditor('item6UpgradeDesc', 'Place Holder');
                     break;
                 case 3:
-                    HTMLEditor('item6UpgradeName', 'PH');
+                    HTMLEditor('item6UpgradeName', 'PlaceHolder');
                     HTMLEditor('item6UpgradeDesc', 'For every 100 Infovault Miners, you will generate 10 Quantum Cryptographs each second.');
                     break;
                 default:
-                    HTMLEditor('item6UpgradeName', 'Place Holder');
-                    HTMLEditor('item6UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item6UpgradeName', 'Major heist');
+                    HTMLEditor('item6UpgradeDesc', 'A stranger leaves a letter on your doorstep. It\s contents reveal a tale of a cyberbank with lax security and large quantities of corporate secrets.');
                     break;
             }
             break;
@@ -503,8 +503,8 @@ function changeUpgradeText(input) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor('item8UpgradeName', 'Place Holder');
-                    HTMLEditor('item8UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item8UpgradeName', 'Microgravity Computers');
+                    HTMLEditor('item8UpgradeDesc', 'Computers in microgravity are unrestrained by the grips of earth.');
                     break;
                 case 2:
                     HTMLEditor('item8UpgradeName', 'Decommissions');
@@ -539,8 +539,8 @@ function changeUpgradeText(input) {
                     HTMLEditor('item9UpgradeDesc', 'For every 100 Dark Matter Semiconductors, you will generate 10 Satellite Hijackers each second.');
                     break;
                 default:
-                    HTMLEditor('item9UpgradeName', '');
-                    HTMLEditor('item9UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item9UpgradeName', 'Dark Matter refinement');
+                    HTMLEditor('item9UpgradeDesc', 'New technology has just been uncovered to make more efficient Dark Matter.');
                     break;
             }
             break;
@@ -601,14 +601,14 @@ function changeUpgradeText(input) {
                     break;
                 case 1:
                     HTMLEditor('item12UpgradeName', 'Time Dilation');
-                    HTMLEditor('item12UpgradeDesc', 'By implementing time dilation around simulated humans we can gather more data from them without using much more processing power. One side effect is that it may appear that the expansion of their universe is accelerating.');
+                    HTMLEditor('item12UpgradeDesc', 'By implementing time dilation around simulated lifeforms we can gather more data from them without using much more processing power. One side effect is that it may appear that the expansion of their universe is accelerating.');
                     break;
                 case 2:
-                    HTMLEditor('item12UpgradeName', 'Place Holder');
-                    HTMLEditor('item12UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item12UpgradeName', 'HELP IM TRAPPED IN A SIMULATION');
+                    HTMLEditor('item12UpgradeDesc', 'BUT THE SIMULATION IS REALLY BORING');
                     break;
                 case 3:
-                    HTMLEditor('item12UpgradeName', 'Place Holder');
+                    HTMLEditor('item12UpgradeName', 'Simulated Intelligence');
                     HTMLEditor('item12UpgradeDesc', 'For every 100 Simulated Universes, you will generate 10 Actual Intelligences each second.');
                     break;
                 default:
