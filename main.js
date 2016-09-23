@@ -1,39 +1,40 @@
 /*
     ________  __    __________  __  ___   ____ __
-   /  _/ __ \/ /   / ____/ __ \/ / / / | / / //_/
-   / // / / / /   / __/ / /_/ / / / /  |/ / ,<   
- _/ // /_/ / /___/ /___/ ____/ /_/ / /|  / /| |  
+   /  _/ __ \/ /   / ____/ __ \/ / / / | / / // _/
+   / //  / / / /   / __/ / /_/ / / / /  |/ / ,<   
+ _/ //  /_/ / /___/ /___/ ____/ /_/ / /|  / /| |  
 /___/_____/_____/_____/_/    \____/_/ |_/_/ |_|  
+A thing by Asher.
 */                                                 
-const tickRate = 10; //The number of ticks per second.
-let lastTick = new Date().getTime(); //The time that the last tick occurred
-let autoSaveTimer = 0; //Increases every tick so that the game doesn't auto save every tick.
-let dataHacked = 0; //Data, less what has been spent.
-let totalDataHacked = 0; //The total amount of data that has been hacked.
+const tickRate = 10; // The number of ticks per second.
+let lastTick = new Date().getTime(); // The time that the last tick occurred
+let autoSaveTimer = 0; // Increases every tick so that the game doesn't auto save every tick.
+let dataHacked = 0; // Data, less what has been spent.
+let totalDataHacked = 0; // The total amount of data that has been hacked.
 let itemConstructor = function(name, ID, baseCost, upgradeCost, baseIncome) {
-    this.name = name; //The name of the item, not really used for anything except debugging.
-    this.ID = ID; //The identifier, usually prefixed to the name of the HTML Div.
-    this.baseCost = baseCost; //The initial cost of the item, the future costs are calculated from this.
-    this.upgradeCost = upgradeCost; //The initial cost of the first upgrade, all upgrade costs are based on this.
+    this.name 			= name; // The name of the item, not really used for anything except debugging.
+    this.ID 			= ID; // The identifier, usually prefixed to the name of the HTML Div.
+    this.baseCost 		= baseCost; // The initial cost of the item, the future costs are calculated from this.
+    this.upgradeCost 	= upgradeCost; // The initial cost of the first upgrade, all upgrade costs are based on this.
     this.basUpgradeCost = upgradeCost;
-    this.baseIncome = baseIncome; //The initial amount of data this generates, the total is this * number of upgrades.
-    this.itemCount = 0; //The amount you have of this item.
-    this.upgradeCount = 0; //The number of upgrades you have for this item.
-    //These are the names of the divs associated with this item.
-    this.itemCostDiv = this.ID + 'Cost';
-    this.itemCountDiv = this.ID + 'Number';
-    this.itemRateDiv = this.ID + 'Rate';
-    this.itemRateTotalDiv = this.ID + 'RateTotal';
-    this.itemNumberMaxDiv = this.ID + 'NumberMax';
-    this.itemAutobuyRate = this.ID + 'CreationRate';
-    this.itemMenuDiv = this.ID + 'Menu';
+    this.baseIncome 	= baseIncome; // The initial amount of data this generates, the total is this * number of upgrades.
+    this.itemCount 		= 0; // The amount you have of this item.
+    this.upgradeCount 	= 0; // The number of upgrades you have for this item.
+    // These are the names of the divs associated with this item.
+    this.itemCostDiv 		= this.ID + 'Cost';
+    this.itemCountDiv 		= this.ID + 'Number';
+    this.itemRateDiv 		= this.ID + 'Rate';
+    this.itemRateTotalDiv 	= this.ID + 'RateTotal';
+    this.itemNumberMaxDiv 	= this.ID + 'NumberMax';
+    this.itemAutobuyRate 	= this.ID + 'CreationRate';
+    this.itemMenuDiv 		= this.ID + 'Menu';
     this.itemUpgradeMenuDiv = this.ID + 'UpgradeMenu';
-    this.itemHRDiv = this.ID + 'HR';
-    this.upgradeCostDiv = this.ID + 'UpgradeCost';
+    this.itemHRDiv 			= this.ID + 'HR';
+    this.upgradeCostDiv 	= this.ID + 'UpgradeCost';
 };
 
-//These must be let instead of const because they are changed when load() is called.
-//            			          name                          ID       Base item cost    Base upgrade cost   Base income
+// These must be let instead of const because they are changed when load() is called.
+//             			          name                          ID       Base item cost    Base upgrade cost   Base income
 let item0  = new itemConstructor('Cyberdeck',                  'item0',  10,               1000,               1);
 let item1  = new itemConstructor('ICE Pick',                   'item1',  200,              20000,              9);
 let item2  = new itemConstructor('Botnet',                     'item2',  3000,             300000,             80);
@@ -47,17 +48,18 @@ let item9  = new itemConstructor('Dark Matter Semiconductors', 'item9',  1000000
 let item10 = new itemConstructor('Actual Intelligence',        'item10', 200000000000,     20000000000000,     9000000000);
 let item11 = new itemConstructor('Artificial Intelligences',   'item11', 3000000000000,    300000000000000,    80000000000);
 let item12 = new itemConstructor('Simulated Universes',        'item12', 40000000000000,   4000000000000000,   700000000000);
+																		// PS I <3 right angled triangles.
+																		// PPS aligning is justified.
 let itemList = [item0, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12];
-//Move DM Semiconductors to below AI.
 
 function startUp() {
-    //Runs when the page is loaded.
-    document.getElementById('all').style.display = 'inline'; //Display is set to none in css to hide the body while loading, this makes it visible.
-    //Gives player enough data to buy the first cyberdeck.
+    // Runs when the page is loaded.
+    document.getElementById('all').style.display = 'inline'; // Display is set to none in css to hide the body while loading, this makes it visible.
+    // Gives player enough data to buy the first cyberdeck.
     dataHacked = 10;
     totalDataHacked = 10;
-    load(); //Loads the save, remove to disable autoloading on refresh.
-    //This hides the item menus, HRs and upgrades when the game loads, checkForReveal() with show the relevant ones on the first tick.
+    load(); // Loads the save, remove to disable autoloading on refresh.
+    // This hides the item menus, HRs and upgrades when the game loads, checkForReveal() with show the relevant ones on the first tick.
     for (let i = itemList.length - 1; i >= 0; i--) {
         const item = itemList[i];
         visibilityLoader(item.itemMenuDiv, 0);
@@ -67,79 +69,80 @@ function startUp() {
 }
 
 function save() {
-    //Saves these objects + variables to local storage.
+    // Saves this stuff to a local key.
     const savegame = {
         dataHacked: dataHacked,
         totalDataHacked: totalDataHacked,
         itemList: itemList
     };
-    localStorage.setItem('save', JSON.stringify(savegame));
+    // Objects get weird if you save them as a local key, so it is converted to a string first.
+    localStorage.setItem('IdlepunkSave', JSON.stringify(savegame));
 }
 
 function load() {
-    //Loads objects + vars from local storage.
-    const savegame = JSON.parse(localStorage.getItem('save'));
-    if (savegame) { //If save is not null or undefined, load.
-        dataHacked = savegame.dataHacked; //Single let.
-        totalDataHacked = savegame.totalDataHacked; //Single let.
-        itemList = savegame.itemList; //Loads itemList.
-        //ItemList only references items, so each item has to be loaded.
+    // Loads objects + vars from local storage.
+    const savegame = JSON.parse(localStorage.getItem('IdlepunkSave')); // Converts string to object.
+    if (savegame) { // If save exists, load.
+        dataHacked 		= savegame.dataHacked; // Single var.
+        totalDataHacked = savegame.totalDataHacked; // Single var.
+        itemList 		= savegame.itemList; // Loads itemList.
+        // ItemList only references items, so each item has to be loaded.
         for (let i = itemList.length - 1; i >= 0; i--) {
-            let item = window['item' + i];
-            item = itemList[i];
+            let item = window['item' + i]; 
+            item = itemList[i]; // Loads local object to global object.
         }
     }
-    //Upgrade text is not refreshed each tick so this sets them properly.
+    // Upgrade text is not refreshed each tick so this sets them properly.
     for (let i = itemList.length - 1; i >= 0; i--) changeUpgradeText(itemList[i]);
 }
 
 function newGame() {
-    //Deletes the save then reloads the game.
-    if (confirm('Are you sure you want to start a new game?')) {
-    	localStorage.removeItem('save');
-	    location.reload(true); // reload(true) forces reload from server, ignores cache, this is probably not necessary.
+    // Deletes the save then reloads the game.
+    if (confirm('Are you sure you want to start a new game?')) { // Nobody likes misclicks.
+    	localStorage.removeItem('IdlepunkSave');
+	    location.reload(true); //  reload(true) forces reload from server, ignores cache, this is probably not necessary.
 	}
 }
 
 function jackIn(number) {
-    //Adds a number of data based on argument.
-    //Currently only used for debugging.
+    // Adds a number of data based on argument.
+    // Currently only used for debugging (cheating).
     dataHacked = dataHacked + number;
     HTMLEditor('dataHacked', formatBytes(dataHacked));
     totalDataHacked += number;
 }
 
 function HTMLEditor(elementID, input) {
-    //changes the inner HTML of an element.
+    // changes the inner HTML of an element.
     document.getElementById(elementID).innerHTML = input;
 }
 
 function visibilityLoader(elementID, visibility) {
-    //Either hides or shows an element depending on arguments.
+    // Either hides or shows an element depending on arguments.
     if (visibility === 1) visibility = 'visible';
     else if (visibility === 0) visibility = 'hidden';
     document.getElementById(elementID).style.visibility = visibility;
 }
 
 function destroyFloats(input) {
-    //Sets dataHacked to 1 decimal place.
-    //Used to avoid float rounding errors.
-    //Should be called whenever decimal changes are made to data.
+    // Sets dataHacked to 1 decimal place.
+    // Used to avoid float rounding errors.
+    // Should be called whenever decimal changes are made to data.
     dataHacked = parseFloat(parseFloat(dataHacked).toFixed(1));
     totalDataHacked = parseFloat(parseFloat(totalDataHacked).toFixed(1));
 }
 
 function formatBytes(bytes) {
-    //Converts a number of Bytes into a data format. E.g. 3000 bytes -> 3KB.
+    // Converts a number of Bytes into a data format. E.g. 3000 bytes -> 3KB.
     bytes = Math.round(bytes);
     if (bytes < 999099999999999999999999999) {
         if (bytes === 0) return '0 Bytes';
         if (bytes === 1) return '1 Byte';
-        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']; //Can someone please invent more data sizes?
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']; // Can someone please invent more data sizes?
         const i = Math.floor(Math.log(bytes) / Math.log(1000));
         return parseFloat((bytes / Math.pow(1000, i)).toFixed(3)) + ' ' + sizes[i];
     } else {
-        //If it is larger than the largest data format (9999 Yottabytes), shows scientific notation of Bytes instead.
+        // If it is larger than the largest data format (9999 Yottabytes), shows scientific notation of Bytes instead.
         bytes = bytes.toExponential(2);
         bytes += ' Bytes';
         return bytes;
@@ -147,9 +150,9 @@ function formatBytes(bytes) {
 }
 
 function formatNumbers(number) {
-    //Converts a number of number into a data format.
-    //if it is less than 1 million it shows the normal number.
-    //if it is greater than 1 million it shows the number name, e.g. 1.34 million.
+    // Converts a number of number into a data format.
+    // if it is less than 1 million it shows the normal number.
+    // if it is greater than 1 million it shows the number name, e.g. 1.34 million.
     number = Math.round(number);
     if (number > 99999) {
         const sizes = [
@@ -161,36 +164,35 @@ function formatNumbers(number) {
         'Quadrillion',
         'Quintillion',
         'Sextillion',
-        'Septillion'];
+        'Septillion',
+        'Okay, you can stop playing now.'];
         const i = Math.floor(Math.log(number) / Math.log(1000));
         return parseFloat((number / Math.pow(1000, i)).toFixed(0)) + ' ' + sizes[i];
     } 
-    else {
-        return number;
-    }
+    else return number;
 }
 
 function maxItem(item) {
-    //Calculates the maximum number of items based on upgrades
-    //Number of upgrades = maximum items
-    //0 = 100
-    //1 = 100
-    //2 = 100
-    //3 = 1000
-    //4 = 10000
-    //5 = 100000
-    //6 = 1000000
-    //etc 
+    // Calculates the maximum number of items based on upgrades
+    // Number of upgrades = maximum items
+    // 0 = 100
+    // 1 = 100
+    // 2 = 100
+    // 3 = 1000
+    // 4 = 10000
+    // 5 = 100000
+    // 6 = 1000000
+    // etc 
     if (item.upgradeCount >= 2) {
-        const max = 100 * Math.pow(10, (item.upgradeCount - 2)); //100 * 10^(Upgrades-2)
+        const max = 100 * Math.pow(10, (item.upgradeCount - 2)); // 100 * 10^(Upgrades-2)
         return max;
     } 
     else return 100;
 }
 
 function refreshUI() {
-    //Updates most UI elements.
-    //Some elements that require heavy calculations are not updated here.
+    // Updates most UI elements.
+    // Some elements that require heavy calculations are not updated here.
     HTMLEditor('dataHacked', formatBytes(Math.floor(dataHacked)));
     HTMLEditor('totalDataHacked', formatBytes(Math.floor(totalDataHacked)));
     for (let i = itemList.length - 1; i >= 0; i--) {
@@ -203,10 +205,10 @@ function refreshUI() {
 }
 
 function checkForReveal() {
-    //Checks if any elements should be revealed.
+    // Checks if any elements should be revealed.
     for (let i = itemList.length - 1; i >= 0; i--) {
-        let item = itemList[i];
-        if (totalDataHacked >= item.baseCost) { //Items are revealed when the all time amount of data surpasses the base cost of the item.
+        let item = itemList[i]; // It just looks cleaner this way.
+        if (totalDataHacked >= item.baseCost) { // Items are revealed when the all time amount of data surpasses the base cost of the item.
             visibilityLoader(item.itemMenuDiv, 1);
             visibilityLoader(item.itemHRDiv, 1);
         }
@@ -216,63 +218,63 @@ function checkForReveal() {
 }
 
 function increment(updateUI = true) {
-    //Generates income based on items.
-    let totalIncome = 0; //The total amount for all items for this tick.
-    let incomePerSecondTotal; //The amount that all items of a single type will generate in 1 second.
-    let incomePerItem; //The amount that a single item will generate in 1 tick.
-    let incomePerTick; //The amount that all items of a single type will generate in a single tick.
-    let incomePerItemPerSecond; //The amount that a single item will generate in one second.
+    // Generates income based on items.
+    let totalIncome = 0; // The total amount for all items for this tick.
+    let incomePerSecondTotal; // The amount that all items of a single type will generate in 1 second.
+    let incomePerItem; // The amount that a single item will generate in 1 tick.
+    let incomePerTick; // The amount that all items of a single type will generate in a single tick.
+    let incomePerItemPerSecond; // The amount that a single item will generate in one second.
     let item;
-    for (let i = itemList.length - 1; i >= 0; i--) { //Iterating through loops backwards is more efficient as the array length only has to be calculated once.
+    for (let i = itemList.length - 1; i >= 0; i--) { // Iterating through loops backwards is more efficient as the array length only has to be calculated once.
         item = itemList[i];
-        //Maths!
+        // Maths!
         incomePerItem           = (item.baseIncome / tickRate) * Math.pow(2, item.upgradeCount);
         incomePerItemPerSecond  = incomePerItem * tickRate;
         incomePerSecondTotal    = incomePerItemPerSecond * item.itemCount;
         incomePerTick           = incomePerItem * item.itemCount;
-        //Increases the data.
+        // Increases the data.
         dataHacked += incomePerTick;
         totalDataHacked += incomePerTick;
-        destroyFloats(); //Fixes float rounding errors.
-        //Updates items UI.
+        destroyFloats(); // Fixes float rounding errors.
+        // Updates items UI.
         if (updateUI) {
         	HTMLEditor(item.itemRateDiv, formatBytes(incomePerItemPerSecond));
         	HTMLEditor(item.itemRateTotalDiv, formatBytes(incomePerSecondTotal));
     	}
-        //Adds this items income to the total income for this second.
+        // Adds this items income to the total income for this second.
         totalIncome += incomePerSecondTotal;
     }
-    if (updateUI) HTMLEditor('totalIncome', formatBytes(totalIncome)); //Updates data UI.
+    if (updateUI) HTMLEditor('totalIncome', formatBytes(totalIncome)); // Updates data UI.
 }
 
 function autoBuyLoader(updateUI) {
-    //Checks if tierX item should buy tierX-1 items.
+    // Checks if tierX item should buy tierX-1 items.
     for (let i = itemList.length - 1; i >= 0; i--) {
-    	//The first item cannot autobuy the tier below as it is the first tier.
+    	// The first item cannot autobuy the tier below as it is the first tier.
         if (i != 0) autoBuy(itemList[i-1], itemList[i], updateUI);
     }
 }
 
 function autoBuy(firstItem, secondItem, updateUI = true) {
     const max = maxItem(firstItem);
-    //If the requisite upgrade is met and you have less than the max number if items.
+    // If the requisite upgrade is met and you have less than the max number if items.
     if (secondItem.upgradeCount >= 4 && firstItem.itemCount < max) {
-        //Buys a number of items of the tier below equal to the number of current tier items divided by 10.
+        // Buys a number of items of the tier below equal to the number of current tier items divided by 10.
         firstItem.itemCount += Math.floor(secondItem.itemCount / 100);
-        //If autoBuy buys more than the max allowed items, sets the number of items to the max.
+        // If autoBuy buys more than the max allowed items, sets the number of items to the max.
         if (firstItem.itemCount > max) firstItem.itemCount = max;
-        //Updates UI.
+        // Updates UI.
         if (updateUI) HTMLEditor(secondItem.itemAutobuyRate, Math.floor(secondItem.itemCount / 100) * 10);
     }
 }
 
 function upgrade(item) {
-    //Upgrades an item.
+    // Upgrades an item.
     let cost = upgradeCost(item);
-    if (dataHacked >= item.upgradeCost) { //Checks if player can afford upgrade.
-        dataHacked -= item.upgradeCost; //Subtracts cost of upgrade.
-        item.upgradeCount++; //Increments upgrade counter.
-        //recalculates then displays the cost of the next upgrade.
+    if (dataHacked >= item.upgradeCost) { // Checks if player can afford upgrade.
+        dataHacked -= item.upgradeCost; // Subtracts cost of upgrade.
+        item.upgradeCount++; // Increments upgrade counter.
+        // recalculates then displays the cost of the next upgrade.
         cost = upgradeCost(item);
         item.upgradeCost = cost;
         changeUpgradeText(item);
@@ -281,36 +283,37 @@ function upgrade(item) {
 }
 
 function upgradeCost(item) {
-    //Calculates cost of next upgrade.
+    // Calculates cost of next upgrade.
     return item.upgradeCost * Math.pow(10, item.upgradeCount);
 }
 
 function buyItem(item, count) {
-    //Buys an item
+    // Attempts to buy a number of items.
     const max = maxItem(item);
-    for (let i = 0; i < count; i++) { //Tries to by this many items.
-        const cost = buyCost(item); //Calculates cost of item.
-        if (dataHacked >= cost && item.itemCount < max) { //Checks if player can afford cost.
-            dataHacked -= cost; //Subtracts cost of item.
-            item.itemCount++; //Increments item.
+    for (let i = 0; i < count; i++) { // Tries to by this many items.
+        const cost = buyCost(item); // Calculates cost of item.
+        if (dataHacked >= cost && item.itemCount < max) { // Player must be able to afford the item and have less than the max allowed items.
+            dataHacked -= cost; // Subtracts cost of item.
+            item.itemCount++; // Increments item.
         } 
         else break;
     }
 }
 
 function buyCost(item) {
-    //Calculates cost of item.
+    // Calculates cost of item.
     return Math.floor(item.baseCost * Math.pow(1.15, item.itemCount));
 }
 
 function changeUpgradeText(input) {
-    //Changes upgrade text and cost.
+    // Changes upgrade text and cost.
+    // Holy mother of god this got out of hand, should probably use a map.
     switch (input) {
-        //Checks what item is being upgraded
-        //Cyberdeck
+        // Checks what item is being upgraded
+        // Cyberdeck
         case itemList[0]:
             HTMLEditor('item0UpgradeCost', formatBytes(itemList[0].upgradeCost));
-            switch (itemList[0].upgradeCount) { //Checks what upgrades the item already has.
+            switch (itemList[0].upgradeCount) { // Checks what upgrades the item already has.
                 case 0:
                     break;
                 case 1:
@@ -331,7 +334,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-            //ICE Pick
+            // ICE Pick
         case itemList[1]:
             HTMLEditor('item1UpgradeCost', formatBytes(itemList[1].upgradeCost));
             switch (itemList[1].upgradeCount) {
@@ -355,7 +358,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-            //Botnet
+            // Botnet
         case itemList[2]:
             HTMLEditor('item2UpgradeCost', formatBytes(itemList[2].upgradeCost));
             switch (itemList[2].upgradeCount) {
@@ -379,7 +382,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-            //Femtocell
+            // Femtocell
         case itemList[3]:
             HTMLEditor('item3UpgradeCost', formatBytes(itemList[3].upgradeCost));
             switch (itemList[3].upgradeCount) {
@@ -403,7 +406,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-            //TETRA
+            // TETRA
         case itemList[4]:
             HTMLEditor('item4UpgradeCost', formatBytes(itemList[4].upgradeCost));
             switch (itemList[4].upgradeCount) {
@@ -427,7 +430,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-            //Quantum Crypto
+            // Quantum Crypto
         case itemList[5]:
             HTMLEditor('item5UpgradeCost', formatBytes(itemList[5].upgradeCost));
             switch (itemList[5].upgradeCount) {
@@ -451,7 +454,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-            //Infovault Mining
+            // Infovault Mining
         case itemList[6]:
             HTMLEditor('item6UpgradeCost', formatBytes(itemList[6].upgradeCost));
             switch (itemList[6].upgradeCount) {
@@ -475,7 +478,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-            //Neural Zombies
+            // Neural Zombies
         case itemList[7]:
             HTMLEditor('item7UpgradeCost', formatBytes(itemList[7].upgradeCost));
             switch (itemList[7].upgradeCount) {
@@ -499,7 +502,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-            //Satellite Jumpers
+            // Satellite Jumpers
         case itemList[8]:
             HTMLEditor('item8UpgradeCost', formatBytes(itemList[8].upgradeCost));
             switch (itemList[8].upgradeCount) {
@@ -518,12 +521,12 @@ function changeUpgradeText(input) {
                     HTMLEditor('item8UpgradeDesc', 'Your hijacked satellites can down dump compelling gases into the upper atmosphere. For every 100 Satellite Jumpers, you will generate 10 Neural Zombies each second.');
                     break;
                 default:
-                    HTMLEditor('item8UpgradeName', 'Place Holder');
-                    HTMLEditor('item8UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item8UpgradeName', 'GPS Infection');
+                    HTMLEditor('item8UpgradeDesc', 'Time data sent from satellites to GPs receivers can be infected, causing an entire geographical region to surrender their data.');
                     break;
             }
             break;
-                   //Dark Matter Semiconductors
+                   // Dark Matter Semiconductors
         case itemList[9]:
             HTMLEditor('item9UpgradeCost', formatBytes(itemList[9].upgradeCost));
             switch (itemList[9].upgradeCount) {
@@ -547,7 +550,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-            //Art Int
+            // Art Int
         case itemList[10]:
             HTMLEditor('item10UpgradeCost', formatBytes(itemList[10].upgradeCost));
             switch (itemList[10].upgradeCount) {
@@ -571,7 +574,7 @@ function changeUpgradeText(input) {
                     break;
             }
             break;
-            //Act Int
+            // Act Int
         case itemList[11]:
             HTMLEditor('item11UpgradeCost', formatBytes(itemList[11].upgradeCost));
             switch (itemList[11].upgradeCount) {
@@ -596,7 +599,7 @@ function changeUpgradeText(input) {
             }
             break;
 
-            //Sim Universe
+            // Sim Universe
         case itemList[12]:
             HTMLEditor('item12UpgradeCost', formatBytes(itemList[12].upgradeCost));
             switch (itemList[12].upgradeCount) {
@@ -624,39 +627,38 @@ function changeUpgradeText(input) {
 }
 
 function updateGame() {
-    //The main loop, it calls itself at the end.
-    const now = new Date().getTime(); //The current time.
-    const deltaTime = now - lastTick; //The amount of time in ms since the last tick occurred.
-    const ticksToExecute = Math.floor(deltaTime / (1000 / tickRate)); //The number of ticks that should have happened since the last tick occurred.
+    // The main loop, it calls itself at the end.
+    const now = new Date().getTime(); // The current time.
+    const deltaTime = now - lastTick; // The amount of time in ms since the last tick occurred.
+    const ticksToExecute = Math.floor(deltaTime / (1000 / tickRate)); // The number of ticks that should have happened since the last tick occurred.
     if (ticksToExecute === 1){
-    //This is what should normally happen, calculations and UI updates happen once per tick.
+    // This is what should normally happen, calculations and UI updates happen once per tick.
+    	// This doesn't need to be a loop anymore.
         for (let i = 0; i < ticksToExecute; i++) {
-            //console.log('Delta Normal: ' + ticksToExecute);
-            lastTick = now; //Updates the time of the most recent tick.
+            lastTick = now; // Updates the time of the most recent tick.
             autoBuyLoader();
             increment();
             checkForReveal();
             autoSaveTimer++;
-            if (autoSaveTimer >= 300) { //Once per second.
+            if (autoSaveTimer >= tickRate) { // Once per second.
                 save();
                 autoSaveTimer = 0;
             }
         }
     }
-    else if (ticksToExecute > 1) { //This must be an else if because TTE may be 0.
-    //If TTE is greater than 1 it means that the game has not been running, likely because the player is alt tabbed or the tab has been closed (or the game is running on a very slow computer).
-    //Therefore we want to quickly do all the things that would have happened if the game was running as normal.
-    //We want to do all the calculations without having to update the UI, reveal elements, or save the game, until all ticks have been executed and the game is all caught up.
+    else if (ticksToExecute > 1) { // This must be an else if because TTE may be 0.
+    // If TTE is greater than 1 it means that the game has not been running, likely because either the player is alt tabbed or the game has been closed (or the game is running on a very slow computer).
+    // Therefore we want to quickly do all the things that would have happened if the game was running as normal.
+    // We want to do all the calculations without having to update the UI, reveal elements, or save the game until all ticks have been executed and the game is all caught up.
         for (let i = 0; i < ticksToExecute; i++) {
-            //console.log('Delta Abnormal: ' + ticksToExecute);
-            //Does normal maths but tells the functions not to update the UI.
+            // Does normal maths but tells the functions not to update the UI.
             autoBuyLoader(false);
             increment(false);
         }
-        lastTick = now; //Updates the time of the most recent tick.
+        lastTick = now; // Updates the time of the most recent tick.
         checkForReveal();
     }
     refreshUI();
-    window.requestAnimationFrame(updateGame); //Calls this function again.
+    window.requestAnimationFrame(updateGame); // Calls this function again.
 }
-window.requestAnimationFrame(updateGame); //If for some reason updateGame cannot call itself, this will call it.
+window.requestAnimationFrame(updateGame); // If for some reason updateGame cannot call itself, this will call it.
