@@ -1,10 +1,9 @@
-let tickRate = 10; //The number of ticks per second.
+const tickRate = 10; //The number of ticks per second.
 let lastTick = new Date().getTime(); //The time that the last tick occurred
 let autoSaveCount = 0; //Increases every tick so that the game doesn't auto save every tick.
-//let autoBuyCount = 0; //Increases every tick so that the game doesn't auto buy every tick.
 let dataHacked = 0; //The current amount of data.
 let totalDataHacked = 0; //The all time total amount of data.
-let item = function(name, ID, baseCost, upgradeCost, baseIncome) {
+let itemConstructor = function(name, ID, baseCost, upgradeCost, baseIncome) {
     this.name = name; //The name of the item, not really used for anything except debugging.
     this.ID = ID; //The identifier, usually prefixed to the name of the HTML Div.
     this.baseCost = baseCost; //The initial cost of the item, the future costs are calculated from this.
@@ -26,20 +25,21 @@ let item = function(name, ID, baseCost, upgradeCost, baseIncome) {
     this.upgradeCostDiv = this.ID + 'UpgradeCost';
 };
 
-//                     name                          ID       cost              Upgrade             Income
-let item0  = new item('Cyberdeck',                  'item0',  10,               1000,               1);
-let item1  = new item('ICE Pick',                   'item1',  200,              20000,              9);
-let item2  = new item('Botnet',                     'item2',  3000,             300000,             80);
-let item3  = new item('Femtocell Hijacker',         'item3',  40000,            4000000,            700);
-let item4  = new item('Neural TETRA',               'item4',  500000,           50000000,           6000);
-let item5  = new item('Quantum Cryptograph',        'item5',  6000000,          600000000,          50000);
-let item6  = new item('Infovault Mining',           'item6',  70000000,         7000000000,         400000);
-let item7  = new item('Neural Zombies',             'item7',  800000000,        80000000000,        3000000);
-let item8  = new item('Satellite Jumpers',          'item8',  9000000000,       900000000000,       20000000);
-let item9  = new item('Dark Matter Semiconductors', 'item9',  10000000000,      1000000000000,      100000000);
-let item10 = new item('Actual Intelligence',        'item10', 200000000000,     20000000000000,     9000000000);
-let item11 = new item('Artificial Intelligences',   'item11', 3000000000000,    300000000000000,    80000000000);
-let item12 = new item('Simulated Universes',        'item12', 40000000000000,   4000000000000000,   700000000000);
+//These must be let instead of const because they are changed when load() is called.
+//            			          name                          ID       cost              Upgrade             Income
+let item0  = new itemConstructor('Cyberdeck',                  'item0',  10,               1000,               1);
+let item1  = new itemConstructor('ICE Pick',                   'item1',  200,              20000,              9);
+let item2  = new itemConstructor('Botnet',                     'item2',  3000,             300000,             80);
+let item3  = new itemConstructor('Femtocell Hijacker',         'item3',  40000,            4000000,            700);
+let item4  = new itemConstructor('Neural TETRA',               'item4',  500000,           50000000,           6000);
+let item5  = new itemConstructor('Quantum Cryptograph',        'item5',  6000000,          600000000,          50000);
+let item6  = new itemConstructor('Infovault Mining',           'item6',  70000000,         7000000000,         400000);
+let item7  = new itemConstructor('Neural Zombies',             'item7',  800000000,        80000000000,        3000000);
+let item8  = new itemConstructor('Satellite Jumpers',          'item8',  9000000000,       900000000000,       20000000);
+let item9  = new itemConstructor('Dark Matter Semiconductors', 'item9',  10000000000,      1000000000000,      100000000);
+let item10 = new itemConstructor('Actual Intelligence',        'item10', 200000000000,     20000000000000,     9000000000);
+let item11 = new itemConstructor('Artificial Intelligences',   'item11', 3000000000000,    300000000000000,    80000000000);
+let item12 = new itemConstructor('Simulated Universes',        'item12', 40000000000000,   4000000000000000,   700000000000);
 let itemList = [item0, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12];
 //Move DM Semiconductors to below AI.
 
@@ -52,7 +52,7 @@ function startUp() {
     load(); //Loads the save, remove to disable autoloading on refresh.
     //This hides the item menus, HRs and upgrades when the game loads.
     for (let i = itemList.length - 1; i >= 0; i--) {
-        let item = itemList[i];
+        const item = itemList[i];
         visibilityLoader(item.itemMenuDiv, 0);
         visibilityLoader(item.itemHRDiv, 0);
         visibilityLoader(item.itemUpgradeMenuDiv, 0);
@@ -61,7 +61,7 @@ function startUp() {
 
 function save() {
     //Saves these objects + variables to local storage.
-    let savegame = {
+    const savegame = {
         dataHacked: dataHacked,
         totalDataHacked: totalDataHacked,
         itemList: itemList
@@ -71,19 +71,18 @@ function save() {
 
 function load() {
     //Loads objects + vars from local storage.
-    let savegame = JSON.parse(localStorage.getItem('save'));
-    let i;
+    const savegame = JSON.parse(localStorage.getItem('save'));
     if (savegame) { //If save is not null or undefined, load.
         dataHacked = savegame.dataHacked; //Single let.
         totalDataHacked = savegame.totalDataHacked; //Single let.
         itemList = savegame.itemList; //Loads itemList.
         //ItemList only references items, so each item has to be loaded.
-        for (i = itemList.length - 1; i >= 0; i--) {
+        for (let i = itemList.length - 1; i >= 0; i--) {
             let item = window['item' + i];
             item = itemList[i];
         }
     }
-    for (i = itemList.length - 1; i >= 0; i--) {
+    for (let i = itemList.length - 1; i >= 0; i--) {
         //Upgrade text is not refreshed each tick so this sets them properly.
         changeUpgradeText(itemList[i]);
     }
@@ -97,6 +96,14 @@ function deleteSave() {
     location.reload();
 }
 
+function jackIn(number) {
+    //Adds a number of data based on argument.
+    //Currently only used for debugging.
+    dataHacked = dataHacked + number;
+    HTMLEditor('dataHacked', formatBytes(dataHacked));
+    totalDataHacked += number;
+}
+
 function HTMLEditor(elementID, input) {
     //changes the inner HTML of an element.
     document.getElementById(elementID).innerHTML = input;
@@ -104,13 +111,8 @@ function HTMLEditor(elementID, input) {
 
 function visibilityLoader(elementID, visibility) {
     //Either hides or shows an element depending on arguments.
-    if (visibility === 1) {
-        visibility = 'visible';
-    } else if (visibility === 0) {
-        visibility = 'hidden';
-    } else {
-        console.log('visibilityLoader broke. elementID: ' + elementID);
-    }
+    if (visibility === 1) visibility = 'visible';
+    else if (visibility === 0) visibility = 'hidden';
     document.getElementById(elementID).style.visibility = visibility;
 }
 
@@ -128,11 +130,9 @@ function formatBytes(bytes) {
     if (bytes < 999099999999999999999999999) {
         if (bytes === 0) return '0 Bytes';
         if (bytes === 1) return '1 Byte';
-        let k = 1000;
-        let dm = 3; //number of decimal places.
-        let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']; //Can someone please invent more data sizes?
-        let i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']; //Can someone please invent more data sizes?
+        const i = Math.floor(Math.log(bytes) / Math.log(1000));
+        return parseFloat((bytes / Math.pow(1000, i)).toFixed(3)) + ' ' + sizes[i];
     } else {
         //If it is larger than the largest data format (9999 Yottabytes), shows scientific notation of Bytes instead.
         bytes = bytes.toExponential(2);
@@ -147,9 +147,7 @@ function formatNumbers(number) {
     //if it is greater than 1 million it shows the number name, e.g. 1.34 million.
     number = Math.round(number);
     if (number > 99999) {
-        let k = 1000;
-        let dm = 0;
-        let sizes = [
+        const sizes = [
         'If you are reading this then you have found a bug! Please contact an exterminator.',
         'Thousand',
         'Million',
@@ -159,21 +157,30 @@ function formatNumbers(number) {
         'Quintillion',
         'Sextillion',
         'Septillion'];
-        let i = Math.floor(Math.log(number) / Math.log(k));
-        number = parseFloat((number / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-        return number;
+        const i = Math.floor(Math.log(number) / Math.log(1000));
+        return parseFloat((number / Math.pow(1000, i)).toFixed(0)) + ' ' + sizes[i];
     } 
     else {
         return number;
     }
 }
 
-function jackIn(number) {
-    //Adds a number of data based on argument.
-    //Currently only used for debugging.
-    dataHacked = dataHacked + number;
-    HTMLEditor('dataHacked', formatBytes(dataHacked));
-    totalDataHacked += number;
+function maxItem(item) {
+    //Calculates the maximum number of items based on upgrades
+    //Number of upgrades = maximum items
+    //0 = 100
+    //1 = 100
+    //2 = 100
+    //3 = 1000
+    //4 = 10000
+    //5 = 100000
+    //6 = 1000000
+    //etc 
+    if (item.upgradeCount >= 2) {
+        const max = 100 * Math.pow(10, (item.upgradeCount - 2)); //100 * 10^(Upgrades-2)
+        return max;
+    } 
+    else return 100;
 }
 
 function refreshUI() {
@@ -190,59 +197,20 @@ function refreshUI() {
     }
 }
 
-function updateGame() {
-    //The main loop, it calls itself at the end.
-    let now = new Date().getTime(); //The current time.
-    let deltaTime = now - lastTick; //The amount of time since the last tick occurred.
-    deltaTime = Math.floor(deltaTime / (1000 / tickRate)); //tickRate is how many ticks per second in MS, 1000 MS per second.
-    if (deltaTime < 2){
-        for (let i = 0; i < deltaTime; i++) {
-            console.log('Delta Normal: ' + deltaTime);
-            lastTick = now; //Updates the time of the most recent tick.
-            autoBuyLoader();
-            increment();
-            checkForReveal();
-            autoSaveCount++;
-            if (autoSaveCount >= tickRate) { //Once per second.
-                save();
-                autoSaveCount = 0;
-            }
-        }
-    }
-    else {
-        for (let i = 0; i < deltaTime; i++) {
-            console.log('Delta Abnormal: ' + deltaTime);
-            autoBuyLoader();
-            increment();
-        }
-        lastTick = now; //Updates the time of the most recent tick.
-        checkForReveal();
-        save();
-        autoSaveCount = 0;
-    }
-    refreshUI();
-    window.requestAnimationFrame(updateGame); //Calls this function again.
-}
-window.requestAnimationFrame(updateGame); //If for some reason updateGame cannot call itself, this will call it.
-
 function checkForReveal() {
     //Checks if any elements should be revealed.
     for (let i = itemList.length - 1; i >= 0; i--) {
-        item = itemList[i];
+        let item = itemList[i];
         if (totalDataHacked >= item.baseCost) { //Items are revealed when the all time amount of data surpasses the base cost of the item.
             visibilityLoader(item.itemMenuDiv, 1);
             visibilityLoader(item.itemHRDiv, 1);
         }
-        if (totalDataHacked >= item.upgradeCost) { //Same as items but for upgrades.
-            visibilityLoader(item.itemUpgradeMenuDiv, 1);
-        }
-        else {
-            visibilityLoader(item.itemUpgradeMenuDiv, 0);
-        }
+        if (totalDataHacked >= item.upgradeCost) visibilityLoader(item.itemUpgradeMenuDiv, 1);
+        else visibilityLoader(item.itemUpgradeMenuDiv, 0);
     }
 }
 
-function increment() {
+function increment(updateUI = true) {
     //Generates income based on items.
     let totalIncome = 0; //The total amount for all items for this tick.
     let incomePerSecondTotal; //The amount that all items of a single type will generate in 1 second.
@@ -262,56 +230,72 @@ function increment() {
         totalDataHacked += incomePerTick;
         destroyFloats(); //Fixes float rounding errors.
         //Updates items UI.
-        HTMLEditor(item.itemRateDiv, formatBytes(incomePerItemPerSecond));
-        HTMLEditor(item.itemRateTotalDiv, formatBytes(incomePerSecondTotal));
+        if (updateUI) {
+        	HTMLEditor(item.itemRateDiv, formatBytes(incomePerItemPerSecond));
+        	HTMLEditor(item.itemRateTotalDiv, formatBytes(incomePerSecondTotal));
+    	}
         //Adds this items income to the total income for this second.
         totalIncome += incomePerSecondTotal;
     }
-    HTMLEditor('totalIncome', formatBytes(totalIncome)); //Updates data UI.
+    if (updateUI) HTMLEditor('totalIncome', formatBytes(totalIncome)); //Updates data UI.
 }
 
-function maxItem(item) {
-    //Calculates the maximum number of items based on upgrades
-    //Number of upgrades = maximum items
-    //0 = 100
-    //1 = 100
-    //2 = 100
-    //3 = 1000
-    //4 = 10000
-    //5 = 100000
-    //6 = 1000000
-    //etc 
-    if (item.upgradeCount >= 2) {
-        let max;
-        max = 100 * Math.pow(10, (item.upgradeCount - 2)); //100 * 10^(Upgrades-2)
-        return max;
-    } else {
-        return 100;
-    }
-}
-
-function autoBuyLoader() {
+function autoBuyLoader(updateUI) {
     //Checks if tierX item should buy tierX-1 items.
     for (let i = itemList.length - 1; i >= 0; i--) {
-        if (i != 0){ //The first item cannot autobuy the tier below as it is the first tier.
-            autoBuy(itemList[i-1], itemList[i]);
-        }
+    	//The first item cannot autobuy the tier below as it is the first tier.
+        if (i != 0) autoBuy(itemList[i-1], itemList[i], updateUI);
     }
 }
 
-function autoBuy(firstItem, secondItem) {
-    let max = maxItem(firstItem);
+function autoBuy(firstItem, secondItem, updateUI = true) {
+    const max = maxItem(firstItem);
     //If the requisite upgrade is met and you have less than the max number if items.
     if (secondItem.upgradeCount >= 4 && firstItem.itemCount < max) {
         //Buys a number of items of the tier below equal to the number of current tier items divided by 10.
         firstItem.itemCount += Math.floor(secondItem.itemCount / 100);
-        if (firstItem.itemCount > max) {
-            //If autoBuy buys more than the max allowed items, sets the number of items to the max.
-            firstItem.itemCount = max;
-        }
+        //If autoBuy buys more than the max allowed items, sets the number of items to the max.
+        if (firstItem.itemCount > max) firstItem.itemCount = max;
         //Updates UI.
-        HTMLEditor(secondItem.itemAutobuyRate, Math.floor(secondItem.itemCount / 100) * 10);
+        if (updateUI) HTMLEditor(secondItem.itemAutobuyRate, Math.floor(secondItem.itemCount / 100) * 10);
     }
+}
+
+function upgrade(item) {
+    //Upgrades an item.
+    let cost = upgradeCost(item);
+    if (dataHacked >= item.upgradeCost) { //Checks if player can afford upgrade.
+        dataHacked -= item.upgradeCost; //Subtracts cost of upgrade.
+        item.upgradeCount++; //Increments upgrade counter.
+        //recalculates then displays the cost of the next upgrade.
+        cost = upgradeCost(item);
+        item.upgradeCost = cost;
+        changeUpgradeText(item);
+        visibilityLoader(item.itemUpgradeMenuDiv, 0);
+    }
+}
+
+function upgradeCost(item) {
+    //Calculates cost of next upgrade.
+    return item.upgradeCost * Math.pow(10, item.upgradeCount);
+}
+
+function buyItem(item, count) {
+    //Buys an item
+    const max = maxItem(item);
+    for (let i = 0; i < count; i++) { //Tries to by this many items.
+        const cost = buyCost(item); //Calculates cost of item.
+        if (dataHacked >= cost && item.itemCount < max) { //Checks if player can afford cost.
+            dataHacked -= cost; //Subtracts cost of item.
+            item.itemCount++; //Increments item.
+        } 
+        else break;
+    }
+}
+
+function buyCost(item) {
+    //Calculates cost of item.
+    return Math.floor(item.baseCost * Math.pow(1.15, item.itemCount));
 }
 
 function changeUpgradeText(input) {
@@ -425,8 +409,8 @@ function changeUpgradeText(input) {
                     HTMLEditor('item4UpgradeDesc', 'Place Holder');
                     break;
                 case 2:
-                    HTMLEditor('item4UpgradeName', 'Place Holder');
-                    HTMLEditor('item4UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item4UpgradeName', 'Assault Barrier Penetration');
+                    HTMLEditor('item4UpgradeDesc', 'Assault Barriers provide cutting edge protection for TETRA links.');
                     break;
                 case 3:
                     HTMLEditor('item4UpgradeName', 'Trunked Femtocells');
@@ -473,8 +457,8 @@ function changeUpgradeText(input) {
                     HTMLEditor('item6UpgradeDesc', 'Place Holder');
                     break;
                 case 2:
-                    HTMLEditor('item6UpgradeName', 'Place Holder');
-                    HTMLEditor('item6UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item6UpgradeName', 'Cascading Switches');
+                    HTMLEditor('item6UpgradeDesc', 'Overwhelm the feeble minds of bank employees by using way too many switch statements.');
                     break;
                 case 3:
                     HTMLEditor('item6UpgradeName', 'PlaceHolder');
@@ -482,7 +466,7 @@ function changeUpgradeText(input) {
                     break;
                 default:
                     HTMLEditor('item6UpgradeName', 'Major heist');
-                    HTMLEditor('item6UpgradeDesc', 'A stranger leaves a letter on your doorstep. It\s contents reveal a tale of a cyberbank with lax security and large quantities of corporate secrets.');
+                    HTMLEditor('item6UpgradeDesc', 'A letter on your doorstep. It\s contents reveal a tale of a cyberbank with lax security and an enticing number of corporate secrets.');
                     break;
             }
             break;
@@ -634,39 +618,41 @@ function changeUpgradeText(input) {
     }
 }
 
-function upgrade(item) {
-    //Upgrades an item.
-    let cost;
-    if (dataHacked >= item.upgradeCost) { //Checks if player can afford upgrade.
-        dataHacked -= item.upgradeCost; //Subtracts cost of upgrade.
-        item.upgradeCount++; //Increments upgrade counter.
-        //Calculates then displays the cost of the next upgrade.
-        cost = upgradeCost(item);
-        item.upgradeCost = cost;
-        changeUpgradeText(item);
-        visibilityLoader(item.itemUpgradeMenuDiv, 0);
+function updateGame() {
+    //The main loop, it calls itself at the end.
+    const now = new Date().getTime(); //The current time.
+    let deltaTime = now - lastTick; //The amount of time since the last tick occurred.
+    deltaTime = Math.floor(deltaTime / (1000 / tickRate)); //tickRate is how many ticks per second in MS, 1000 MS per second.
+    if (deltaTime === 1){
+        for (let i = 0; i < deltaTime; i++) {
+            console.log('Delta Normal: ' + deltaTime);
+            lastTick = now; //Updates the time of the most recent tick.
+            autoBuyLoader();
+            increment();
+            checkForReveal();
+            autoSaveCount++;
+            if (autoSaveCount >= tickRate) { //Once per second.
+                save();
+                autoSaveCount = 0;
+            }
+        }
     }
-}
-
-function upgradeCost(item) {
-    //Calculates cost of next upgrade.
-    return item.upgradeCost * Math.pow(10, item.upgradeCount);
-}
-
-function buyItem(item, count) {
-    //Buys an item
-    let cost;
-    let max = maxItem(item);
-    for (let i = 0; i < count; i++) { //Tries to by this many items.
-        cost = buyCost(item); //Calculates cost of item.
-        if (dataHacked >= cost && item.itemCount < max) { //Checks if player can afford cost.
-            dataHacked -= cost; //Subtracts cost of item.
-            item.itemCount++; //Increments item.
-        } else break;
+    else if (deltaTime > 1) { //This must be an else if because DT may be 0.
+    	//If DT is greater than 1 it means that the player has been away and the game has not been running (or it is being played on a very slow computer.).
+    	//Therefor we want to quickly do all the things that would have happened if they were watching.
+    	//But there is no need to update the UI until all the calculations are done.
+        for (let i = 0; i < deltaTime; i++) {
+            console.log('Delta Abnormal: ' + deltaTime);
+            //Does normal maths but tells the functions not to update the UI.
+            autoBuyLoader(false);
+            increment(false);
+        }
+        lastTick = now; //Updates the time of the most recent tick.
+        checkForReveal();
+        save();
+        autoSaveCount = 0;
     }
+    refreshUI();
+    window.requestAnimationFrame(updateGame); //Calls this function again.
 }
-
-function buyCost(item) {
-    //Calculates cost of item.
-    return Math.floor(item.baseCost * Math.pow(1.15, item.itemCount));
-}
+window.requestAnimationFrame(updateGame); //If for some reason updateGame cannot call itself, this will call it.
