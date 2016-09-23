@@ -413,8 +413,8 @@ function changeUpgradeText(input) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor('item4UpgradeName', 'Place Holder');
-                    HTMLEditor('item4UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item4UpgradeName', 'Priority trafficking');
+                    HTMLEditor('item4UpgradeDesc', 'You have sufficient data to lobby certain groups to get your TETRAs higher up on the International  Signaling Stack.');
                     break;
                 case 2:
                     HTMLEditor('item4UpgradeName', 'Assault Barrier Penetration');
@@ -425,8 +425,8 @@ function changeUpgradeText(input) {
                     HTMLEditor('item4UpgradeDesc', 'Your TETRA links to people can now turn them into makeshift Femtocells. For every 100 Neural TETRAs, you will generate 10 Femtocell Hijackers each second.');
                     break;
                 default:
-                    HTMLEditor('item4UpgradeName', 'Place Holder');
-                    HTMLEditor('item4UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item4UpgradeName', 'Double-wide trunking');
+                    HTMLEditor('item4UpgradeDesc', 'AsaKasA ltd Elephant Trunks links will double your performance or your money back!');
                     break;
             }
             break;
@@ -437,20 +437,20 @@ function changeUpgradeText(input) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor('item5UpgradeName', 'Place Holder 1');
-                    HTMLEditor('item5UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item5UpgradeName', 'Quantum keys');
+                    HTMLEditor('item5UpgradeDesc', 'Makes your data simultaneously encrypted and unencrypted at the same time, until you try to read it that is.');
                     break;
                 case 2:
-                    HTMLEditor('item5UpgradeName', 'Place Holder 2');
-                    HTMLEditor('item5UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item5UpgradeName', 'Dual-State Blocks');
+                    HTMLEditor('item5UpgradeDesc', 'Uses quantum box ciphers as blocks, the box may or may not contain a cat.');
                     break;
                 case 3:
                     HTMLEditor('item5UpgradeName', 'MILNET TETRA Decryption');
                     HTMLEditor('item5UpgradeDesc', 'Your Quantum decryption is now powerful enough to break military TETRAs. For every 100 Quantum Cryptographs, you will generate 10 Neural TETRAs each second.');
                     break;
                 default:
-                    HTMLEditor('item5UpgradeName', 'Place Holder def');
-                    HTMLEditor('item5UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item5UpgradeName', 'Add extra dimension');
+                    HTMLEditor('item5UpgradeDesc', 'Four dimensional array encryption is a thing of the past, multidimensional encryption transcends your notions of past.');
                     break;
             }
             break;
@@ -461,15 +461,15 @@ function changeUpgradeText(input) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor('item6UpgradeName', 'Place Holder');
-                    HTMLEditor('item6UpgradeDesc', 'Place Holder');
+                    HTMLEditor('item6UpgradeName', 'Cyber Bribery');
+                    HTMLEditor('item6UpgradeDesc', 'Certain engineers have certain knowledge of certain security systems in certain cyberbanks.');
                     break;
                 case 2:
                     HTMLEditor('item6UpgradeName', 'Cascading Switches');
                     HTMLEditor('item6UpgradeDesc', 'Overwhelm the feeble minds of bank employees by using way too many switch statements.');
                     break;
                 case 3:
-                    HTMLEditor('item6UpgradeName', 'PlaceHolder');
+                    HTMLEditor('item6UpgradeName', 'Reverse engineering');
                     HTMLEditor('item6UpgradeDesc', 'For every 100 Infovault Miners, you will generate 10 Quantum Cryptographs each second.');
                     break;
                 default:
