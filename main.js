@@ -1,8 +1,15 @@
+/*
+    ________  __    __________  __  ___   ____ __
+   /  _/ __ \/ /   / ____/ __ \/ / / / | / / //_/
+   / // / / / /   / __/ / /_/ / / / /  |/ / ,<   
+ _/ // /_/ / /___/ /___/ ____/ /_/ / /|  / /| |  
+/___/_____/_____/_____/_/    \____/_/ |_/_/ |_|  
+*/                                                 
 const tickRate = 10; //The number of ticks per second.
 let lastTick = new Date().getTime(); //The time that the last tick occurred
-let autoSaveCount = 0; //Increases every tick so that the game doesn't auto save every tick.
-let dataHacked = 0; //The current amount of data.
-let totalDataHacked = 0; //The all time total amount of data.
+let autoSaveTimer = 0; //Increases every tick so that the game doesn't auto save every tick.
+let dataHacked = 0; //Data, less what has been spent.
+let totalDataHacked = 0; //The total amount of data that has been hacked.
 let itemConstructor = function(name, ID, baseCost, upgradeCost, baseIncome) {
     this.name = name; //The name of the item, not really used for anything except debugging.
     this.ID = ID; //The identifier, usually prefixed to the name of the HTML Div.
@@ -26,7 +33,7 @@ let itemConstructor = function(name, ID, baseCost, upgradeCost, baseIncome) {
 };
 
 //These must be let instead of const because they are changed when load() is called.
-//            			          name                          ID       cost              Upgrade             Income
+//            			          name                          ID       Base item cost    Base upgrade cost   Base income
 let item0  = new itemConstructor('Cyberdeck',                  'item0',  10,               1000,               1);
 let item1  = new itemConstructor('ICE Pick',                   'item1',  200,              20000,              9);
 let item2  = new itemConstructor('Botnet',                     'item2',  3000,             300000,             80);
@@ -50,7 +57,7 @@ function startUp() {
     dataHacked = 10;
     totalDataHacked = 10;
     load(); //Loads the save, remove to disable autoloading on refresh.
-    //This hides the item menus, HRs and upgrades when the game loads.
+    //This hides the item menus, HRs and upgrades when the game loads, checkForReveal() with show the relevant ones on the first tick.
     for (let i = itemList.length - 1; i >= 0; i--) {
         const item = itemList[i];
         visibilityLoader(item.itemMenuDiv, 0);
@@ -82,18 +89,16 @@ function load() {
             item = itemList[i];
         }
     }
-    for (let i = itemList.length - 1; i >= 0; i--) {
-        //Upgrade text is not refreshed each tick so this sets them properly.
-        changeUpgradeText(itemList[i]);
-    }
+    //Upgrade text is not refreshed each tick so this sets them properly.
+    for (let i = itemList.length - 1; i >= 0; i--) changeUpgradeText(itemList[i]);
 }
 
-function deleteSave() {
+function newGame() {
     //Deletes the save then reloads the game.
-    //Should probably be renamed newGame.
-    //Should probably add a confirmation check.
-    localStorage.removeItem('save');
-    location.reload();
+    if (confirm('Are you sure you want to start a new game?')) {
+    	localStorage.removeItem('save');
+	    location.reload(true); // reload(true) forces reload from server, ignores cache, this is probably not necessary.
+	}
 }
 
 function jackIn(number) {
@@ -621,36 +626,35 @@ function changeUpgradeText(input) {
 function updateGame() {
     //The main loop, it calls itself at the end.
     const now = new Date().getTime(); //The current time.
-    let deltaTime = now - lastTick; //The amount of time since the last tick occurred.
-    deltaTime = Math.floor(deltaTime / (1000 / tickRate)); //tickRate is how many ticks per second in MS, 1000 MS per second.
-    if (deltaTime === 1){
-        for (let i = 0; i < deltaTime; i++) {
-            console.log('Delta Normal: ' + deltaTime);
+    const deltaTime = now - lastTick; //The amount of time in ms since the last tick occurred.
+    const ticksToExecute = Math.floor(deltaTime / (1000 / tickRate)); //The number of ticks that should have happened since the last tick occurred.
+    if (ticksToExecute === 1){
+    //This is what should normally happen, calculations and UI updates happen once per tick.
+        for (let i = 0; i < ticksToExecute; i++) {
+            //console.log('Delta Normal: ' + ticksToExecute);
             lastTick = now; //Updates the time of the most recent tick.
             autoBuyLoader();
             increment();
             checkForReveal();
-            autoSaveCount++;
-            if (autoSaveCount >= tickRate) { //Once per second.
+            autoSaveTimer++;
+            if (autoSaveTimer >= 300) { //Once per second.
                 save();
-                autoSaveCount = 0;
+                autoSaveTimer = 0;
             }
         }
     }
-    else if (deltaTime > 1) { //This must be an else if because DT may be 0.
-    	//If DT is greater than 1 it means that the player has been away and the game has not been running (or it is being played on a very slow computer.).
-    	//Therefor we want to quickly do all the things that would have happened if they were watching.
-    	//But there is no need to update the UI until all the calculations are done.
-        for (let i = 0; i < deltaTime; i++) {
-            console.log('Delta Abnormal: ' + deltaTime);
+    else if (ticksToExecute > 1) { //This must be an else if because TTE may be 0.
+    //If TTE is greater than 1 it means that the game has not been running, likely because the player is alt tabbed or the tab has been closed (or the game is running on a very slow computer).
+    //Therefore we want to quickly do all the things that would have happened if the game was running as normal.
+    //We want to do all the calculations without having to update the UI, reveal elements, or save the game, until all ticks have been executed and the game is all caught up.
+        for (let i = 0; i < ticksToExecute; i++) {
+            //console.log('Delta Abnormal: ' + ticksToExecute);
             //Does normal maths but tells the functions not to update the UI.
             autoBuyLoader(false);
             increment(false);
         }
         lastTick = now; //Updates the time of the most recent tick.
         checkForReveal();
-        save();
-        autoSaveCount = 0;
     }
     refreshUI();
     window.requestAnimationFrame(updateGame); //Calls this function again.
