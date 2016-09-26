@@ -12,33 +12,33 @@ let autoSaveTimer = 0; // Increases every tick so that the game doesn't auto sav
 let dataHacked = 0; // Data, less what has been spent.
 let totalDataHacked = 0; // The total amount of data that has been hacked.
 let itemConstructor = function(name, ID, baseCost, upgradeCost) {
-    this.name 			= name; // The name of the item, not really used for anything except debugging.
-    this.ID 			= ID; // The identifier, usually prefixed to the name of the HTML Div.
-    this.baseCost 		= baseCost; // The initial cost of the item, the future costs are calculated from this.
-    this.upgradeCost 	= upgradeCost; // The initial cost of the first upgrade, all upgrade costs are based on this.
+    this.name           = name; // The name of the item, not really used for anything except debugging.
+    this.ID             = ID; // The identifier, usually prefixed to the name of the HTML Div.
+    this.baseCost       = baseCost; // The initial cost of the item, the future costs are calculated from this.
+    this.upgradeCost    = upgradeCost; // The initial cost of the first upgrade, all upgrade costs are based on this.
     this.basUpgradeCost = upgradeCost;
-    this.baseIncome 	= baseCost / 10; // The initial amount of data this generates.
-    this.itemCount 		= 0; // The amount you have of this item.
-    this.upgradeCount 	= 0; // The number of upgrades you have for this item.
+    this.baseIncome     = baseCost / 10; // The initial amount of data this generates.
+    this.itemCount      = 0; // The amount you have of this item.
+    this.upgradeCount   = 0; // The number of upgrades you have for this item.
     // These are the names of the divs associated with this item.
-    this.itemCostDiv 		= this.ID + 'Cost';
-    this.itemCountDiv 		= this.ID + 'Number';
-    this.itemRateDiv 		= this.ID + 'Rate';
-    this.itemRateTotalDiv 	= this.ID + 'RateTotal';
-    this.itemNumberMaxDiv 	= this.ID + 'NumberMax';
-    this.itemAutobuyRate 	= this.ID + 'CreationRate';
-    this.itemMenuDiv 		= this.ID + 'Menu';
+    this.itemCostDiv        = this.ID + 'Cost';
+    this.itemCountDiv       = this.ID + 'Number';
+    this.itemRateDiv        = this.ID + 'Rate';
+    this.itemRateTotalDiv   = this.ID + 'RateTotal';
+    this.itemNumberMaxDiv   = this.ID + 'NumberMax';
+    this.itemAutobuyRate    = this.ID + 'CreationRate';
+    this.itemMenuDiv        = this.ID + 'Menu';
     this.itemUpgradeMenuDiv = this.ID + 'UpgradeMenu';
-    this.itemHRDiv 			= this.ID + 'HR';
+    this.itemHRDiv          = this.ID + 'HR';
     this.itemUpgradeCostDiv = this.ID + 'UpgradeCost';
-    this.itemUpgradeNameDiv	= this.ID + 'UpgradeName';
-    this.itemUpgradeDescDiv	= this.ID + 'UpgradeDesc';
+    this.itemUpgradeNameDiv = this.ID + 'UpgradeName';
+    this.itemUpgradeDescDiv = this.ID + 'UpgradeDesc';
 };
 
 const BIC = 10; // Base item cost.
 const BUC = 1000; // Base upgrade cost.
 // These must be let instead of const because they are changed when load() is called.
-//             			          name                          ID       Base item cost    Base upgrade cost
+//                                name                          ID       Base item cost    Base upgrade cost
 let item0  = new itemConstructor('Cyberdeck',                  'item0',  Math.pow(BIC, 1),  Math.pow(BUC, 1)); // I know X^1 is pointless, but I like the symmetry.
 let item1  = new itemConstructor('ICE Pick',                   'item1',  Math.pow(BIC, 2),  Math.pow(BUC, 2));
 let item2  = new itemConstructor('Botnet',                     'item2',  Math.pow(BIC, 3),  Math.pow(BUC, 3));
@@ -85,9 +85,9 @@ function load() {
     // Loads objects + vars from local storage.
     const savegame = JSON.parse(localStorage.getItem('IdlepunkSave')); // Converts string to object.
     if (savegame) { // If save exists, load.
-        dataHacked 		= savegame.dataHacked; // Single var.
+        dataHacked      = savegame.dataHacked; // Single var.
         totalDataHacked = savegame.totalDataHacked; // Single var.
-        itemList 		= savegame.itemList; // Loads itemList.
+        itemList        = savegame.itemList; // Loads itemList.
         // ItemList only references items, so each item has to be loaded.
         for (let i = itemList.length - 1; i >= 0; i--) {
             let item = window['item' + i]; 
@@ -101,9 +101,9 @@ function load() {
 function newGame() {
     // Deletes the save then reloads the game.
     if (confirm('Are you sure you want to start a new game?')) { // Nobody likes misclicks.
-    	localStorage.removeItem('IdlepunkSave');
-	    location.reload(true); //  reload(true) forces reload from server, ignores cache, this is probably not necessary.
-	}
+        localStorage.removeItem('IdlepunkSave');
+        location.reload(true); //  reload(true) forces reload from server, ignores cache, this is probably not necessary.
+    }
 }
 
 function jackIn(number) {
@@ -240,9 +240,9 @@ function increment(updateUI = true) {
         destroyFloats(); // Fixes float rounding errors.
         // Updates items UI.
         if (updateUI) {
-        	HTMLEditor(item.itemRateDiv, formatBytes(incomePerItemPerSecond));
-        	HTMLEditor(item.itemRateTotalDiv, formatBytes(incomePerSecondTotal));
-    	}
+            HTMLEditor(item.itemRateDiv, formatBytes(incomePerItemPerSecond));
+            HTMLEditor(item.itemRateTotalDiv, formatBytes(incomePerSecondTotal));
+        }
         // Adds this items income to the total income for this second.
         totalIncome += incomePerSecondTotal;
     }
@@ -252,15 +252,15 @@ function increment(updateUI = true) {
 function autoBuyLoader(updateUI) {
     // Checks if tierX item should buy tierX-1 items.
     for (let i = itemList.length - 1; i >= 0; i--) {
-    	// The first item cannot autobuy the tier below as it is the first tier.
+        // The first item cannot autobuy the tier below as it is the first tier.
         if (i != 0) autoBuy(itemList[i-1], itemList[i], updateUI);
     }
 }
 
 function autoBuy(firstItem, secondItem, updateUI = true) {
-	// This function increases the number of firstItem items based on the number of secondItem items and upgrades.
-	// The 4th upgrade of secondItem is required to increase firstItem.
-	// Every 100 secondItems will add 10 firstItems, 99 secondItems will add 0 firstItems.
+    // This function increases the number of firstItem items based on the number of secondItem items and upgrades.
+    // The 4th upgrade of secondItem is required to increase firstItem.
+    // Every 100 secondItems will add 10 firstItems, 99 secondItems will add 0 firstItems.
     const max = maxItem(firstItem);
     // If the requisite upgrade is met and you have less than the max number if items.
     if (secondItem.upgradeCount >= 4 && firstItem.itemCount < max) {
@@ -637,7 +637,7 @@ function updateGame() {
     const ticksToExecute = Math.floor(deltaTime / (1000 / tickRate)); // The number of ticks that should have happened since the last tick occurred.
     if (ticksToExecute === 1){
     // This is what should normally happen, calculations and UI updates happen once per tick.
-    	// This doesn't need to be a loop anymore.
+        // This doesn't need to be a loop anymore.
         for (let i = 0; i < ticksToExecute; i++) {
             lastTick = now; // Updates the time of the most recent tick.
             autoBuyLoader();
