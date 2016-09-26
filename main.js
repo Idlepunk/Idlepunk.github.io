@@ -17,7 +17,7 @@ let itemConstructor = function(name, ID, baseCost, upgradeCost) {
     this.ID             = ID; // The identifier, usually prefixed to the name of the HTML Div.
     this.baseCost       = baseCost; // The initial cost of the item, the future costs are calculated from this.
     this.upgradeCost    = upgradeCost; // The cost of the next upgrade.
-    this.baseIncome     = baseCost / 10; // The initial amount of data this generates.
+    this.baseIncome     = baseCost / 15; // The initial amount of data this generates.
     this.itemCount      = 0; // The amount you have of this item.
     this.upgradeCount   = 0; // The number of upgrades you have for this item.
     // These are the names of the divs associated with this item.
@@ -35,8 +35,8 @@ let itemConstructor = function(name, ID, baseCost, upgradeCost) {
     this.itemUpgradeDescDiv = this.ID + 'UpgradeDesc';
 };
 
-const BIC = 10; // Base item cost.
-const BUC = 1000; // Base upgrade cost.
+const BIC = 15; // Base item cost.
+const BUC = 1100; // Base upgrade cost.
 // These must be let instead of const because they are changed when load() is called.
 //                                name                          ID       item cost          upgrade cost
 let item0  = new itemConstructor('Cyberdeck',                  'item0',  Math.pow(BIC, 1),  Math.pow(BUC, 1)); // I know X^1 is pointless, but I like the symmetry.
@@ -58,8 +58,8 @@ function startUp() {
     // Runs when the page is loaded.
     document.getElementById('all').style.display = 'inline'; // Display is set to none in css to hide the body while loading, this makes it visible.
     // Gives player enough data to buy the first cyberdeck.
-    dataHacked = 10;
-    totalDataHacked = 10;
+    dataHacked = 15;
+    totalDataHacked = 15;
     load(); // Loads the save, remove to disable autoloading on refresh.
     // This hides the item menus, HRs and upgrades when the game loads, checkForReveal() with show the relevant ones on the first tick.
     for (let i = itemList.length - 1; i >= 0; i--) {
