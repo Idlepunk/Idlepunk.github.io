@@ -39,7 +39,7 @@ const BIC = 10; // Base item cost.
 const BUC = 1000; // Base upgrade cost.
 // These must be let instead of const because they are changed when load() is called.
 //             			          name                          ID       Base item cost    Base upgrade cost
-let item0  = new itemConstructor('Cyberdeck',                  'item0',  Math.pow(BIC, 1),  Math.pow(BUC, 1)); // I know 10 ^ 1 is pointless, but I like the symmetry.
+let item0  = new itemConstructor('Cyberdeck',                  'item0',  Math.pow(BIC, 1),  Math.pow(BUC, 1)); // I know X^1 is pointless, but I like the symmetry.
 let item1  = new itemConstructor('ICE Pick',                   'item1',  Math.pow(BIC, 2),  Math.pow(BUC, 2));
 let item2  = new itemConstructor('Botnet',                     'item2',  Math.pow(BIC, 3),  Math.pow(BUC, 3));
 let item3  = new itemConstructor('Femtocell Hijacker',         'item3',  Math.pow(BIC, 4),  Math.pow(BUC, 4));
@@ -258,6 +258,9 @@ function autoBuyLoader(updateUI) {
 }
 
 function autoBuy(firstItem, secondItem, updateUI = true) {
+	// This function increases the number of firstItem items based on the number of secondItem items and upgrades.
+	// The 4th upgrade of secondItem is required to increase firstItem.
+	// Every 100 secondItems will add 10 firstItems, 99 secondItems will add 0 firstItems.
     const max = maxItem(firstItem);
     // If the requisite upgrade is met and you have less than the max number if items.
     if (secondItem.upgradeCount >= 4 && firstItem.itemCount < max) {
@@ -309,7 +312,7 @@ function buyCost(item) {
 
 function changeUpgradeText(input) {
     // Changes upgrade text and cost.
-    // Holy mother of god this got out of hand, should probably use a map.
+    // Holy mother of god this got out of hand, should probably use a map or something instead of this.
     switch (input) {
         // Checks what item is being upgraded
         // Cyberdeck
