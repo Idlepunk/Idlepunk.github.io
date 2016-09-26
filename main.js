@@ -5,7 +5,8 @@
  _/ //  /_/ / /___/ /___/ ____/ /_/ / /|  / /| |  
 /___/_____/_____/_____/_/    \____/_/ |_/_/ |_|  
 A thing by Asher.
-*/                                                 
+*/                
+/*jshint esversion: 6 */                                 
 const tickRate = 10; // The number of ticks per second.
 let lastTick = new Date().getTime(); // The time that the last tick occurred
 let autoSaveTimer = 0; // Increases every tick so that the game doesn't auto save every tick.
@@ -182,9 +183,13 @@ function maxItem(item) {
     // 4 = 10000
     // 5 = 100000
     // 6 = 1000000
-    // etc                             max = 100 * 10^(Upgrades-2)
-    if (item.upgradeCount >= 2) return max = 100 * Math.pow(10, (item.upgradeCount - 2)); 
-    else return 100; // 100 is the default max.
+    // etc
+    // How max items are calculated:     
+    // n = the number of upgrades.
+    // u = the upgrade where you want maxItem changes to kick in.           
+    // max items = 100 * 10^(n-u)
+    if (item.upgradeCount >= 2) return 100 * Math.pow(10, (item.upgradeCount - 2)); 
+    else return 100; // 100 is the default number of max items.
 }
 
 function refreshUI() {
@@ -249,7 +254,7 @@ function autoBuyLoader(updateUI) {
     // Checks if tierX item should buy tierX-1 items.
     for (let i = itemList.length - 1; i >= 0; i--) {
         // The first item cannot autobuy the tier below as it is the first tier and there is nothing below it.
-        if (i != 0) autoBuy(itemList[i-1], itemList[i], updateUI);
+        if (i !== 0) autoBuy(itemList[i-1], itemList[i], updateUI);
     }
 }
 
@@ -300,7 +305,7 @@ function buyItem(item, count) {
 }
 
 function buyCost(item) {
-    // Calculates cost of an item based on the base cost of the item and the number of items, cost is exponential.
+    // Calculates cost of an item based on the base cost of the item and the number of items, cost is exponential with an exponent of 1.15 (thanks CC).
     return Math.floor(item.baseCost * Math.pow(1.15, item.itemCount));
 }
 
