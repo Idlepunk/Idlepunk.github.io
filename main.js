@@ -314,7 +314,7 @@ function changeUpgradeText(item) {
     // Holy mother of god this got out of hand, should probably use a map or something instead of this.
     // At the very least I could make a function to make it less repetitive.
     switch (item) { // Checks what item is being upgraded.
-        // Cyberdeck
+        // Cyberdeck 
         case itemList[0]:
             HTMLEditor(itemList[0].itemUpgradeCostDiv, formatBytes(itemList[0].upgradeCost)); // Updates cost.
             switch (itemList[0].upgradeCount) { // Checks what upgrades the item already has.
