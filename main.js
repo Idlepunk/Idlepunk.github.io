@@ -15,8 +15,7 @@ let itemConstructor = function(name, ID, baseCost, upgradeCost) {
     this.name           = name; // The name of the item, not really used for anything except debugging.
     this.ID             = ID; // The identifier, usually prefixed to the name of the HTML Div.
     this.baseCost       = baseCost; // The initial cost of the item, the future costs are calculated from this.
-    this.upgradeCost    = upgradeCost; // The initial cost of the first upgrade, all upgrade costs are based on this.
-    this.basUpgradeCost = upgradeCost;
+    this.upgradeCost    = upgradeCost; // The cost of the next upgrade.
     this.baseIncome     = baseCost / 10; // The initial amount of data this generates.
     this.itemCount      = 0; // The amount you have of this item.
     this.upgradeCount   = 0; // The number of upgrades you have for this item.
@@ -38,7 +37,7 @@ let itemConstructor = function(name, ID, baseCost, upgradeCost) {
 const BIC = 10; // Base item cost.
 const BUC = 1000; // Base upgrade cost.
 // These must be let instead of const because they are changed when load() is called.
-//                                name                          ID       Base item cost    Base upgrade cost
+//                                name                          ID       item cost          upgrade cost
 let item0  = new itemConstructor('Cyberdeck',                  'item0',  Math.pow(BIC, 1),  Math.pow(BUC, 1)); // I know X^1 is pointless, but I like the symmetry.
 let item1  = new itemConstructor('ICE Pick',                   'item1',  Math.pow(BIC, 2),  Math.pow(BUC, 2));
 let item2  = new itemConstructor('Botnet',                     'item2',  Math.pow(BIC, 3),  Math.pow(BUC, 3));
@@ -110,7 +109,6 @@ function jackIn(number) {
     // Adds a number of data based on argument.
     // Currently only used for debugging (cheating).
     dataHacked = dataHacked + number;
-    HTMLEditor('dataHacked', formatBytes(dataHacked));
     totalDataHacked += number;
 }
 
@@ -119,7 +117,7 @@ function HTMLEditor(elementID, input) {
     document.getElementById(elementID).innerHTML = input;
 }
 
-function visibilityLoader(elementID, visibility) {
+function visibilityLoader(elementID, visibility = 0) {
     // Either hides or shows an element depending on arguments.
     if (visibility === 1) visibility = 'visible';
     else if (visibility === 0) visibility = 'hidden';
@@ -171,7 +169,7 @@ function formatNumbers(number) {
         const i = Math.floor(Math.log(number) / Math.log(1000));
         return parseFloat((number / Math.pow(1000, i)).toFixed(0)) + ' ' + sizes[i];
     } 
-    else return number;
+    else return number; // If the number is smaller than 100k, it just displays it normally.
 }
 
 function maxItem(item) {
@@ -184,24 +182,21 @@ function maxItem(item) {
     // 4 = 10000
     // 5 = 100000
     // 6 = 1000000
-    // etc 
-    if (item.upgradeCount >= 2) {
-        const max = 100 * Math.pow(10, (item.upgradeCount - 2)); // 100 * 10^(Upgrades-2)
-        return max;
-    } 
-    else return 100;
+    // etc                             max = 100 * 10^(Upgrades-2)
+    if (item.upgradeCount >= 2) return max = 100 * Math.pow(10, (item.upgradeCount - 2)); 
+    else return 100; // 100 is the default max.
 }
 
 function refreshUI() {
     // Updates most UI elements.
-    // Some elements that require heavy calculations are not updated here.
+    // Some elements that require heavier calculations or do not need to be updated often are not updated here.
     HTMLEditor('dataHacked', formatBytes(Math.floor(dataHacked)));
     HTMLEditor('totalDataHacked', formatBytes(Math.floor(totalDataHacked)));
     for (let i = itemList.length - 1; i >= 0; i--) {
-        let item = itemList[i];
-        HTMLEditor(item.itemNumberMaxDiv, formatNumbers(maxItem(item)));
-        HTMLEditor(item.itemCountDiv, formatNumbers(item.itemCount));
-        HTMLEditor(item.itemCostDiv, formatBytes(buyCost(item)));
+        const item = itemList[i];
+        HTMLEditor(item.itemNumberMaxDiv, formatNumbers(maxItem(item))); // Max number of items.
+        HTMLEditor(item.itemCountDiv, formatNumbers(item.itemCount)); // Number of items.
+        HTMLEditor(item.itemCostDiv, formatBytes(buyCost(item))); // Item cost.
         changeUpgradeText(item);
     }
 }
@@ -209,7 +204,7 @@ function refreshUI() {
 function checkForReveal() {
     // Checks if any elements should be revealed.
     for (let i = itemList.length - 1; i >= 0; i--) {
-        let item = itemList[i]; // It just looks cleaner this way.
+        const item = itemList[i]; // It just looks cleaner this way.
         if (totalDataHacked >= item.baseCost) { // Items are revealed when the all time amount of data surpasses the base cost of the item.
             visibilityLoader(item.itemMenuDiv, 1);
             visibilityLoader(item.itemHRDiv, 1);
@@ -222,29 +217,30 @@ function checkForReveal() {
 function increment(updateUI = true) {
     // Generates income based on items.
     let totalIncome = 0; // The total amount for all items for this tick.
-    let incomePerSecondTotal; // The amount that all items of a single type will generate in 1 second.
-    let incomePerItem; // The amount that a single item will generate in 1 tick.
-    let incomePerTick; // The amount that all items of a single type will generate in a single tick.
-    let incomePerItemPerSecond; // The amount that a single item will generate in one second.
-    let item;
+
     for (let i = itemList.length - 1; i >= 0; i--) { // Iterating through loops backwards is more efficient as the array length only has to be calculated once.
-        item = itemList[i];
+        let incomePerItemPerTick; // The amount that a single item will generate in 1 tick.
+        let incomePerItemPerSecond; // The amount that a single item will generate in one second.
+        let incomePerTypePerTick; // The amount that all items of a type will generate in a single tick.        
+        let incomePerTypePerSecond; // The amount that all items of a type will generate in 1 second.
+
+        const item = itemList[i];
         // Maths!
-        incomePerItem           = (item.baseIncome / tickRate) * Math.pow(2, item.upgradeCount);
-        incomePerItemPerSecond  = incomePerItem * tickRate;
-        incomePerSecondTotal    = incomePerItemPerSecond * item.itemCount;
-        incomePerTick           = incomePerItem * item.itemCount;
+        incomePerItemPerTick    = (item.baseIncome / tickRate) * Math.pow(2, item.upgradeCount);
+        incomePerItemPerSecond  = incomePerItemPerTick * tickRate;
+        incomePerTypePerTick    = incomePerItemPerTick * item.itemCount;
+        incomePerTypePerSecond  = incomePerItemPerSecond * item.itemCount;
         // Increases the data.
-        dataHacked += incomePerTick;
-        totalDataHacked += incomePerTick;
+        dataHacked += incomePerTypePerTick;
+        totalDataHacked += incomePerTypePerTick;
         destroyFloats(); // Fixes float rounding errors.
         // Updates items UI.
         if (updateUI) {
             HTMLEditor(item.itemRateDiv, formatBytes(incomePerItemPerSecond));
-            HTMLEditor(item.itemRateTotalDiv, formatBytes(incomePerSecondTotal));
+            HTMLEditor(item.itemRateTotalDiv, formatBytes(incomePerTypePerSecond));
         }
         // Adds this items income to the total income for this second.
-        totalIncome += incomePerSecondTotal;
+        totalIncome += incomePerTypePerSecond;
     }
     if (updateUI) HTMLEditor('totalIncome', formatBytes(totalIncome)); // Updates data UI.
 }
@@ -252,7 +248,7 @@ function increment(updateUI = true) {
 function autoBuyLoader(updateUI) {
     // Checks if tierX item should buy tierX-1 items.
     for (let i = itemList.length - 1; i >= 0; i--) {
-        // The first item cannot autobuy the tier below as it is the first tier.
+        // The first item cannot autobuy the tier below as it is the first tier and there is nothing below it.
         if (i != 0) autoBuy(itemList[i-1], itemList[i], updateUI);
     }
 }
@@ -275,13 +271,11 @@ function autoBuy(firstItem, secondItem, updateUI = true) {
 
 function upgrade(item) {
     // Upgrades an item.
-    let cost = upgradeCost(item);
     if (dataHacked >= item.upgradeCost) { // Checks if player can afford upgrade.
         dataHacked -= item.upgradeCost; // Subtracts cost of upgrade.
         item.upgradeCount++; // Increments upgrade counter.
-        // recalculates then displays the cost of the next upgrade.
-        cost = upgradeCost(item);
-        item.upgradeCost = cost;
+        // Recalculates cost of next upgrade.
+        item.upgradeCost = upgradeCost(item);
         changeUpgradeText(item);
         visibilityLoader(item.itemUpgradeMenuDiv, 0);
     }
@@ -294,32 +288,32 @@ function upgradeCost(item) {
 
 function buyItem(item, count) {
     // Attempts to buy a number of items.
-    const max = maxItem(item);
     for (let i = 0; i < count; i++) { // Tries to by this many items.
+        const max = maxItem(item);
         const cost = buyCost(item); // Calculates cost of item.
         if (dataHacked >= cost && item.itemCount < max) { // Player must be able to afford the item and have less than the max allowed items.
             dataHacked -= cost; // Subtracts cost of item.
             item.itemCount++; // Increments item.
         } 
-        else break;
+        else break; // If the player cannot afford or has the max number of items, stop trying to buy items.
     }
 }
 
 function buyCost(item) {
-    // Calculates cost of item.
+    // Calculates cost of an item based on the base cost of the item and the number of items, cost is exponential.
     return Math.floor(item.baseCost * Math.pow(1.15, item.itemCount));
 }
 
-function changeUpgradeText(input) {
-    // Changes upgrade text and cost.
+function changeUpgradeText(item) {
+    // Changes upgrade text and upgraded cost.
     // Holy mother of god this got out of hand, should probably use a map or something instead of this.
-    switch (input) {
-        // Checks what item is being upgraded
+    // At the very least I could make a function to make it less repetitive.
+    switch (item) { // Checks what item is being upgraded.
         // Cyberdeck
         case itemList[0]:
-            HTMLEditor(itemList[0].itemUpgradeCostDiv, formatBytes(itemList[0].upgradeCost)); //Updates cost.
+            HTMLEditor(itemList[0].itemUpgradeCostDiv, formatBytes(itemList[0].upgradeCost)); // Updates cost.
             switch (itemList[0].upgradeCount) { // Checks what upgrades the item already has.
-                case 0: //If the item has 0 upgrades, then no change is required.
+                case 0: // If the item has 0 upgrades, no change is required.
                     break;
                 case 1:
                     HTMLEditor(itemList[0].itemUpgradeNameDiv, 'Install Neural Interfaces');
@@ -639,7 +633,6 @@ function updateGame() {
     // This is what should normally happen, calculations and UI updates happen once per tick.
         // This doesn't need to be a loop anymore.
         for (let i = 0; i < ticksToExecute; i++) {
-            lastTick = now; // Updates the time of the most recent tick.
             autoBuyLoader();
             increment();
             checkForReveal();
@@ -648,6 +641,8 @@ function updateGame() {
                 save();
                 autoSaveTimer = 0;
             }
+            refreshUI();
+            lastTick = now; // Updates the time of the most recent tick.
         }
     }
     else if (ticksToExecute > 1) { // This must be an else if because TTE may be 0.
@@ -659,10 +654,10 @@ function updateGame() {
             autoBuyLoader(false);
             increment(false);
         }
-        lastTick = now; // Updates the time of the most recent tick.
         checkForReveal();
+        refreshUI();
+        lastTick = now; // Updates the time of the most recent tick.
     }
-    refreshUI();
     window.requestAnimationFrame(updateGame); // Calls this function again.
 }
-window.requestAnimationFrame(updateGame); // If for some reason updateGame cannot call itself, this will call it.
+window.requestAnimationFrame(updateGame); // If for some reason updateGame cannot call itself, or if it isn't called during startup, this will call it.
