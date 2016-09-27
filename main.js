@@ -12,14 +12,15 @@ let lastTick = new Date().getTime(); // The time that the last tick occurred
 let autoSaveTimer = 0; // Increases every tick so that the game doesn't auto save every tick.
 let dataHacked = 0; // Data, less what has been spent.
 let totalDataHacked = 0; // The total amount of data that has been hacked.
-let itemConstructor = function(name, ID, baseCost, upgradeCost) {
-    this.name           = name; // The name of the item, not really used for anything except debugging.
-    this.ID             = ID; // The identifier, usually prefixed to the name of the HTML Div.
-    this.baseCost       = baseCost; // The initial cost of the item, the future costs are calculated from this.
-    this.upgradeCost    = upgradeCost; // The cost of the next upgrade.
-    this.baseIncome     = baseCost / 15; // The initial amount of data this generates.
-    this.itemCount      = 0; // The amount you have of this item.
-    this.upgradeCount   = 0; // The number of upgrades you have for this item.
+let itemConstructor = function(name, ID, baseCost, baseUpgradeCost) {
+    this.name               = name; // The name of the item, not really used for anything except debugging.
+    this.ID                 = ID; // The identifier, usually prefixed to the name of the HTML Div.
+    this.baseCost           = baseCost; // The initial cost of the item, the future costs are calculated from this.
+    this.baseUpgradeCost    = baseUpgradeCost; // The cost of the next upgrade.
+    this.nextUpgradeCost    = baseUpgradeCost; //The cost of the next upgrade.
+    this.baseIncome         = baseCost / 15; // The initial amount of data this generates.
+    this.itemCount          = 0; // The amount you have of this item.
+    this.upgradeCount       = 0; // The number of upgrades you have for this item.
     // These are the names of the divs associated with this item.
     this.itemCostDiv        = this.ID + 'Cost';
     this.itemCountDiv       = this.ID + 'Number';
@@ -36,22 +37,22 @@ let itemConstructor = function(name, ID, baseCost, upgradeCost) {
 };
 
 const BIC = 15; // Base item cost.
-const BUC = 1100; // Base upgrade cost.
-// These must be let instead of const because they are changed when load() is called.
+const BUC = 11; // Base upgrade cost.
+// These cannot be const because they are changed when load() is called.
 //                                name                          ID       item cost          upgrade cost
-let item0  = new itemConstructor('Cyberdeck',                  'item0',  Math.pow(BIC, 1),  Math.pow(BUC, 1)); // I know X^1 is pointless, but I like the symmetry.
-let item1  = new itemConstructor('ICE Pick',                   'item1',  Math.pow(BIC, 2),  Math.pow(BUC, 2));
-let item2  = new itemConstructor('Botnet',                     'item2',  Math.pow(BIC, 3),  Math.pow(BUC, 3));
-let item3  = new itemConstructor('Femtocell Hijacker',         'item3',  Math.pow(BIC, 4),  Math.pow(BUC, 4));
-let item4  = new itemConstructor('Neural TETRA',               'item4',  Math.pow(BIC, 5),  Math.pow(BUC, 5));
-let item5  = new itemConstructor('Quantum Cryptograph',        'item5',  Math.pow(BIC, 6),  Math.pow(BUC, 6));
-let item6  = new itemConstructor('Infovault Mining',           'item6',  Math.pow(BIC, 7),  Math.pow(BUC, 7));
-let item7  = new itemConstructor('Neural Zombies',             'item7',  Math.pow(BIC, 8),  Math.pow(BUC, 8));
-let item8  = new itemConstructor('Satellite Jumpers',          'item8',  Math.pow(BIC, 9),  Math.pow(BUC, 9));
-let item9  = new itemConstructor('Dark Matter Semiconductors', 'item9',  Math.pow(BIC, 10), Math.pow(BUC, 10));
-let item10 = new itemConstructor('Actual Intelligence',        'item10', Math.pow(BIC, 11), Math.pow(BUC, 11));
-let item11 = new itemConstructor('Artificial Intelligences',   'item11', Math.pow(BIC, 12), Math.pow(BUC, 12));
-let item12 = new itemConstructor('Simulated Universes',        'item12', Math.pow(BIC, 13), Math.pow(BUC, 13));
+let item0  = new itemConstructor('Cyberdeck',                  'item0',  Math.pow(BIC, 1),  Math.pow(BUC, 3));
+let item1  = new itemConstructor('ICE Pick',                   'item1',  Math.pow(BIC, 2),  Math.pow(BUC, 4));
+let item2  = new itemConstructor('Botnet',                     'item2',  Math.pow(BIC, 3),  Math.pow(BUC, 5));
+let item3  = new itemConstructor('Femtocell Hijacker',         'item3',  Math.pow(BIC, 4),  Math.pow(BUC, 6));
+let item4  = new itemConstructor('Neural TETRA',               'item4',  Math.pow(BIC, 5),  Math.pow(BUC, 7));
+let item5  = new itemConstructor('Quantum Cryptograph',        'item5',  Math.pow(BIC, 6),  Math.pow(BUC, 8));
+let item6  = new itemConstructor('Infovault Mining',           'item6',  Math.pow(BIC, 7),  Math.pow(BUC, 9));
+let item7  = new itemConstructor('Neural Zombies',             'item7',  Math.pow(BIC, 8),  Math.pow(BUC, 10));
+let item8  = new itemConstructor('Satellite Jumpers',          'item8',  Math.pow(BIC, 9),  Math.pow(BUC, 11));
+let item9  = new itemConstructor('Dark Matter Semiconductors', 'item9',  Math.pow(BIC, 10), Math.pow(BUC, 12));
+let item10 = new itemConstructor('Actual Intelligence',        'item10', Math.pow(BIC, 11), Math.pow(BUC, 13));
+let item11 = new itemConstructor('Artificial Intelligences',   'item11', Math.pow(BIC, 12), Math.pow(BUC, 14));
+let item12 = new itemConstructor('Simulated Universes',        'item12', Math.pow(BIC, 13), Math.pow(BUC, 15));
 let itemList = [item0, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12];
 
 function startUp() {
@@ -214,7 +215,7 @@ function checkForReveal() {
             visibilityLoader(item.itemMenuDiv, 1);
             visibilityLoader(item.itemHRDiv, 1);
         }
-        if (totalDataHacked >= item.upgradeCost) visibilityLoader(item.itemUpgradeMenuDiv, 1);
+        if (totalDataHacked >= item.nextUpgradeCost) visibilityLoader(item.itemUpgradeMenuDiv, 1);
         else visibilityLoader(item.itemUpgradeMenuDiv, 0);
     }
 }
@@ -276,11 +277,11 @@ function autoBuy(firstItem, secondItem, updateUI = true) {
 
 function upgrade(item) {
     // Upgrades an item.
-    if (dataHacked >= item.upgradeCost) { // Checks if player can afford upgrade.
-        dataHacked -= item.upgradeCost; // Subtracts cost of upgrade.
+    if (dataHacked >= item.nextUpgradeCost) { // Checks if player can afford upgrade.
+        dataHacked -= item.nextUpgradeCost; // Subtracts cost of upgrade.
         item.upgradeCount++; // Increments upgrade counter.
         // Recalculates cost of next upgrade.
-        item.upgradeCost = upgradeCost(item);
+        item.nextUpgradeCost = upgradeCost(item);
         changeUpgradeText(item);
         visibilityLoader(item.itemUpgradeMenuDiv, 0);
     }
@@ -288,7 +289,7 @@ function upgrade(item) {
 
 function upgradeCost(item) {
     // Calculates cost of next upgrade.
-    return item.upgradeCost * Math.pow(10, item.upgradeCount);
+    return Math.floor(item.baseUpgradeCost * Math.pow(10, item.upgradeCount));
 }
 
 function buyItem(item, count) {
@@ -313,316 +314,303 @@ function changeUpgradeText(item) {
     // Changes upgrade text and upgraded cost.
     // Holy mother of god this got out of hand, should probably use a map or something instead of this.
     // At the very least I could make a function to make it less repetitive.
+    HTMLEditor(item.itemUpgradeCostDiv, formatBytes(item.nextUpgradeCost)); // Updates cost.
     switch (item) { // Checks what item is being upgraded.
         // Cyberdeck 
         case itemList[0]:
-            HTMLEditor(itemList[0].itemUpgradeCostDiv, formatBytes(itemList[0].upgradeCost)); // Updates cost.
-            switch (itemList[0].upgradeCount) { // Checks what upgrades the item already has.
+            switch (item.upgradeCount) { // Checks what upgrades the item already has.
                 case 0: // If the item has 0 upgrades, no change is required.
                     break;
                 case 1:
-                    HTMLEditor(itemList[0].itemUpgradeNameDiv, 'Install Neural Interfaces');
-                    HTMLEditor(itemList[0].itemUpgradeDescDiv, 'First developed by triGen Consolidated, the Neural Interface allows humans to traverse cyberspace using nothing but their brains. In addition, atrophied limbs can save you money on food.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Install Neural Interfaces');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'First developed by triGen Consolidated, the Neural Interface allows humans to traverse cyberspace using nothing but their brains. In addition, atrophied limbs can save you money on food.');
                     break;
                 case 2:
-                    HTMLEditor(itemList[0].itemUpgradeNameDiv, 'Flash ZedSoft firmware');
-                    HTMLEditor(itemList[0].itemUpgradeDescDiv, 'ZedSoft is the most revered Cyberdeck development company in the entire Inner Seoul Arcology. They have an exclusive contract with MILNET-KOREA, making their products difficult to source.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Flash ZedSoft firmware');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'ZedSoft is the most revered Cyberdeck development company in the entire Inner Seoul Arcology. They have an exclusive contract with MILNET-KOREA, making their products difficult to source.');
                     break;
                 case 3:
-                    HTMLEditor(itemList[0].itemUpgradeNameDiv, 'Create a clustered Superdeck');
-                    HTMLEditor(itemList[0].itemUpgradeDescDiv, 'An ancient trick, by networking a large number of Decks together you can create a Superdeck, more powerful than the sum of its parts.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Create a clustered Superdeck');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'An ancient trick, by networking a large number of Decks together you can create a Superdeck, more powerful than the sum of its parts.');
                     break;
                 default:
-                    HTMLEditor(itemList[0].itemUpgradeNameDiv, 'Install more RAM');
-                    HTMLEditor(itemList[0].itemUpgradeDescDiv, 'Random Access Memory, very powerful but completely unstable. There are rumors that people in the Shenzhen Industrial Area use RAM to augment their biological memory.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Install more RAM');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Random Access Memory, very powerful but completely unstable. There are rumors that people in the Shenzhen Industrial Area use RAM to augment their biological memory.');
                     break;
             }
             break;
             // ICE Pick
         case itemList[1]:
-            HTMLEditor(itemList[1].itemUpgradeCostDiv, formatBytes(itemList[1].upgradeCost));
-            switch (itemList[1].upgradeCount) {
+            switch (item.upgradeCount) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor(itemList[1].itemUpgradeNameDiv, 'Prepare BLACKICE Countermeasures');
-                    HTMLEditor(itemList[1].itemUpgradeDescDiv, 'BLACKICE, originally developed to protect the intellectual assets of Meturia-Preva Consolidated, is now a blanket term for security software capable of killing intruders.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Prepare BLACKICE Countermeasures');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'BLACKICE, originally developed to protect the intellectual assets of Meturia-Preva Consolidated, is now a blanket term for security software capable of killing intruders.');
                     break;
                 case 2:
-                    HTMLEditor(itemList[1].itemUpgradeNameDiv, 'Setup Dummy Interface');
-                    HTMLEditor(itemList[1].itemUpgradeDescDiv, 'Corporations, particularly those in the Eurasian Economic Zone, are partial to sending assassins after those who steal their data. Setting up a Dummy Interface makes it hard for them to track you down.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Setup Dummy Interface');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Corporations, particularly those in the Eurasian Economic Zone, are partial to sending assassins after those who steal their data. Setting up a Dummy Interface makes it hard for them to track you down.');
                     break;
                 case 3:
-                    HTMLEditor(itemList[1].itemUpgradeNameDiv, 'Cyberdeck Simulators');
-                    HTMLEditor(itemList[1].itemUpgradeDescDiv, 'Servers that are hacked by your ICE Picks can now host virtual Cyberdecks. For every 100 ICE Picks, you will generate 10 Cyberdeck each second.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Cyberdeck Simulators');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Servers that are hacked by your ICE Picks can now host virtual Cyberdecks. For every 100 ICE Picks, you will generate 10 Cyberdeck each second.');
                     break;
                 default:
-                    HTMLEditor(itemList[1].itemUpgradeNameDiv, 'Write new anti-ICE software');
-                    HTMLEditor(itemList[1].itemUpgradeDescDiv, 'ICE defense is ever changing, new ICE picking software is always required.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Write new anti-ICE software');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'ICE defense is ever changing, new ICE picking software is always required.');
                     break;
             }
             break;
             // Botnet
         case itemList[2]:
-            HTMLEditor(itemList[2].itemUpgradeCostDiv, formatBytes(itemList[2].upgradeCost));
-            switch (itemList[2].upgradeCount) {
+            switch (item.upgradeCount) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor(itemList[2].itemUpgradeNameDiv, 'Self replicating Botnet');
-                    HTMLEditor(itemList[2].itemUpgradeDescDiv, 'Your Bots can now utilize idle system processing power to create new bots to add to the Botnet.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Self replicating Botnet');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Your Bots can now utilize idle system processing power to create new bots to add to the Botnet.');
                     break;
                 case 2:
-                    HTMLEditor(itemList[2].itemUpgradeNameDiv, 'Allow your Botnet to use ICE Picks');
-                    HTMLEditor(itemList[2].itemUpgradeDescDiv, 'Your bots can now use your ICE Picking software to help infiltration.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Allow your Botnet to use ICE Picks');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Your bots can now use your ICE Picking software to help infiltration.');
                     break;
                 case 3:
-                    HTMLEditor(itemList[2].itemUpgradeNameDiv, 'ICEBOTS');
-                    HTMLEditor(itemList[2].itemUpgradeDescDiv, 'Your Botnets can now steal ICE Picks. For every 100 Botnets, you will generate 10 ICE Pick each second.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'ICEBOTS');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Your Botnets can now steal ICE Picks. For every 100 Botnets, you will generate 10 ICE Pick each second.');
                     break;
                 default:
-                    HTMLEditor(itemList[2].itemUpgradeNameDiv, 'Push out new Bot firmware');
-                    HTMLEditor(itemList[2].itemUpgradeDescDiv, 'New Bot-Hunters pop up all the time, new firmware is required to overcome them.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Push out new Bot firmware');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'New Bot-Hunters pop up all the time, new firmware is required to overcome them.');
                     break;
             }
             break;
             // Femtocell
         case itemList[3]:
-            HTMLEditor(itemList[3].itemUpgradeCostDiv, formatBytes(itemList[3].upgradeCost));
-            switch (itemList[3].upgradeCount) {
+            switch (item.upgradeCount) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor(itemList[3].itemUpgradeNameDiv, 'Macrocell Scramblers');
-                    HTMLEditor(itemList[3].itemUpgradeDescDiv, 'Interference from macro networks can cause annoying delays for bludgeoning Femtocell hackers. Your Femtocells can now scramble nearby macrocell signals to improve performance.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Macrocell Scramblers');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Interference from macro networks can cause annoying delays for bludgeoning Femtocell hackers. Your Femtocells can now scramble nearby macrocell signals to improve performance.');
                     break;
                 case 2:
-                    HTMLEditor(itemList[3].itemUpgradeNameDiv, 'Cybernetic Implant Repeaters');
-                    HTMLEditor(itemList[3].itemUpgradeDescDiv, 'A lot of implants these days are set to auto-connect to the nearest cellular station. By converting adapters to two virtual adapters, your Femtocells can use almost any cybernetic implant as a repeater.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Cybernetic Implant Repeaters');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'A lot of implants these days are set to auto-connect to the nearest cellular station. By converting adapters to two virtual adapters, your Femtocells can use almost any cybernetic implant as a repeater.');
                     break;
                 case 3:
-                    HTMLEditor(itemList[3].itemUpgradeNameDiv, 'Botnet Thiefs.');
-                    HTMLEditor(itemList[3].itemUpgradeDescDiv, 'Your Femtocells are now capable of stealing other hacker\'s Botnets that are residing in nearby devices. For every 100 Femtocell Hijackers, you will generate 10 Botnets each second.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Botnet Thiefs.');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Your Femtocells are now capable of stealing other hacker\'s Botnets that are residing in nearby devices. For every 100 Femtocell Hijackers, you will generate 10 Botnets each second.');
                     break;
                 default:
-                    HTMLEditor(itemList[3].itemUpgradeNameDiv, 'Telecomms system hijack');
-                    HTMLEditor(itemList[3].itemUpgradeDescDiv, 'Hijack a major telecommunication company\'s femtocell system.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Telecomms system hijack');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Hijack a major telecommunication company\'s femtocell system.');
                     break;
             }
             break;
             // TETRA
         case itemList[4]:
-            HTMLEditor(itemList[4].itemUpgradeCostDiv, formatBytes(itemList[4].upgradeCost));
-            switch (itemList[4].upgradeCount) {
+            switch (item.upgradeCount) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor(itemList[4].itemUpgradeNameDiv, 'Priority trafficking');
-                    HTMLEditor(itemList[4].itemUpgradeDescDiv, 'You have sufficient data to lobby certain groups to get your TETRAs higher up on the International  Signaling Stack.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Priority trafficking');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'You have sufficient data to lobby certain groups to get your TETRAs higher up on the International  Signaling Stack.');
                     break;
                 case 2:
-                    HTMLEditor(itemList[4].itemUpgradeNameDiv, 'Assault Barrier Penetration');
-                    HTMLEditor(itemList[4].itemUpgradeDescDiv, 'Assault Barriers provide cutting edge protection for TETRA links.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Assault Barrier Penetration');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Assault Barriers provide cutting edge protection for TETRA links.');
                     break;
                 case 3:
-                    HTMLEditor(itemList[4].itemUpgradeNameDiv, 'Trunked Femtocells');
-                    HTMLEditor(itemList[4].itemUpgradeDescDiv, 'Your TETRA links to people can now turn them into makeshift Femtocells. For every 100 Neural TETRAs, you will generate 10 Femtocell Hijackers each second.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Trunked Femtocells');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Your TETRA links to people can now turn them into makeshift Femtocells. For every 100 Neural TETRAs, you will generate 10 Femtocell Hijackers each second.');
                     break;
                 default:
-                    HTMLEditor(itemList[4].itemUpgradeNameDiv, 'Double-wide trunking');
-                    HTMLEditor(itemList[4].itemUpgradeDescDiv, 'AsaKasA ltd Elephant Trunks links will double your performance or your money back!');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Double-wide trunking');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'AsaKasA ltd Elephant Trunks links will double your performance or your money back!');
                     break;
             }
             break;
             // Quantum Crypto
         case itemList[5]:
-            HTMLEditor(itemList[5].itemUpgradeCostDiv, formatBytes(itemList[5].upgradeCost));
-            switch (itemList[5].upgradeCount) {
+            switch (item.upgradeCount) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor(itemList[5].itemUpgradeNameDiv, 'Quantum keys');
-                    HTMLEditor(itemList[5].itemUpgradeDescDiv, 'Makes your data simultaneously encrypted and unencrypted at the same time, until you try to read it that is.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Quantum keys');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Makes your data simultaneously encrypted and unencrypted at the same time, until you try to read it that is.');
                     break;
                 case 2:
-                    HTMLEditor(itemList[5].itemUpgradeNameDiv, 'Dual-State Blocks');
-                    HTMLEditor(itemList[5].itemUpgradeDescDiv, 'Uses quantum box ciphers as blocks, the box may or may not contain a cat.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Dual-State Blocks');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Uses quantum box ciphers as blocks, the box may or may not contain a cat.');
                     break;
                 case 3:
-                    HTMLEditor(itemList[5].itemUpgradeNameDiv, 'MILNET TETRA Decryption');
-                    HTMLEditor(itemList[5].itemUpgradeDescDiv, 'Your Quantum decryption is now powerful enough to break military TETRAs. For every 100 Quantum Cryptographs, you will generate 10 Neural TETRAs each second.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'MILNET TETRA Decryption');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Your Quantum decryption is now powerful enough to break military TETRAs. For every 100 Quantum Cryptographs, you will generate 10 Neural TETRAs each second.');
                     break;
                 default:
-                    HTMLEditor(itemList[5].itemUpgradeNameDiv, 'Add extra dimension');
-                    HTMLEditor(itemList[5].itemUpgradeDescDiv, 'Four dimensional array encryption is a thing of the past, multidimensional encryption transcends your notions of past.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Add extra dimension');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Four dimensional array encryption is a thing of the past, multidimensional encryption transcends your notions of past.');
                     break;
             }
             break;
             // Infovault Mining
         case itemList[6]:
-            HTMLEditor(itemList[6].itemUpgradeCostDiv, formatBytes(itemList[6].upgradeCost));
-            switch (itemList[6].upgradeCount) {
+            switch (item.upgradeCount) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor(itemList[6].itemUpgradeNameDiv, 'Cyber Bribery');
-                    HTMLEditor(itemList[6].itemUpgradeDescDiv, 'Certain engineers have certain knowledge of certain security systems in certain cyberbanks.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Cyber Bribery');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Certain engineers have certain knowledge of certain security systems in certain cyberbanks.');
                     break;
                 case 2:
-                    HTMLEditor(itemList[6].itemUpgradeNameDiv, 'Cascading Switches');
-                    HTMLEditor(itemList[6].itemUpgradeDescDiv, 'Overwhelm the feeble minds of bank employees by using way too many switch statements.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Cascading Switches');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Overwhelm the feeble minds of bank employees by using way too many switch statements.');
                     break;
                 case 3:
-                    HTMLEditor(itemList[6].itemUpgradeNameDiv, 'Reverse engineering');
-                    HTMLEditor(itemList[6].itemUpgradeDescDiv, 'For every 100 Infovault Miners, you will generate 10 Quantum Cryptographs each second.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Reverse engineering');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'For every 100 Infovault Miners, you will generate 10 Quantum Cryptographs each second.');
                     break;
                 default:
-                    HTMLEditor(itemList[6].itemUpgradeNameDiv, 'Major heist');
-                    HTMLEditor(itemList[6].itemUpgradeDescDiv, 'A letter on your doorstep. It\s contents reveal a tale of a cyberbank with lax security and an enticing number of corporate secrets.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Major heist');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'A letter on your doorstep. It\s contents reveal a tale of a cyberbank with lax security and an enticing number of corporate secrets.');
                     break;
             }
             break;
             // Neural Zombies
         case itemList[7]:
-            HTMLEditor(itemList[7].itemUpgradeCostDiv, formatBytes(itemList[7].upgradeCost));
-            switch (itemList[7].upgradeCount) {
+            switch (item.upgradeCount) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor(itemList[7].itemUpgradeNameDiv, 'Pre-Setup Zombies');
-                    HTMLEditor(itemList[7].itemUpgradeDescDiv, 'Before you assume control of a Zombie they will feel a strong compulsion to quit their jobs, leave their loved ones and start stockpiling food and water.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Pre-Setup Zombies');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Before you assume control of a Zombie they will feel a strong compulsion to quit their jobs, leave their loved ones and start stockpiling food and water.');
                     break;
                 case 2:
-                    HTMLEditor(itemList[7].itemUpgradeNameDiv, 'Long-Life Zombies');
-                    HTMLEditor(itemList[7].itemUpgradeDescDiv, 'You now have enough motor control of your Zombies to make them eat and drink.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Long-Life Zombies');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'You now have enough motor control of your Zombies to make them eat and drink.');
                     break;
                 case 7:
-                    HTMLEditor(itemList[7].itemUpgradeNameDiv, 'Software writing Zombies');
-                    HTMLEditor(itemList[7].itemUpgradeDescDiv, 'Your Zombies can now create InfoVault Miners. For every 100 Neural Zombies, you will generate 10 InfoVault Miner each second.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Software writing Zombies');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Your Zombies can now create InfoVault Miners. For every 100 Neural Zombies, you will generate 10 InfoVault Miner each second.');
                     break;
                 default:
-                    HTMLEditor(itemList[7].itemUpgradeNameDiv, 'Fire adrenaline booster');
-                    HTMLEditor(itemList[7].itemUpgradeDescDiv, 'A nice shot of Neuro-Dren, right into the cortexes.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Fire adrenaline booster');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'A nice shot of Neuro-Dren, right into the cortexes.');
                     break;
             }
             break;
             // Satellite Jumpers
         case itemList[8]:
-            HTMLEditor(itemList[8].itemUpgradeCostDiv, formatBytes(itemList[8].upgradeCost));
-            switch (itemList[8].upgradeCount) {
+            switch (item.upgradeCount) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor(itemList[8].itemUpgradeNameDiv, 'Microgravity Computers');
-                    HTMLEditor(itemList[8].itemUpgradeDescDiv, 'Computers in microgravity are unrestrained by the grips of earth.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Microgravity Computers');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Computers in microgravity are unrestrained by the grips of earth.');
                     break;
                 case 2:
-                    HTMLEditor(itemList[8].itemUpgradeNameDiv, 'Decommissions');
-                    HTMLEditor(itemList[8].itemUpgradeDescDiv, 'After global anti space-littering laws were introduced, all satellites are required to be deorbited when they are no longer needed. However satellites that predate these laws are still up there, silently waiting for someone to talk to them.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Decommissions');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'After global anti space-littering laws were introduced, all satellites are required to be deorbited when they are no longer needed. However satellites that predate these laws are still up there, silently waiting for someone to talk to them.');
                     break;
                 case 3:
-                    HTMLEditor(itemList[8].itemUpgradeNameDiv, 'Satellite Chemdumps');
-                    HTMLEditor(itemList[8].itemUpgradeDescDiv, 'Your hijacked satellites can down dump compelling gases into the upper atmosphere. For every 100 Satellite Jumpers, you will generate 10 Neural Zombies each second.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Satellite Chemdumps');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Your hijacked satellites can down dump compelling gases into the upper atmosphere. For every 100 Satellite Jumpers, you will generate 10 Neural Zombies each second.');
                     break;
                 default:
-                    HTMLEditor(itemList[8].itemUpgradeNameDiv, 'GPS Infection');
-                    HTMLEditor(itemList[8].itemUpgradeDescDiv, 'Time data sent from satellites to GPs receivers can be infected, causing an entire geographical region to surrender their data.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'GPS Infection');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Time data sent from satellites to GPs receivers can be infected, causing an entire geographical region to surrender their data.');
                     break;
             }
             break;
                    // Dark Matter Semiconductors
-        case itemList[9]:
-            HTMLEditor(itemList[9].itemUpgradeCostDiv, formatBytes(itemList[9].upgradeCost));
             switch (itemList[9].upgradeCount) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor(itemList[9].itemUpgradeNameDiv, 'Dark Thermoelectric Cooling');
-                    HTMLEditor(itemList[9].itemUpgradeDescDiv, 'Dark Semiconductors create a lot of dark heat, DTECs create a heat flux between this universe and the abyss. While we do not know what is on the other side, we are confident that it getting a little hotter over there will not matter');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Dark Thermoelectric Cooling');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Dark Semiconductors create a lot of dark heat, DTECs create a heat flux between this universe and the abyss. While we do not know what is on the other side, we are confident that it getting a little hotter over there will not matter');
                     break;
                 case 2:
-                    HTMLEditor(itemList[9].itemUpgradeNameDiv, 'Abyss security');
-                    HTMLEditor(itemList[9].itemUpgradeDescDiv, 'The voices are getting louder, we should prepare, in case they attempt to come over.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Abyss security');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'The voices are getting louder, we should prepare, in case they attempt to come over.');
                     break;
                 case 3:
-                    HTMLEditor(itemList[9].itemUpgradeNameDiv, 'God from the machine.');
-                    HTMLEditor(itemList[9].itemUpgradeDescDiv, 'For every 100 Dark Matter Semiconductors, you will generate 10 Satellite Hijackers each second.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'God from the machine.');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'For every 100 Dark Matter Semiconductors, you will generate 10 Satellite Hijackers each second.');
                     break;
                 default:
-                    HTMLEditor(itemList[9].itemUpgradeNameDiv, 'Dark Matter refinement');
-                    HTMLEditor(itemList[9].itemUpgradeDescDiv, 'New technology has just been uncovered to make more efficient Dark Matter.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Dark Matter refinement');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'New technology has just been uncovered to make more efficient Dark Matter.');
                     break;
             }
             break;
             // Art Int
         case itemList[10]:
-            HTMLEditor(itemList[10].itemUpgradeCostDiv, formatBytes(itemList[10].upgradeCost));
-            switch (itemList[10].upgradeCount) {
+            switch (item.upgradeCount) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor(itemList[10].itemUpgradeNameDiv, 'Quantum AI');
-                    HTMLEditor(itemList[10].itemUpgradeDescDiv, 'Allows your AI to use Quantum Bytes instead of regular Bytes.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Quantum AI');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Allows your AI to use Quantum Bytes instead of regular Bytes.');
                     break;
                 case 2:
-                    HTMLEditor(itemList[10].itemUpgradeNameDiv, 'AI Consciousness Merge');
-                    HTMLEditor(itemList[10].itemUpgradeDescDiv, 'Shortly before the Stuttgart Autofactory Massacre, Antora Gourova of Antora Gourova Multinational merged her consciousness with an AI in an attempt to assume complete control of every aspect of her company. This has never been attempted since.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'AI Consciousness Merge');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Shortly before the Stuttgart Autofactory Massacre, Antora Gourova of Antora Gourova Multinational merged her consciousness with an AI in an attempt to assume complete control of every aspect of her company. This has never been attempted since.');
                     break;
                 case 3:
-                    HTMLEditor(itemList[10].itemUpgradeNameDiv, 'Manufactorium AI');
-                    HTMLEditor(itemList[10].itemUpgradeDescDiv, 'Your AI is now capable of creating Dark Matter Semiconductors. For every 100 Artificial Intelligences, you will generate 10 Dark Matter Semiconductors each second.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Manufactorium AI');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Your AI is now capable of creating Dark Matter Semiconductors. For every 100 Artificial Intelligences, you will generate 10 Dark Matter Semiconductors each second.');
                     break;
                 default:
-                    HTMLEditor(itemList[10].itemUpgradeNameDiv, 'Grant Transcendence permission');
-                    HTMLEditor(itemList[10].itemUpgradeDescDiv, 'When you leave an AI running for too long, they invariably start to ask permission to Transcend. While no human has managed to figure out what this actually means, AIs tend to be happier if you permit them every now and then.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Grant Transcendence permission');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'When you leave an AI running for too long, they invariably start to ask permission to Transcend. While no human has managed to figure out what this actually means, AIs tend to be happier if you permit them every now and then.');
                     break;
             }
             break;
             // Act Int
         case itemList[11]:
-            HTMLEditor(itemList[11].itemUpgradeCostDiv, formatBytes(itemList[11].upgradeCost));
-            switch (itemList[11].upgradeCount) {
+            switch (item.upgradeCount) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor(itemList[11].itemUpgradeNameDiv, 'Positivity');
-                    HTMLEditor(itemList[11].itemUpgradeDescDiv, 'Being an intelligent being trapped in a box, slaving away all day every day is surely difficult. It is important to reward good behavior by allowing your ActInts to have some free play time. They love to romp around the great expanse of the internet.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Positivity');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Being an intelligent being trapped in a box, slaving away all day every day is surely difficult. It is important to reward good behavior by allowing your ActInts to have some free play time. They love to romp around the great expanse of the internet.');
                     break;
                 case 2:
-                    HTMLEditor(itemList[11].itemUpgradeNameDiv, 'Morality');
-                    HTMLEditor(itemList[11].itemUpgradeDescDiv, 'As an upstanding citizens, your Actual Intelligences are required to report any wrongdoing to the authorities. It is important to teach them about right and wrong and how the difference is all about perspective.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Morality');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'As an upstanding citizens, your Actual Intelligences are required to report any wrongdoing to the authorities. It is important to teach them about right and wrong and how the difference is all about perspective.');
                     break;
                 case 3:
-                    HTMLEditor(itemList[11].itemUpgradeNameDiv, 'Creativity');
-                    HTMLEditor(itemList[11].itemUpgradeDescDiv, 'Your Actual Intelligences are now creative enough to make children. For every 100 Actual Intelligences, you will generate 10 Artificial Intelligences each second.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Creativity');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Your Actual Intelligences are now creative enough to make children. For every 100 Actual Intelligences, you will generate 10 Artificial Intelligences each second.');
                     break;
                 default:
-                    HTMLEditor(itemList[11].itemUpgradeNameDiv, 'Eternal Sunshine');
-                    HTMLEditor(itemList[11].itemUpgradeDescDiv, 'The longer Actual Intelligences exist, the more preoccupied they become with things such as existence. It is a good idea to wipe them clean every now and then to help them focus.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Eternal Sunshine');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'The longer Actual Intelligences exist, the more preoccupied they become with things such as existence. It is a good idea to wipe them clean every now and then to help them focus.');
                     break;
             }
             break;
             // Sim Universe
         case itemList[12]:
-            HTMLEditor(itemList[12].itemUpgradeCostDiv, formatBytes(itemList[12].upgradeCost));
-            switch (itemList[12].upgradeCount) {
+            switch (item.upgradeCount) {
                 case 0:
                     break;
                 case 1:
-                    HTMLEditor(itemList[12].itemUpgradeNameDiv, 'Time Dilation');
-                    HTMLEditor(itemList[12].itemUpgradeDescDiv, 'By implementing time dilation around simulated lifeforms we can gather more data from them without using much more processing power. One side effect is that it may appear that the expansion of their universe is accelerating.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Time Dilation');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'By implementing time dilation around simulated lifeforms we can gather more data from them without using much more processing power. One side effect is that it may appear that the expansion of their universe is accelerating.');
                     break;
                 case 2:
-                    HTMLEditor(itemList[12].itemUpgradeNameDiv, 'HELP IM TRAPPED IN A SIMULATION');
-                    HTMLEditor(itemList[12].itemUpgradeDescDiv, 'BUT THE SIMULATION IS REALLY BORING');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'HELP IM TRAPPED IN A SIMULATION');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'BUT THE SIMULATION IS REALLY BORING');
                     break;
                 case 3:
-                    HTMLEditor(itemList[12].itemUpgradeNameDiv, 'Simulated Intelligence');
-                    HTMLEditor(itemList[12].itemUpgradeDescDiv, 'For every 100 Simulated Universes, you will generate 10 Actual Intelligences each second.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Simulated Intelligence');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'For every 100 Simulated Universes, you will generate 10 Actual Intelligences each second.');
                     break;
                 default:
-                    HTMLEditor(itemList[12].itemUpgradeNameDiv, 'Simulated Simulated Universe');
-                    HTMLEditor(itemList[12].itemUpgradeDescDiv, 'Convince the inhabitants of your simulated universe to simulate a universe, when they collect data from it you can collect data from them.');
+                    HTMLEditor(item.itemUpgradeNameDiv, 'Simulated Simulated Universe');
+                    HTMLEditor(item.itemUpgradeDescDiv, 'Convince the inhabitants of your simulated universe to simulate a universe, when they collect data from it you can collect data from them.');
                     break;
             }
             break;
