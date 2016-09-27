@@ -620,7 +620,7 @@ function changeUpgradeText(item) {
                     break;
                 case 3:
                     HTMLEditor(item.div.upgradeName, 'Simulated Intelligence');
-                    HTMLEditor(item.div.upgradeDesc, 'For every Simulated Universe, you will generate 0.1 Actual Intelligences each second.');
+                    HTMLEditor(item.div.upgradeDesc, 'The smartest of the smart inhabitants of your sim universes are now capable of transcending their simulation and entering the real world. For every Simulated Universe, you will generate 0.1 Actual Intelligences each second.');
                     break;
                 default:
                     HTMLEditor(item.div.upgradeName, 'Simulated Simulated Universe');
