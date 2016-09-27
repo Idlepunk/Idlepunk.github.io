@@ -21,6 +21,7 @@ let itemConstructor = function(name, ID, baseCost, baseUpgradeCost) {
     this.baseIncome         = baseCost / 15; // The initial amount of data this generates.
     this.itemCount          = 0; // The amount you have of this item.
     this.upgradeCount       = 0; // The number of upgrades you have for this item.
+    this.autoBuyCount       = 0; // The amount that has gone to an autobuy.
     // These are the names of the divs associated with this item.
     this.div = {
         cost        : ID + 'Cost',
@@ -59,13 +60,13 @@ let itemList = [item0, item1, item2, item3, item4, item5, item6, item7, item8, i
 
 function startUp() {
     // Runs when the page is loaded.
-    document.getElementById('all').style.display = 'inline'; // Display is set to none in css to hide the body while loading, this makes it visible.
     // Gives player enough data to buy the first cyberdeck.
     dataHacked = 15;
     totalDataHacked = 15;
-    //load(); // Loads the save, remove to disable autoloading on refresh.
+    load(); // Loads the save, remove to disable autoloading on refresh.
+    document.getElementById('all').style.display = 'inline'; // Display is set to none in css to hide the body while loading, this makes it visible.
     // This hides the item menus, HRs and upgrades when the game loads, checkForReveal() with show the relevant ones on the first tick.
-    for (let i = itemList.length - 1; i >= 0; i--) {
+    for (let i = itemList.length - 1; i >= 0; i--) { // Iterating backwards is better for performance as length only has to be calculated once.
         const item = itemList[i];
         visibilityLoader(item.div.itemMenu, 0);
         visibilityLoader(item.div.HR, 0);
@@ -80,6 +81,11 @@ function save() {
         totalDataHacked: totalDataHacked,
         itemList: itemList
     };
+    /*
+    for (var i = savegame.itemList.length - 1; i >= 0; i--) {
+        delete savegame.itemList[i].div;
+    }
+    */
     // Objects get weird if you save them as a local key, so it is converted to a string first.
     localStorage.setItem('IdlepunkSave', JSON.stringify(savegame));
 }
@@ -264,17 +270,22 @@ function autoBuyLoader(updateUI) {
 function autoBuy(firstItem, secondItem, updateUI = true) {
     // This function increases the number of firstItem items based on the number of secondItem items and upgrades.
     // The 4th upgrade of secondItem is required to increase firstItem.
-    // Every 100 secondItems will add 10 firstItems, 99 secondItems will add 0 firstItems.
+    // Every 1 secondItems will add 0.1 to firstItem.autoBuyCount per tick, once autoBuyCount is >= than 1 it buys an item from the tier below.
     const max = maxItem(firstItem);
     // If the requisite upgrade is met and you have less than the max number if items.
     if (secondItem.upgradeCount >= 4 && firstItem.itemCount < max) {
-        // Buys a number of items of the tier below equal to the number of current tier items divided by 10.
-        firstItem.itemCount += Math.floor(secondItem.itemCount / 100);
+        firstItem.autoBuyCount += secondItem.itemCount / (tickRate * 10); // Divide by 100 here but 10 below because there are 10 ticks per second.
+        if (firstItem.autoBuyCount >= 1){
+            firstItem.itemCount += Math.floor(firstItem.autoBuyCount); // If autoBuyCount rounds to 1 or more, it will buy.
+            firstItem.autoBuyCount -= Math.floor(firstItem.autoBuyCount); // Subtracts the amount used to buy. 
+        }
         // If autoBuy buys more than the max allowed items, sets the number of items to the max.
         if (firstItem.itemCount > max) firstItem.itemCount = max;
-        // Updates UI.
-        if (updateUI) HTMLEditor(secondItem.div.autobuyRate, Math.floor(secondItem.itemCount / 100) * 10);
+        // Updates UI with the rate that items are being auto bought.
+        if (updateUI) HTMLEditor(secondItem.div.autobuyRate, (secondItem.itemCount / tickRate));
     }
+        // If items are not being auto bought, the rate is displayed as 0.
+    else if (updateUI) HTMLEditor(secondItem.div.autobuyRate, 0);
 }
 
 function upgrade(item) {
@@ -357,7 +368,7 @@ function changeUpgradeText(item) {
                     break;
                 case 3:
                     HTMLEditor(item.div.upgradeName, 'Cyberdeck Simulators');
-                    HTMLEditor(item.div.upgradeDesc, 'Servers that are hacked by your ICE Picks can now host virtual Cyberdecks. For every 100 ICE Picks, you will generate 10 Cyberdeck each second.');
+                    HTMLEditor(item.div.upgradeDesc, 'Servers that are hacked by your ICE Picks can now host virtual Cyberdecks. For every ICE Pick, you will generate 0.1 Cyberdeck each second.');
                     break;
                 default:
                     HTMLEditor(item.div.upgradeName, 'Write new anti-ICE software');
@@ -380,7 +391,7 @@ function changeUpgradeText(item) {
                     break;
                 case 3:
                     HTMLEditor(item.div.upgradeName, 'ICEBOTS');
-                    HTMLEditor(item.div.upgradeDesc, 'Your Botnets can now steal ICE Picks. For every 100 Botnets, you will generate 10 ICE Pick each second.');
+                    HTMLEditor(item.div.upgradeDesc, 'Your Botnets can now steal ICE Picks. For every Botnet, you will generate 0.1 ICE Pick each second.');
                     break;
                 default:
                     HTMLEditor(item.div.upgradeName, 'Push out new Bot firmware');
@@ -403,7 +414,7 @@ function changeUpgradeText(item) {
                     break;
                 case 3:
                     HTMLEditor(item.div.upgradeName, 'Botnet Thiefs.');
-                    HTMLEditor(item.div.upgradeDesc, 'Your Femtocells are now capable of stealing other hacker\'s Botnets that are residing in nearby devices. For every 100 Femtocell Hijackers, you will generate 10 Botnets each second.');
+                    HTMLEditor(item.div.upgradeDesc, 'Your Femtocells are now capable of stealing other hacker\'s Botnets that are residing in nearby devices. For every Femtocell Hijacker, you will generate 0.1 Botnets each second.');
                     break;
                 default:
                     HTMLEditor(item.div.upgradeName, 'Telecomms system hijack');
@@ -426,7 +437,7 @@ function changeUpgradeText(item) {
                     break;
                 case 3:
                     HTMLEditor(item.div.upgradeName, 'Trunked Femtocells');
-                    HTMLEditor(item.div.upgradeDesc, 'Your TETRA links to people can now turn them into makeshift Femtocells. For every 100 Neural TETRAs, you will generate 10 Femtocell Hijackers each second.');
+                    HTMLEditor(item.div.upgradeDesc, 'Your TETRA links to people can now turn them into makeshift Femtocells. For every Neural TETRA, you will generate 0.1 Femtocell Hijackers each second.');
                     break;
                 default:
                     HTMLEditor(item.div.upgradeName, 'Double-wide trunking');
@@ -449,7 +460,7 @@ function changeUpgradeText(item) {
                     break;
                 case 3:
                     HTMLEditor(item.div.upgradeName, 'MILNET TETRA Decryption');
-                    HTMLEditor(item.div.upgradeDesc, 'Your Quantum decryption is now powerful enough to break military TETRAs. For every 100 Quantum Cryptographs, you will generate 10 Neural TETRAs each second.');
+                    HTMLEditor(item.div.upgradeDesc, 'Your Quantum decryption is now powerful enough to break military TETRAs. For every Quantum Cryptograph, you will generate 0.1 Neural TETRA each second.');
                     break;
                 default:
                     HTMLEditor(item.div.upgradeName, 'Add extra dimension');
@@ -472,7 +483,7 @@ function changeUpgradeText(item) {
                     break;
                 case 3:
                     HTMLEditor(item.div.upgradeName, 'Reverse engineering');
-                    HTMLEditor(item.div.upgradeDesc, 'For every 100 Infovault Miners, you will generate 10 Quantum Cryptographs each second.');
+                    HTMLEditor(item.div.upgradeDesc, 'For every Infovault Miner, you will generate 0.1 Quantum Cryptographs each second.');
                     break;
                 default:
                     HTMLEditor(item.div.upgradeName, 'Major heist');
@@ -495,7 +506,7 @@ function changeUpgradeText(item) {
                     break;
                 case 7:
                     HTMLEditor(item.div.upgradeName, 'Software writing Zombies');
-                    HTMLEditor(item.div.upgradeDesc, 'Your Zombies can now create InfoVault Miners. For every 100 Neural Zombies, you will generate 10 InfoVault Miner each second.');
+                    HTMLEditor(item.div.upgradeDesc, 'Your Zombies can now create InfoVault Miners. For every Neural Zombie, you will generate 0.1 InfoVault Miner each second.');
                     break;
                 default:
                     HTMLEditor(item.div.upgradeName, 'Fire adrenaline booster');
@@ -518,7 +529,7 @@ function changeUpgradeText(item) {
                     break;
                 case 3:
                     HTMLEditor(item.div.upgradeName, 'Satellite Chemdumps');
-                    HTMLEditor(item.div.upgradeDesc, 'Your hijacked satellites can down dump compelling gases into the upper atmosphere. For every 100 Satellite Jumpers, you will generate 10 Neural Zombies each second.');
+                    HTMLEditor(item.div.upgradeDesc, 'Your hijacked satellites can down dump compelling gases into the upper atmosphere. For every Satellite Jumper, you will generate 0.1 Neural Zombies each second.');
                     break;
                 default:
                     HTMLEditor(item.div.upgradeName, 'GPS Infection');
@@ -540,7 +551,7 @@ function changeUpgradeText(item) {
                     break;
                 case 3:
                     HTMLEditor(item.div.upgradeName, 'God from the machine.');
-                    HTMLEditor(item.div.upgradeDesc, 'For every 100 Dark Matter Semiconductors, you will generate 10 Satellite Hijackers each second.');
+                    HTMLEditor(item.div.upgradeDesc, 'For every Dark Matter Semiconductor, you will generate 0.1 Satellite Hijackers each second.');
                     break;
                 default:
                     HTMLEditor(item.div.upgradeName, 'Dark Matter refinement');
@@ -563,7 +574,7 @@ function changeUpgradeText(item) {
                     break;
                 case 3:
                     HTMLEditor(item.div.upgradeName, 'Manufactorium AI');
-                    HTMLEditor(item.div.upgradeDesc, 'Your AI is now capable of creating Dark Matter Semiconductors. For every 100 Artificial Intelligences, you will generate 10 Dark Matter Semiconductors each second.');
+                    HTMLEditor(item.div.upgradeDesc, 'Your AI is now capable of creating Dark Matter Semiconductors. For every Artificial Intelligence, you will generate 0.1 Dark Matter Semiconductors each second.');
                     break;
                 default:
                     HTMLEditor(item.div.upgradeName, 'Grant Transcendence permission');
@@ -586,7 +597,7 @@ function changeUpgradeText(item) {
                     break;
                 case 3:
                     HTMLEditor(item.div.upgradeName, 'Creativity');
-                    HTMLEditor(item.div.upgradeDesc, 'Your Actual Intelligences are now creative enough to make children. For every 100 Actual Intelligences, you will generate 10 Artificial Intelligences each second.');
+                    HTMLEditor(item.div.upgradeDesc, 'Your Actual Intelligences are now creative enough to make children. For every Actual Intelligence, you will generate 0.1 Artificial Intelligences each second.');
                     break;
                 default:
                     HTMLEditor(item.div.upgradeName, 'Eternal Sunshine');
@@ -609,7 +620,7 @@ function changeUpgradeText(item) {
                     break;
                 case 3:
                     HTMLEditor(item.div.upgradeName, 'Simulated Intelligence');
-                    HTMLEditor(item.div.upgradeDesc, 'For every 100 Simulated Universes, you will generate 10 Actual Intelligences each second.');
+                    HTMLEditor(item.div.upgradeDesc, 'For every Simulated Universe, you will generate 0.1 Actual Intelligences each second.');
                     break;
                 default:
                     HTMLEditor(item.div.upgradeName, 'Simulated Simulated Universe');
