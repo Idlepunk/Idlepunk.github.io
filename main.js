@@ -6,7 +6,8 @@
 /___/_____/_____/_____/_/    \____/_/ |_/_/ |_|  
 A thing by Asher.
 */                
-/*jshint esversion: 6 */                                 
+/*jshint esversion: 6 */                  
+const saveName = 'idlepunkSave 0.2'               
 const tickRate = 10; // The number of ticks per second.
 let lastTick = new Date().getTime(); // The time that the last tick occurred
 let autoSaveTimer = 0; // Increases every tick so that the game doesn't auto save every tick.
@@ -87,12 +88,12 @@ function save() {
     }
     */
     // Objects get weird if you save them as a local key, so it is converted to a string first.
-    localStorage.setItem('IdlepunkSave', JSON.stringify(savegame));
+    localStorage.setItem(saveName, JSON.stringify(savegame));
 }
 
 function load() {
     // Loads objects + vars from local storage.
-    const savegame = JSON.parse(localStorage.getItem('IdlepunkSave')); // Converts string to object.
+    const savegame = JSON.parse(localStorage.getItem(saveName)); // Converts string to object.
     if (savegame) { // If save exists, load.
         dataHacked      = savegame.dataHacked; // Single var.
         totalDataHacked = savegame.totalDataHacked; // Single var.
@@ -110,7 +111,7 @@ function load() {
 function newGame() {
     // Deletes the save then reloads the game.
     if (confirm('Are you sure you want to start a new game?')) { // Nobody likes misclicks.
-        localStorage.removeItem('IdlepunkSave');
+        localStorage.removeItem('IdlepunkSave 0.2');
         location.reload(true); //  reload(true) forces reload from server, ignores cache, this is probably not necessary.
     }
 }
