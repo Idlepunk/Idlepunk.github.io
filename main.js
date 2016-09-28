@@ -7,12 +7,30 @@
 A thing by Asher.
 */                
 /*jshint esversion: 6 */                  
-const saveName = 'idlepunkSave 0.2'               
+const saveName = 'idlepunkSave 0.4'               
 const tickRate = 10; // The number of ticks per second.
 let lastTick = new Date().getTime(); // The time that the last tick occurred
 let autoSaveTimer = 0; // Increases every tick so that the game doesn't auto save every tick.
 let dataHacked = 0; // Data, less what has been spent.
 let totalDataHacked = 0; // The total amount of data that has been hacked.
+let currentTheme = 0; // The current theme, the index of colorTheme[].
+const colorTheme = [{ // An array of objects, each object is a theme.
+    bodyColor: 'orange',
+    clickColor: 'red',
+    numberColor: '#ff0' //yellow
+}, {
+    bodyColor: '#FF5733',
+    clickColor: '#C70039',
+    numberColor: '#900C3F'
+}, {
+    bodyColor: '#FDFEFE',
+    clickColor: '#515A5A',
+    numberColor: '#AEB6BF'
+}, {
+    bodyColor: '#FF5733',
+    clickColor: '#C70039',
+    numberColor: '#900C3F'
+}]
 let itemConstructor = function(name, ID, baseCost, baseUpgradeCost) {
     this.name               = name; // The name of the item, not really used for anything except debugging.
     this.ID                 = ID; // The identifier, usually prefixed to the name of the HTML Div.
@@ -95,8 +113,8 @@ function load() {
     // Loads objects + vars from local storage.
     const savegame = JSON.parse(localStorage.getItem(saveName)); // Converts string to object.
     if (savegame) { // If save exists, load.
-        dataHacked      = savegame.dataHacked; // Single var.
-        totalDataHacked = savegame.totalDataHacked; // Single var.
+        dataHacked      = savegame.dataHacked;
+        totalDataHacked = savegame.totalDataHacked;
         itemList        = savegame.itemList; // Loads itemList.
         // ItemList only references items, so each item has to be loaded.
         for (let i = itemList.length - 1; i >= 0; i--) {
@@ -106,6 +124,7 @@ function load() {
     }
     // Upgrade text is not refreshed each tick so this sets them properly.
     for (let i = itemList.length - 1; i >= 0; i--) changeUpgradeText(itemList[i]);
+    changeTheme(false);
 }
 
 function newGame() {
@@ -121,6 +140,23 @@ function jackIn(number) {
     // Currently only used for debugging (cheating).
     dataHacked = dataHacked + number;
     totalDataHacked += number;
+}
+
+function changeTheme(change = true){
+	// Changes the UI color theme.
+	if (change){ // If the theme should be changed, or if the currently selected theme should be applied.
+		if (currentTheme < colorTheme.length -1) currentTheme++;
+		else currentTheme = 0;
+	}	
+	changeClassColor(document.getElementsByClassName('all'), colorTheme[currentTheme].bodyColor);
+	changeClassColor(document.getElementsByClassName('clickRed'), colorTheme[currentTheme].clickColor);
+	changeClassColor(document.getElementsByClassName('number'), colorTheme[currentTheme].numberColor);
+
+	function changeClassColor(classArray, classColor){
+		for (let i = classArray.length - 1; i >= 0; i--) {
+			classArray[i].style.color = classColor;
+		}
+	}
 }
 
 function HTMLEditor(elementID, input) {
