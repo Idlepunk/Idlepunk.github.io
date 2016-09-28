@@ -43,12 +43,12 @@ let itemConstructor = function(name, ID, baseCost, baseUpgradeCost) {
         this.name               = name; // The name of the item, not really used for anything except debugging.
         this.ID                 = ID; // The identifier, usually prefixed to the name of the HTML Div.
         this.baseCost           = baseCost; // The initial cost of the item, the future costs are calculated from this.
-        this.baseUpgradeCost    = baseUpgradeCost; // The cost of the next upgrade.
-        this.nextUpgradeCost    = baseUpgradeCost; //The cost of the next upgrade.
+        this.baseUpgradeCost    = baseUpgradeCost; // The cost of the first upgrade, does not change.
+        this.nextUpgradeCost    = baseUpgradeCost; //The cost of the next upgrade, changes with each upgrade.
         this.baseIncome         = baseCost / 15; // The initial amount of data this generates.
         this.itemCount          = 0; // The amount you have of this item.
         this.upgradeCount       = 0; // The number of upgrades you have for this item.
-        this.autoBuyCount       = 0; // The amount that has gone to an autobuy.
+        this.autoBuyCount       = 0; // The amount of work that has gone towards an autobuy, further explanation in autoBuy().
     }
     // These are the names of the divs associated with this item in the DOM.
     this.div = {
@@ -69,7 +69,6 @@ let itemConstructor = function(name, ID, baseCost, baseUpgradeCost) {
 
 const BIC = 15; // Base item cost.
 const BUC = 11; // Base upgrade cost.
-// These cannot be const because they are changed when load() is called.
 //                                name                          ID       item cost          upgrade cost
 let item0  = new itemConstructor('Cyberdeck',                  'item0',  Math.pow(BIC, 1),  Math.pow(BUC, 3));
 let item1  = new itemConstructor('ICE Pick',                   'item1',  Math.pow(BIC, 2),  Math.pow(BUC, 4));
@@ -167,7 +166,7 @@ function changeTheme(change = true){
 
 function HTMLEditor(elementID, input) {
     // changes the inner HTML of an element.
-    // Mostly used to change text but can also insert normal HTML stuff.
+    // Mostly used to change text but can also insert other HTML stuff.
     document.getElementById(elementID).innerHTML = input;
 }
 
@@ -189,12 +188,12 @@ function destroyFloats(input) {
 function formatBytes(bytes) {
     // Converts a number of Bytes into a data format. E.g. 3000 bytes -> 3KB.
     bytes = Math.round(bytes);
-    if (bytes < 999099999999999999999999999) {
+    if (bytes <= 999999999999999999999999999) { // 1000 YB = 1*10^27 Bytes, this is 1 less than that.
         if (bytes === 0) return '0 Bytes';
         if (bytes === 1) return '1 Byte';
-        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']; // Can someone please invent more data sizes?
+        const dataSizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']; // Can someone please invent more data sizes?
         const i = Math.floor(Math.log(bytes) / Math.log(1000));
-        return parseFloat((bytes / Math.pow(1000, i)).toFixed(3)) + ' ' + sizes[i];
+        return parseFloat((bytes / Math.pow(1000, i)).toFixed(3)) + ' ' + dataSizes[i];
     } else {
         // If it is larger than the largest data format (9999 Yottabytes), shows scientific notation of Bytes instead.
         bytes = bytes.toExponential(2);
@@ -209,7 +208,7 @@ function formatNumbers(number) {
     // if it is greater than 1 million it shows the number name, e.g. 1.34 million.
     number = Math.round(number);
     if (number > 99999) {
-        const sizes = [
+        const numberSizes = [
         'If you are reading this then you have found a bug! Please contact an exterminator.',
         'Thousand',
         'Million',
@@ -221,7 +220,7 @@ function formatNumbers(number) {
         'Septillion',
         'If you are reading this then you need to tell me to add more number sizes.'];
         const i = Math.floor(Math.log(number) / Math.log(1000));
-        return parseFloat((number / Math.pow(1000, i)).toFixed(0)) + ' ' + sizes[i];
+        return parseFloat((number / Math.pow(1000, i)).toFixed(0)) + ' ' + numberSizes[i];
     } 
     else return number; // If the number is smaller than 100k, it just displays it normally.
 }
@@ -699,7 +698,7 @@ function updateGame() {
         lastTick = now; // Updates the time of the most recent tick.
     }
     else if (ticksToExecute > 1) { // This must be an else if because TTE may be 0.
-        // If TTE is greater than 1 it means that the game has not been running, likely because either the player is alt tabbed or the game has been closed (or the game is running on a very slow computer).
+        // If TTE is greater than 1 it means that the game has not been running, likely because either the player is alt tabbed (or the game is running on a very slow computer).
         // Therefore we want to quickly do all the things that would have happened if the game was running as normal.
         // We want to do all the calculations without having to update the UI, reveal elements, or save the game until all ticks have been executed and the game is all caught up.
         for (let i = 0; i < ticksToExecute; i++) {
