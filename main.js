@@ -13,24 +13,31 @@ let lastTick = new Date().getTime(); // The time that the last tick occurred
 let autoSaveTimer = 0; // Increases every tick so that the game doesn't auto save every tick.
 let dataHacked = 0; // Data, less what has been spent.
 let totalDataHacked = 0; // The total amount of data that has been hacked.
-let currentTheme = 0; // The current theme, the index of colorTheme[].
-const colorTheme = [{ // An array of objects, each object is a theme.
-    bodyColor: 'orange',
-    clickColor: 'red',
-    numberColor: '#ff0' //yellow
+/* Color Themes */
+let currentTheme = 1; // The current theme, the index of colorTheme[].
+const colorTheme = [ // An array of objects, each object is a theme.
+{ 
+    bodyColor: 'orange', // Orange.
+    clickColor: 'red', // Red.
+    numberColor: '#ff0' // Yellow.
 }, {
-    bodyColor: '#FF5733',
-    clickColor: '#C70039',
-    numberColor: '#900C3F'
+    bodyColor: '#FF5733', // Burgandy.
+    clickColor: '#CC7320', // Dark Yellow.
+    numberColor: '#C70039' // Maroon.
 }, {
-    bodyColor: '#FDFEFE',
-    clickColor: '#515A5A',
-    numberColor: '#AEB6BF'
+    bodyColor: '#FDFEFE', // White.
+    clickColor: '#566573', // Dark Blue.
+    numberColor: '#AAB7B8' // Light Blue.
 }, {
-    bodyColor: '#FF5733',
-    clickColor: '#C70039',
-    numberColor: '#900C3F'
+    bodyColor: '#8E44AD', // Purple.
+    clickColor: '#2471A3', // Blue.
+    numberColor: '#D2B4DE' // Light Purple.
+}, {
+    bodyColor: '#27E700', // Lime.
+    clickColor: '#6D9864', // Dull Green.
+    numberColor: '#239B56' // Green.
 }]
+/* Item Construction */
 let itemConstructor = function(name, ID, baseCost, baseUpgradeCost) {
     this.name               = name; // The name of the item, not really used for anything except debugging.
     this.ID                 = ID; // The identifier, usually prefixed to the name of the HTML Div.
@@ -148,11 +155,13 @@ function changeTheme(change = true){
 		if (currentTheme < colorTheme.length -1) currentTheme++;
 		else currentTheme = 0;
 	}	
+    // Gets an array of elements of a class.
 	changeClassColor(document.getElementsByClassName('all'), colorTheme[currentTheme].bodyColor);
 	changeClassColor(document.getElementsByClassName('clickRed'), colorTheme[currentTheme].clickColor);
 	changeClassColor(document.getElementsByClassName('number'), colorTheme[currentTheme].numberColor);
 
 	function changeClassColor(classArray, classColor){
+    // Sets an array of elements to a given color.
 		for (let i = classArray.length - 1; i >= 0; i--) {
 			classArray[i].style.color = classColor;
 		}
@@ -161,6 +170,7 @@ function changeTheme(change = true){
 
 function HTMLEditor(elementID, input) {
     // changes the inner HTML of an element.
+    // Mostly used to change text but can also insert normal HTML stuff.
     document.getElementById(elementID).innerHTML = input;
 }
 
@@ -260,7 +270,7 @@ function checkForReveal() {
             visibilityLoader(item.div.itemMenu, 1);
             visibilityLoader(item.div.HR, 1);
         }
-        if (totalDataHacked >= item.nextUpgradeCost) visibilityLoader(item.div.upgradeMenu, 1);
+        if (totalDataHacked >= item.nextUpgradeCost) visibilityLoader(item.div.upgradeMenu, 1); // An upgrade is revealed when total data is greater than the cost of the upgrade.
         else visibilityLoader(item.div.upgradeMenu, 0);
     }
 }
