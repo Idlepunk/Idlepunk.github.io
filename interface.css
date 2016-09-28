@@ -1,14 +1,11 @@
 body {
-    color: orange;
-}
-
-body {
     background-color: #000;
     font-size: 1.5vw;
     font-size: 1.5vh;
 }
 
 .all {
+    color: orange;  
     display: none;
     cursor: default;
     -webkit-touch-callout: none;
@@ -70,8 +67,8 @@ body {
 
 hr {
     background-color: #000;
-    border-top: 1px dashed orange;
-    border-bottom: 1px dashed orange;
+    border-top: 1px dashed;
+    border-bottom: 1px dashed;
 }
 
 .output {
