@@ -36,20 +36,20 @@ const colorTheme = [ // An array of objects, each object is a theme.
     bodyColor: '#27E700', // Lime.
     clickColor: '#6D9864', // Dull Green.
     numberColor: '#239B56' // Green.
-}]
+}];
 /* Item Construction */
 let itemConstructor = function(name, ID, baseCost, baseUpgradeCost) {
-    this.gameData = new function() {
-        this.name               = name; // The name of the item, not really used for anything except debugging.
-        this.ID                 = ID; // The identifier, usually prefixed to the name of the HTML Div.
-        this.baseCost           = baseCost; // The initial cost of the item, the future costs are calculated from this.
-        this.baseUpgradeCost    = baseUpgradeCost; // The cost of the first upgrade, does not change.
-        this.nextUpgradeCost    = baseUpgradeCost; //The cost of the next upgrade, changes with each upgrade.
-        this.baseIncome         = baseCost / 15; // The initial amount of data this generates.
-        this.itemCount          = 0; // The amount you have of this item.
-        this.upgradeCount       = 0; // The number of upgrades you have for this item.
-        this.autoBuyCount       = 0; // The amount of work that has gone towards an autobuy, further explanation in autoBuy().
-    }
+    this.gameData = {
+        name               : name, // The name of the item, not really used for anything except debugging.
+        ID                 : ID, // The identifier, usually prefixed to the name of the HTML Div.
+        baseCost           : baseCost, // The initial cost of the item, the future costs are calculated from 
+        baseUpgradeCost    : baseUpgradeCost, // The cost of the first upgrade, does not change.
+        nextUpgradeCost    : baseUpgradeCost, //The cost of the next upgrade, changes with each upgrade.
+        baseIncome         : baseCost / 15, // The initial amount of data this generates.
+        itemCount          : 0, // The amount you have of this item.
+        upgradeCount       : 0, // The number of upgrades you have for this item.
+        autoBuyCount       : 0 // The amount of work that has gone towards an autobuy, further explanation in autoBuy().
+    };
     // These are the names of the divs associated with this item in the DOM.
     this.div = {
         cost        : ID + 'Cost',
@@ -64,7 +64,7 @@ let itemConstructor = function(name, ID, baseCost, baseUpgradeCost) {
         upgradeCost : ID + 'UpgradeCost',
         upgradeName : ID + 'UpgradeName',
         upgradeDesc : ID + 'UpgradeDesc'
-    }
+    };
 };
 
 const BIC = 15; // Base item cost.
@@ -100,6 +100,7 @@ function startUp() {
         visibilityLoader(item.div.HR, 0);
         visibilityLoader(item.div.upgradeMenu, 0);
     }
+    window.requestAnimationFrame(updateGame); // Calls the first tick of the game.
 }
 
 function save() {
@@ -142,22 +143,22 @@ function jackIn(number) {
 }
 
 function changeTheme(change = true){
-	// Changes the UI color theme.
-	if (change){ // If the theme should be changed, or if the currently selected theme should be applied.
-		if (currentTheme < colorTheme.length -1) currentTheme++;
-		else currentTheme = 0;
-	}	
+    // Changes the UI color theme.
+    if (change){ // If the theme should be changed, or if the currently selected theme should be applied.
+        if (currentTheme < colorTheme.length -1) currentTheme++;
+        else currentTheme = 0;
+    }   
     // Gets an array of elements of a class.
-	changeClassColor(document.getElementsByClassName('all'), colorTheme[currentTheme].bodyColor);
-	changeClassColor(document.getElementsByClassName('clickRed'), colorTheme[currentTheme].clickColor);
-	changeClassColor(document.getElementsByClassName('number'), colorTheme[currentTheme].numberColor);
+    changeClassColor(document.getElementsByClassName('all'), colorTheme[currentTheme].bodyColor);
+    changeClassColor(document.getElementsByClassName('clickRed'), colorTheme[currentTheme].clickColor);
+    changeClassColor(document.getElementsByClassName('number'), colorTheme[currentTheme].numberColor);
 
-	function changeClassColor(classArray, classColor){
+    function changeClassColor(classArray, classColor){
     // Sets an array of elements to a given color.
-		for (let i = classArray.length - 1; i >= 0; i--) {
-			classArray[i].style.color = classColor;
-		}
-	}
+        for (let i = classArray.length - 1; i >= 0; i--) {
+            classArray[i].style.color = classColor;
+        }
+    }
 }
 
 function HTMLEditor(elementID, input) {
@@ -578,7 +579,8 @@ function changeUpgradeText(item) {
             }
             break;
                    // Dark Matter Semiconductors
-            switch (itemList[9].upgradeCount) {
+        case itemList[9]:
+            switch (item.gameData.upgradeCount) {
                 case 0:
                     break;
                 case 1:
@@ -669,7 +671,7 @@ function changeUpgradeText(item) {
             }
             break;
     }
-    if (upgradeName && upgradeDesc) {;
+    if (upgradeName && upgradeDesc) {
         HTMLEditor(item.div.upgradeName, upgradeName);
         HTMLEditor(item.div.upgradeDesc, upgradeDesc);
     }
