@@ -7,7 +7,7 @@
 A thing by Asher.
 */                
 /*jshint esversion: 6 */                  
-const saveName = 'idlepunkSave 0.7'               
+const saveName = 'idlepunkSave 0.7'; // The name used in local storage, change if an update will break using old saves.        
 const tickRate = 10; // The number of ticks per second.
 let lastTick = new Date().getTime(); // The time that the last tick occurred
 let autoSaveTimer = 0; // Increases every tick so that the game doesn't auto save every tick.
@@ -69,27 +69,28 @@ let itemConstructor = function(name, ID, baseCost, baseUpgradeCost) {
 
 const BIC = 15; // Base item cost.
 const BUC = 11; // Base upgrade cost.
-//                                name                          ID       item cost          upgrade cost
-let item0  = new itemConstructor('Cyberdeck',                  'item0',  Math.pow(BIC, 1),  Math.pow(BUC, 3));
-let item1  = new itemConstructor('ICE Pick',                   'item1',  Math.pow(BIC, 2),  Math.pow(BUC, 4));
-let item2  = new itemConstructor('Botnet',                     'item2',  Math.pow(BIC, 3),  Math.pow(BUC, 5));
-let item3  = new itemConstructor('Femtocell Hijacker',         'item3',  Math.pow(BIC, 4),  Math.pow(BUC, 6));
-let item4  = new itemConstructor('Neural TETRA',               'item4',  Math.pow(BIC, 5),  Math.pow(BUC, 7));
-let item5  = new itemConstructor('Quantum Cryptograph',        'item5',  Math.pow(BIC, 6),  Math.pow(BUC, 8));
-let item6  = new itemConstructor('Infovault Mining',           'item6',  Math.pow(BIC, 7),  Math.pow(BUC, 9));
-let item7  = new itemConstructor('Neural Zombies',             'item7',  Math.pow(BIC, 8),  Math.pow(BUC, 10));
-let item8  = new itemConstructor('Satellite Jumpers',          'item8',  Math.pow(BIC, 9),  Math.pow(BUC, 11));
-let item9  = new itemConstructor('Dark Matter Semiconductors', 'item9',  Math.pow(BIC, 10), Math.pow(BUC, 12));
-let item10 = new itemConstructor('Actual Intelligence',        'item10', Math.pow(BIC, 11), Math.pow(BUC, 13));
-let item11 = new itemConstructor('Artificial Intelligences',   'item11', Math.pow(BIC, 12), Math.pow(BUC, 14));
-let item12 = new itemConstructor('Simulated Universes',        'item12', Math.pow(BIC, 13), Math.pow(BUC, 15));
-let itemList = [item0, item1, item2, item3, item4, item5, item6, item7, item8, item9, item10, item11, item12];
+
+let itemList = [
+    new itemConstructor('Cyberdeck',                  'item0',  Math.pow(BIC, 1),  Math.pow(BUC, 3)),
+    new itemConstructor('ICE Pick',                   'item1',  Math.pow(BIC, 2),  Math.pow(BUC, 4)),
+    new itemConstructor('Botnet',                     'item2',  Math.pow(BIC, 3),  Math.pow(BUC, 5)),
+    new itemConstructor('Femtocell Hijacker',         'item3',  Math.pow(BIC, 4),  Math.pow(BUC, 6)),
+    new itemConstructor('Neural TETRA',               'item4',  Math.pow(BIC, 5),  Math.pow(BUC, 7)),
+    new itemConstructor('Quantum Cryptograph',        'item5',  Math.pow(BIC, 6),  Math.pow(BUC, 8)),
+    new itemConstructor('Infovault Mining',           'item6',  Math.pow(BIC, 7),  Math.pow(BUC, 9)),
+    new itemConstructor('Neural Zombies',             'item7',  Math.pow(BIC, 8),  Math.pow(BUC, 10)),
+    new itemConstructor('Satellite Jumpers',          'item8',  Math.pow(BIC, 9),  Math.pow(BUC, 11)),
+    new itemConstructor('Dark Matter Semiconductors', 'item9',  Math.pow(BIC, 10), Math.pow(BUC, 12)),
+    new itemConstructor('Actual Intelligence',        'item10', Math.pow(BIC, 11), Math.pow(BUC, 13)),
+    new itemConstructor('Artificial Intelligences',   'item11', Math.pow(BIC, 12), Math.pow(BUC, 14)),
+    new itemConstructor('Simulated Universes',        'item12', Math.pow(BIC, 13), Math.pow(BUC, 15))
+];
 
 function startUp() {
     // Runs when the page is loaded.
-    // Gives player enough data to buy the first cyberdeck.
-    dataHacked = 15;
-    totalDataHacked = 15;
+    // Gives player enough data to buy the first item.
+    dataHacked = BIC;
+    totalDataHacked = BIC;
     load(); // Loads the save, remove to disable autoloading on refresh.
     document.getElementById('all').style.display = 'inline'; // Display is set to none in css to hide the body while loading, this makes it visible.
     // This hides the item menus, HRs and upgrades when the game loads, checkForReveal() with show the relevant ones on the first tick.
@@ -118,12 +119,7 @@ function load() {
     if (savegame) { // If save exists, load.
         dataHacked      = savegame.dataHacked;
         totalDataHacked = savegame.totalDataHacked;
-        itemList        = savegame.itemList; // Loads itemList.
-        // ItemList only references items, so each item has to be loaded.
-        for (let i = itemList.length - 1; i >= 0; i--) {
-            let item = window['item' + i]; 
-            item = itemList[i]; // Loads local object to global object.
-        }
+        itemList        = savegame.itemList;
     }
     // Upgrade text is not refreshed each tick so this sets them properly.
     for (let i = itemList.length - 1; i >= 0; i--) changeUpgradeText(itemList[i]);
@@ -133,7 +129,7 @@ function load() {
 function newGame() {
     // Deletes the save then reloads the game.
     if (confirm('Are you sure you want to start a new game?')) { // Nobody likes misclicks.
-        localStorage.removeItem('IdlepunkSave 0.2');
+        localStorage.removeItem(saveName);
         location.reload(true); //  reload(true) forces reload from server, ignores cache, this is probably not necessary.
     }
 }
@@ -340,6 +336,7 @@ function upgrade(item) {
         item.gameData.nextUpgradeCost = upgradeCost(item);
         changeUpgradeText(item);
         visibilityLoader(item.div.upgradeMenu, 0);
+        checkForReveal();
     }
 }
 
@@ -672,8 +669,7 @@ function changeUpgradeText(item) {
             }
             break;
     }
-    if (upgradeName && upgradeDesc) changeText();
-    function changeText(){
+    if (upgradeName && upgradeDesc) {;
         HTMLEditor(item.div.upgradeName, upgradeName);
         HTMLEditor(item.div.upgradeDesc, upgradeDesc);
     }
