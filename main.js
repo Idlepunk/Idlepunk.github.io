@@ -7,7 +7,7 @@
 A thing by Asher.
 */                
 /*jshint esversion: 6 */                  
-const saveName = 'idlepunkSave 0.7'; // The name used in local storage, change if an update will break using old saves.        
+const saveName = 'idlepunkSave 0.8'; // The name used in local storage, change if an update will break using old saves.        
 const tickRate = 10; // The number of ticks per second.
 let lastTick = new Date().getTime(); // The time that the last tick occurred
 let autoSaveTimer = 0; // Increases every tick so that the game doesn't auto save every tick.
@@ -105,26 +105,38 @@ function startUp() {
 
 function save() {
     // Saves this stuff to a local key.
-    const savegame = {
-        dataHacked: dataHacked,
-        totalDataHacked: totalDataHacked,
-        itemList: itemList
+    const savegame = new function(){
+        this.dataHacked = dataHacked;
+        this.totalDataHacked = totalDataHacked;
+        this.currentTheme = currentTheme;
+        this.gameData = []; // gameData gets saved, while div does not.
+        for (let i = itemList.length - 1; i >= 0; i--) {
+            this.gameData[i] = itemList[i].gameData;
+        }
     };
     // Objects get weird if you save them as a local key, so it is converted to a string first.
-    localStorage.setItem(saveName, JSON.stringify(savegame));
+    let savegameString = JSON.stringify(savegame);    
+    savegameString = window.btoa(savegameString); // Save is obfuscated.
+    localStorage.setItem(saveName, savegameString); // Save is saved to local storage.
 }
 
 function load() {
-    // Loads objects + vars from local storage.
-    const savegame = JSON.parse(localStorage.getItem(saveName)); // Converts string to object.
-    if (savegame) { // If save exists, load.
-        dataHacked      = savegame.dataHacked;
+    // Loads stuff from local storage.
+    if (localStorage.getItem(saveName)){ // If save exists in local storage.
+        let savegame = localStorage.getItem(saveName); 
+        savegame = window.atob(savegame); // Deobfusaces save to string.
+        savegame = JSON.parse(savegame); // Converts string to object.
+        // Loads stuff from object.
+        dataHacked = savegame.dataHacked;
         totalDataHacked = savegame.totalDataHacked;
-        itemList        = savegame.itemList;
+        for (let i = savegame.gameData.length - 1; i >= 0; i--) {
+            itemList[i].gameData = savegame.gameData[i];
+        }
+        currentTheme = savegame.currentTheme;
+        changeTheme(false);
+        // Upgrade text is not refreshed each tick so this sets the upgrade text properly.
+        for (let i = itemList.length - 1; i >= 0; i--) changeUpgradeText(itemList[i]);
     }
-    // Upgrade text is not refreshed each tick so this sets them properly.
-    for (let i = itemList.length - 1; i >= 0; i--) changeUpgradeText(itemList[i]);
-    changeTheme(false);
 }
 
 function newGame() {
