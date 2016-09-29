@@ -105,7 +105,7 @@ function startUp() {
 
 function save() {
     // Saves this stuff to a local key.
-    const savegame = function(){
+    const savegame = new function(){
         this.dataHacked = dataHacked;
         this.totalDataHacked = totalDataHacked;
         this.currentTheme = currentTheme;
