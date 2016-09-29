@@ -7,38 +7,38 @@
 A thing by Asher.
 */                
 /*jshint esversion: 6 */                  
-const saveName = 'idlepunkSave 0.8'; // The name used in local storage, change if an update will break using old saves.        
+const saveName = 'idlepunkSave 0.9'; // The name used in local storage, change if an update will break using old saves.        
 const tickRate = 10; // The number of ticks per second.
 let lastTick = new Date().getTime(); // The time that the last tick occurred
 let autoSaveTimer = 0; // Increases every tick so that the game doesn't auto save every tick.
 let dataHacked = 0; // Data, less what has been spent.
 let totalDataHacked = 0; // The total amount of data that has been hacked.
-/* Color Themes */
+// Color themes.
 let currentTheme = 0; // The current theme, the index of colorTheme[].
 const colorTheme = [ // An array of objects, each object is a theme.
 { 
     bodyColor: 'orange', // Orange.
-    clickColor: 'red', // Red.
-    numberColor: '#ff0' // Yellow.
+    clickColor: 'red', 
+    numberColor: '#ff0' 
 }, {
     bodyColor: '#FF5733', // Burgandy.
-    clickColor: '#CC7320', // Dark Yellow.
-    numberColor: '#C70039' // Maroon.
+    clickColor: '#C70039', 
+    numberColor: '#CC7320' 
 }, {
     bodyColor: '#FDFEFE', // White.
-    clickColor: '#566573', // Dark Blue.
-    numberColor: '#AAB7B8' // Light Blue.
+    clickColor: '#85929E', 
+    numberColor: '#ABEBC6' 
 }, {
     bodyColor: '#8E44AD', // Purple.
-    clickColor: '#2471A3', // Blue.
-    numberColor: '#D2B4DE' // Light Purple.
+    clickColor: '#BB0E96', 
+    numberColor: '#D2B4DE' 
 }, {
-    bodyColor: '#27E700', // Lime.
-    clickColor: '#6D9864', // Dull Green.
-    numberColor: '#239B56' // Green.
+    bodyColor: '#27E700', // Green.
+    clickColor: '#0B8C0F', 
+    numberColor: '#B1FFB3' 
 }];
-/* Item Construction */
-let itemConstructor = function(name, ID, baseCost, baseUpgradeCost) {
+// Item Construction.
+const itemConstructor = function(name, ID, baseCost, baseUpgradeCost) {
     this.gameData = {
         name               : name, // The name of the item, not really used for anything except debugging.
         ID                 : ID, // The identifier, usually prefixed to the name of the HTML Div.
@@ -70,7 +70,7 @@ let itemConstructor = function(name, ID, baseCost, baseUpgradeCost) {
 const BIC = 15; // Base item cost.
 const BUC = 11; // Base upgrade cost.
 
-let itemList = [
+const itemList = [
     new itemConstructor('Cyberdeck',                  'item0',  Math.pow(BIC, 1),  Math.pow(BUC, 3)),
     new itemConstructor('ICE Pick',                   'item1',  Math.pow(BIC, 2),  Math.pow(BUC, 4)),
     new itemConstructor('Botnet',                     'item2',  Math.pow(BIC, 3),  Math.pow(BUC, 5)),
@@ -105,7 +105,7 @@ function startUp() {
 
 function save() {
     // Saves this stuff to a local key.
-    const savegame = new function(){
+    const savegame = function(){
         this.dataHacked = dataHacked;
         this.totalDataHacked = totalDataHacked;
         this.currentTheme = currentTheme;
@@ -115,7 +115,7 @@ function save() {
         }
     };
     // Objects get weird if you save them as a local key, so it is converted to a string first.
-    let savegameString = JSON.stringify(savegame);    
+    let savegameString = JSON.stringify(savegame); // foo = JSON.stringify(foo) doesn't work for some reason.
     savegameString = window.btoa(savegameString); // Save is obfuscated.
     localStorage.setItem(saveName, savegameString); // Save is saved to local storage.
 }
@@ -378,7 +378,7 @@ function buyCost(item) {
 
 function changeUpgradeText(item) {
     // Changes upgrade text and upgraded cost.
-    // Holy mother of god this got out of hand, should probably use a map or something instead of this.
+    // Holy mother of god this got out of hand, should probably use a map or object or something.
     let upgradeName;
     let upgradeDesc;
     HTMLEditor(item.div.upgradeCost, formatBytes(item.gameData.nextUpgradeCost)); // Updates cost.
@@ -721,5 +721,6 @@ function updateGame() {
         lastTick = now; // Updates the time of the most recent tick.
     }
     window.requestAnimationFrame(updateGame); // Calls this function again.
+
 }
 window.requestAnimationFrame(updateGame); // If for some reason updateGame cannot call itself, or if it isn't called during startup, this will call it.
