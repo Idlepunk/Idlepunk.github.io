@@ -227,6 +227,19 @@ function formatNumbers(number) {
         'Quintillion',
         'Sextillion',
         'Septillion',
+        'Octillion',
+        'Nonillion',
+        'Decillion',
+        'Undecillion',
+        'Duodecillion',
+        'Tredecillion',
+        'Quattuordecillion',
+        'Quindecillion',
+        'Sexdecillion',
+        'Septendecillion',
+        'Octodecillion',
+        'Novemdecillion',
+        'Vigintillion',
         'If you are reading this then you need to tell me to add more number sizes.'];
         const i = Math.floor(Math.log(number) / Math.log(1000));
         return parseFloat((number / Math.pow(1000, i)).toFixed(0)) + ' ' + numberSizes[i];
