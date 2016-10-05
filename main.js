@@ -435,7 +435,7 @@ function refreshUI() {
         HTMLEditor(itemList[i].div.numberMax, formatNumbers(maxItem(itemList[i]))); // Max number of items.
         HTMLEditor(itemList[i].div.itemCount, formatNumbers(itemList[i].let.itemCount)); // Number of items.
         HTMLEditor(itemList[i].div.cost, formatBytes(buyCost(itemList[i]))); // Item cost.
-        changeUpgradeText(itemList[i]);
+        //changeUpgradeText(itemList[i]);
     }
 }
 
@@ -447,7 +447,10 @@ function checkForReveal() {
             document.getElementById(itemList[i].div.itemFlex).style.display = 'flex';
             visibilityChange(itemList[i].div.HR, true);
         }
-        if (totalDataHacked >= itemList[i].let.nextUpgradeCost) visibilityChange(itemList[i].div.upgradeMenu, true); // An upgrade is revealed when total data is greater than the cost of the upgrade.
+        if (totalDataHacked >= itemList[i].let.nextUpgradeCost) {
+            visibilityChange(itemList[i].div.upgradeMenu, true); // An upgrade is revealed when total data is greater than the cost of the upgrade.
+            changeUpgradeText(itemList[i]);
+        }
         else visibilityChange(itemList[i].div.upgradeMenu, false);
     }
 }
