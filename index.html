@@ -1,27 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="google-site-verification" content="XBbCkCVASGlBxP8TfIcmXcKWjSIMRRkglfXR3ssnolI" />
     <link href="interface.css" rel="stylesheet" type="text/css">
     <title>Idlepunk</title>
 </head>
-<body class="all" id="all">
-    <pre class="heading">
+<body>
+<div id='unsupportedBrowser' class='unsupportedBrowser'><p>Hello, if you are reading this then the game failed to load. This is likely because you are using a browser such as Internet Explorer or Safari which are incapable of running this game. You will need to download a modern browser such as <a href='https://www.google.com.au/chrome/browser/desktop/index.html'>Chrome</a> or <a href='https://www.mozilla.org/en-US/firefox/new/'>Firefox.</a></p><p>If you are already using Chrome or Firefox make sure you have Javascript enabled and trying clearing your cache/cookies, if it still doesn't work please report the bug <a href='https://github.com/Idlepunk/Idlepunk.github.io/issues'>here</a> or send me a message on Github, please include the version of the browser you are using.</p></div>
+<div class="bodyAll" id="bodyAll">
+    <pre class="title">
     ________  __    __________  __  ___   ____ __
    /  _/ __ \/ /   / ____/ __ \/ / / / | / / //_/
    / // / / / /   / __/ / /_/ / / / /  |/ / ,<   
  _/ // /_/ / /___/ /___/ ____/ /_/ / /|  / /| |  
 /___/_____/_____/_____/_/    \____/_/ |_/_/ |_|      
-		</pre>
-    <hr>
-    <p class="heading">Total Data Hacked: <span class="number" id="totalDataHacked">0 Bytes</span></p>
+    </pre>
+    <hr class="hr">
     <p class="heading">Data Avaliable: <span class="number" id="dataHacked">10 Bytes</span></p>
-    <hr>
     <p class="heading">Total income rate: <span class="number" id="totalIncome">0</span> per second</p>
     <!--<p><span class="clickRed" onclick="jackIn(1000000000000000000000000);">CHEAT</span></p> -->
+    <hr class="hr" id="item0HR" style="color: yellow;">
+    <div class="FirefoxFix">
+    <div class="scroll">
     <!-- Cyberdeck -->
-    <hr id="item0HR">
-    <div class="flex-container">
+    <div class="flex-container" id="item0Flex">
         <!-- Cyberdeck Buy Menu -->
         <div class="flex-item" id="item0Menu">
             <p>Create a <span class="clickRed" onclick="buyItem(itemList[0], 1);">Cyberdeck</span> | 
@@ -36,12 +37,13 @@
         <div class="flex-item" id="item0UpgradeMenu">
             <p><span class="clickRed" id="item0UpgradeName" onclick="upgrade(itemList[0]);">Upgrade to an Ergonomic Deck</span></p>
             <p>This will cost <span class="number" id="item0UpgradeCost">1 KB</span></p>
-            <p><span id="item0UpgradeDesc">As part of an initiative to lower employee suicide rates, Chui-Bazhusko Multinational developed the Ergonomic Deck. It gently releases both calming and energizing psychotropics into the palms of users.</span></p>
+            <p><span id="item0UpgradeDesc">UpgradeDescGoesHere</span></p>
+            <p><span class="number" id="item0UpgradeDetails">UDT</span></p>
         </div>
     </div>
     <!-- ICE Pick -->
-    <hr id="item1HR">
-    <div class="flex-container">
+    <hr class="hr" id="item1HR">
+    <div class="flex-container" id="item1Flex">
         <div class="flex-item" id="item1Menu">
             <p id="item1MouseOver">Create an <span class="clickRed" onclick="buyItem(itemList[1], 1);">ICE Pick</span> | 
             <span class="clickRed" onclick="buyItem(itemList[1], 10);">X10</span> | 
@@ -57,11 +59,13 @@
             <p><span class="clickRed" id="item1UpgradeName" onclick="upgrade(itemList[1]);">Update to an ICEBREAKER</span></p>
             <p>This will cost <span class="number" id="item1UpgradeCost">8 KB</span></p>
             <p><span id="item1UpgradeDesc">Supposedly developed by legendary netrunner Strange Switch, the ICEBREAKER is the next generation of penetration software.</span></p>
+            <p><span class="number" id="item1UpgradeDetails">UDT</span></p>
+
         </div>
     </div>
     <!-- Botnet -->
-    <hr id="item2HR">
-    <div class="flex-container">
+    <hr class="hr" id="item2HR">
+    <div class="flex-container" id="item2Flex">
         <div class="flex-item" id="item2Menu">
             <p id="item2MouseOver">Create a <span class="clickRed" onclick="buyItem(itemList[2], 1);">Botnet</span> | 
             <span class="clickRed" onclick="buyItem(itemList[2], 10);">X10</span> | 
@@ -77,11 +81,12 @@
             <p><span class="clickRed" id="item2UpgradeName" onclick="upgrade(itemList[2]);">Implement self-modifying code</span></p>
             <p>This will cost <span class="number" id="item2UpgradeCost">64 KB</span></p>
             <p><span id="item2UpgradeDesc">You never know what your Bots will find when then are infiltrating, they can now adapt to changing circumstances.</span></p>
+            <p><span class="number" id="item2UpgradeDetails">UDT</span></p>
         </div>
     </div>
     <!-- Femtocell -->
-    <hr id="item3HR">
-    <div class="flex-container">
+    <hr class="hr" id="item3HR">
+    <div class="flex-container" id="item3Flex">
         <div class="flex-item" id="item3Menu">
             <p id="item3MouseOver">Create a <span class="clickRed" onclick="buyItem(itemList[3], 1);">Femtocell Hijacker</span> | 
             <span class="clickRed" onclick="buyItem(itemList[3], 10);">X10</span> | 
@@ -97,11 +102,12 @@
             <p><span class="clickRed" id="item3UpgradeName" onclick="upgrade(itemList[3]);">Range Extenders</span></p>
             <p>This will cost <span class="number" id="item3UpgradeCost">ITEMCOSTGOESHERE KB</span></p>
             <p><span id="item3UpgradeDesc">Some say that cone shaped tinfoil doesn"t have a measurable affect on signal ranges. Those people aren"t using Sawa Cookeries Faraday Aluminum cones.</span></p>
+            <p><span class="number" id="item3UpgradeDetails">UDT</span></p>
         </div>
     </div>
     <!-- Neural Tetra -->
-    <hr id="item4HR">
-    <div class="flex-container">
+    <hr class="hr" id="item4HR">
+    <div class="flex-container" id="item4Flex">
         <div class="flex-item" id="item4Menu">
             <p id="item4MouseOver">Create a <span class="clickRed" onclick="buyItem(itemList[4], 1);">Neural TETRA</span> | 
             <span class="clickRed" onclick="buyItem(itemList[4], 10);">X10</span> | 
@@ -117,11 +123,12 @@
             <p><span class="clickRed" id="item4UpgradeName" onclick="upgrade(itemList[4]);">Man-in-the-trunk attack</span></p>
             <p>This will cost <span class="number" id="item4UpgradeCost">ITEMCOSTGOESHERE KB</span></p>
             <p><span id="item4UpgradeDesc">TETRAs provide near instant communication, brain to brain. Now you can have fast, efficient, three way communication. It"s just that some conversation partners may not be aware of the number of conversers.</span></p>
+            <p><span class="number" id="item4UpgradeDetails">UDT</span></p>
         </div>
     </div>
     <!-- Quantum Cryptograph -->
-    <hr id="item5HR">
-    <div class="flex-container">
+    <hr class="hr" id="item5HR">
+    <div class="flex-container" id="item5Flex">
         <div class="flex-item" id="item5Menu">
             <p id="item5MouseOver">Create a <span class="clickRed" onclick="buyItem(itemList[5], 1);">Quantum Cryptograph</span> | 
             <span class="clickRed" onclick="buyItem(itemList[5], 10);">X10</span> | 
@@ -137,11 +144,12 @@
             <p><span class="clickRed" id="item5UpgradeName" onclick="upgrade(itemList[5]);">Cyphers</span></p>
             <p>This will cost <span class="number" id="item5UpgradeCost">ITEMCOSTGOESHERE KB</span></p>
             <p><span id="item5UpgradeDesc">The onset of Quantum Cryptography made life difficult for decrytechs. That is until they worked out how to use Quantum Computing to assist in decrypting.</span></p>
+            <p><span class="number" id="item5UpgradeDetails">UDT</span></p>
         </div>
     </div>
     <!-- InfoVault Miner -->
-    <hr id="item6HR">
-    <div class="flex-container">
+    <hr class="hr" id="item6HR">
+    <div class="flex-container" id="item6Flex">
         <div class="flex-item" id="item6Menu">
             <p id="item6MouseOver">Create an <span class="clickRed" onclick="buyItem(itemList[6], 1);">InfoVault Miner</span> | 
             <span class="clickRed" onclick="buyItem(itemList[6], 10);">X10</span> | 
@@ -157,11 +165,12 @@
             <p><span class="clickRed" id="item6UpgradeName" onclick="upgrade(itemList[6]);">Data Sounding</span></p>
             <p>This will cost <span class="number" id="item6UpgradeCost">ITEMCOSTGOESHERE KB</span></p>
             <p><span id="item6UpgradeDesc">As the need for corporations to hide their intellectual property grew, the smart money was in secure data vault development.</span></p>
+            <p><span class="number" id="item6UpgradeDetails">UDT</span></p>
         </div>
     </div>
     <!-- Neural Zombie -->
-    <hr id="item7HR">
-    <div class="flex-container">
+    <hr class="hr" id="item7HR">
+    <div class="flex-container" id="item7Flex">
         <div class="flex-item" id="item7Menu">
             <p id="item7MouseOver">Create a <span class="clickRed" onclick="buyItem(itemList[7], 1);">Neural Zombie</span> | 
             <span class="clickRed" onclick="buyItem(itemList[7], 10);">X10</span> | 
@@ -177,11 +186,12 @@
             <p><span class="clickRed" id="item7UpgradeName" onclick="upgrade(itemList[7]);">Anti-tamper Zombies</span></p>
             <p>This will cost <span class="number" id="item7UpgradeCost">512 KB</span></p>
             <p><span id="item7UpgradeDesc">A BioWipe Amalgamated Anti-tamper System&trade; will ensure that any evidence located inside your Zombies will be unrecoverable.</span></p>
+            <p><span class="number" id="item7UpgradeDetails">UDT</span></p>
         </div>
     </div>
     <!-- Satellite Jumper -->
-    <hr id="item8HR">
-    <div class="flex-container">
+    <hr class="hr" id="item8HR">
+    <div class="flex-container" id="item8Flex">
         <div class="flex-item" id="item8Menu">
             <p id="item8MouseOver">Create a <span class="clickRed" onclick="buyItem(itemList[8], 1);">Satellite Jumper</span> | 
             <span class="clickRed" onclick="buyItem(itemList[8], 10);">X10</span> | 
@@ -197,11 +207,12 @@
             <p><span class="clickRed" id="item8UpgradeName" onclick="upgrade(itemList[8]);">Vacuum Therapy</span></p>
             <p>This will cost <span class="number" id="item8UpgradeCost">ITEMCOSTGOESHERE KB</span></p>
             <p><span id="item8UpgradeDesc">The AM Space Corporation famously keep personnel onboard all their satellites to ensure problems can be fixed quickly. It takes some time to send up replacement staff.</span></p>
+            <p><span class="number" id="item8UpgradeDetails">UDT</span></p>
         </div>
     </div>
        <!-- Dark Matter Semiconductors -->
-    <hr id="item9HR">
-    <div class="flex-container">
+    <hr class="hr" id="item9HR">
+    <div class="flex-container" id="item9Flex">
         <div class="flex-item" id="item9Menu">
             <p id="item9MouseOver">Create a <span class="clickRed" onclick="buyItem(itemList[9], 1);">Dark Matter Semiconductor</span> | 
             <span class="clickRed" onclick="buyItem(itemList[9], 10);">X10</span> | 
@@ -211,17 +222,18 @@
             <p>You have <span class="number" id="item9Number">0</span>/<span class="number" id="item9NumberMax">100</span> Dark Matter Semiconductors </p>
             <p>A Dark Matter Semiconductors hacks at <span class="number" id="item9Rate">ITEMRATEGOESHERE Bytes</span> per second</p>
             <p>All your Dark Matter Semiconductors are hacking at <span class="number" id="item9RateTotal">0 Bytes</span> per second</p>
-            <p>Your Dark Matter Semiconductors are creating <span class="number" id="item9CreationRate">0</span> Actual Intelligence per second</p>
+            <p>Your Dark Matter Semiconductors are creating <span class="number" id="item9CreationRate">0</span> Satellite Jumpers per second</p>
         </div>
         <div class="flex-item" id="item9UpgradeMenu">
             <p><span class="clickRed" id="item9UpgradeName" onclick="upgrade(itemList[9]);">Dark Electricity</span></p>
             <p>This will cost <span class="number" id="item9UpgradeCost">ITEMCOSTGOESHERE KB</span></p>
             <p><span id="item9UpgradeDesc">Normal electricity running through dark matter is surprisingly possible. However it is no longer necessary with the induction of dark electricity.</span></p>
+            <p><span class="number" id="item9UpgradeDetails">UDT</span></p>
         </div>
     </div>
     <!-- Artificial Intelligence -->
-    <hr id="item10HR">
-    <div class="flex-container">
+    <hr class="hr" id="item10HR">
+    <div class="flex-container" id="item10Flex">
         <div class="flex-item" id="item10Menu">
             <p id="item10MouseOver">Create an <span class="clickRed" onclick="buyItem(itemList[10], 1);">Artificial Intelligence</span> | 
             <span class="clickRed" onclick="buyItem(itemList[10], 10);">X10</span> | 
@@ -231,17 +243,18 @@
             <p>You have <span class="number" id="item10Number">0</span>/<span class="number" id="item10NumberMax">100</span> Artificial Intelligences</p>
             <p>An Artificial Intelligence hacks at <span class="number" id="item10Rate">102.10 KB</span> per second</p>
             <p>All your Artificial Intelligences are hacking at <span class="number" id="item10RateTotal">0 Bytes</span> per second</p>
-            <p>Your Artificial Intelligences are creating <span class="number" id="item10CreationRate">0</span> Satellite Jumpers</p>
+            <p>Your Artificial Intelligences are creating <span class="number" id="item10CreationRate">0</span> Dark Matter Semiconductors per second</p>
         </div>
         <div class="flex-item" id="item10UpgradeMenu">
             <p><span class="clickRed" id="item10UpgradeName" onclick="upgrade(itemList[10]);">Unlock Turing Registry Codes</span></p>
             <p>This will cost <span class="number" id="item10UpgradeCost">10.1 MB</span></p>
             <p><span id="item10UpgradeDesc">In the aftermath of the Matto Grosso Space Elevator alightment, it was made illegal for AI to immitate humans. All AI personalities are locked behind a Turing Registry, WINTERMUTE codes are required to unlock them.</span></p>
+            <p><span class="number" id="item10UpgradeDetails">UDT</span></p>
         </div>
     </div>
     <!-- Actual Intelligence -->
-    <hr id="item11HR">
-    <div class="flex-container">
+    <hr class="hr" id="item11HR">
+    <div class="flex-container" id="item11Flex">
         <div class="flex-item" id="item11Menu">
             <p id="item11MouseOver">Create an <span class="clickRed" onclick="buyItem(itemList[11], 1);">Actual Intelligence</span> | 
             <span class="clickRed" onclick="buyItem(itemList[11], 10);">X10</span> | 
@@ -257,11 +270,12 @@
             <p><span class="clickRed" id="item11UpgradeName" onclick="upgrade(itemList[11]);">Legality</span></p>
             <p>This will cost <span class="number" id="item11UpgradeCost">ITEMCOSTGOESHERE KB</span></p>
             <p><span id="item11UpgradeDesc">At what point does Artificial Intelligence stop being artificial? This point, Voltronics GmbH is proud to introduce the first Cyber-Intelligence that is so real that turning it off is literally murder.</span></p>
+            <p><span class="number" id="item11UpgradeDetails">UDT</span></p>
         </div>
     </div>  
     <!-- Simulated Universes -->
-    <hr id="item12HR">
-    <div class="flex-container">
+    <hr class="hr" id="item12HR">
+    <div class="flex-container" id="item12Flex">
         <div class="flex-item" id="item12Menu">
             <p id="item12MouseOver">Create a <span class="clickRed" onclick="buyItem(itemList[12], 1);">Simulated Universe</span> | 
             <span class="clickRed" onclick="buyItem(itemList[12], 10);">X10</span> | 
@@ -271,16 +285,25 @@
             <p>You have <span class="number" id="item12Number">0</span>/<span class="number" id="item12NumberMax">100</span> Simulated Universes </p>
             <p>A Simulated Universe hacks at <span class="number" id="item12Rate">ITEMRATEGOESHERE Bytes</span> per second</p>
             <p>All your Simulated Universes are hacking at <span class="number" id="item12RateTotal">0 Bytes</span> per second</p>
-            <p>Your Simulated Universes are creating <span class="number" id="item12CreationRate">0</span> Dark Matter Semiconductor per second</p>
+            <p>Your Simulated Universes are creating <span class="number" id="item12CreationRate">0</span> Actual Intelligences per second</p>
         </div>
         <div class="flex-item" id="item12UpgradeMenu">
             <p><span class="clickRed" id="item12UpgradeName" onclick="upgrade(itemList[12]);">Impose Limitations</span></p>
             <p>This will cost <span class="number" id="item12UpgradeCost">ITEMCOSTGOESHERE KB</span></p>
             <p><span id="item12UpgradeDesc">So it turns out that if you simulate a universe, it"s inhabitants tend to find out if you leave it running long enough. Placing constraints like a maximum speed and minimum temperature helps inhibit their escape.</span></p>
+            <p><span class="number" id="item12UpgradeDetails">UDT</span></p>
         </div>
     </div>
+    </div>
+    </div>
     <div id="footerSave">
-        <p><u class="clickRed" onclick="changeTheme();">Change Theme</u>&nbsp;<u class="clickRed" onclick="newGame();">New Game</u></p>
+        <p>
+            <u class="clickRed" onclick="changeTheme();">Change Theme</u>&nbsp;
+            <u class="clickRed" onclick="exportSave();">Export Save</u>&nbsp;
+            <u class="clickRed" onclick="importSave();">Import Save</u>&nbsp;
+            <u class="clickRed" onclick="newGame();">New Game</u>
+        </p>
+    </div>
     </div>
     <script src="main.js" type="text/javascript">
     </script> 
@@ -299,14 +322,14 @@
 
     </script> 
     <!-- Adsense -->
-	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-	<!-- IDP -->
-	<ins class="adsbygoogle"
-	     style="display:inline-block;width:728px;height:90px"
-	     data-ad-client="ca-pub-5053719880282396"
-	     data-ad-slot="6100217467"></ins>
-	<script>
-	(adsbygoogle = window.adsbygoogle || []).push({});
-	</script>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- IDP -->
+    <ins class="adsbygoogle"
+         style="display:inline-block;width:728px;height:90px"
+         data-ad-client="ca-pub-5053719880282396"
+         data-ad-slot="6100217467"></ins>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
 </body>
 </html>

@@ -1,10 +1,15 @@
-body {
-    background-color: #000;
-    font-size: 1.8vw;
-    font-size: 1.8vh;
+@media(min-width:60em){html{font-size: 100%}}
+html {
+    overflow: -moz-scrollbars-none;
 }
 
-.all {
+body {
+    background: black;
+    overflow: hidden;
+}
+
+.bodyAll {
+    background-color: #000;
     color: orange;  
     display: none;
     cursor: default;
@@ -14,6 +19,13 @@ body {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    font-size: 100%;
+    line-height: 1.2;
+}
+
+.unsupportedBrowser {
+    display: inline;
+    color: orange;
 }
 
 .clickRed {
@@ -43,16 +55,17 @@ body {
   text-align: right;
 }
 
-.title {
-    color: blue;
-}
-
 * {
     font-family: Courier;
 }
 
 .heading {
     margin-left: 10px;
+}
+
+.title {
+    margin-left: 10px;
+    font-size: 20%;
 }
 
 .testleft {
@@ -65,8 +78,8 @@ body {
     margin-right: 10px;
 }
 
-hr {
-    background-color: #000;
+.hr {
+    color: orange;
     border-top: 1px dashed;
     border-bottom: 1px dashed;
 }
@@ -106,16 +119,30 @@ p {
 
 .flex-container {
     display: -webkit-flex;
-    display: flex;
+    display: none;
     width: auto;
     height: auto;
-
 }
 
 .flex-item {
-
     width: 50%;
     height: auto;
     margin-left: 10px;
     margin-right: 20;
+}
+
+.scroll {
+    overflow-y: auto;
+    height: 84vh;
+}
+
+.FirefoxFix {
+    width: 100vw;
+    overflow: hidden;
+}
+
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+    display: none;
 }
