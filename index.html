@@ -33,16 +33,42 @@
         <p class="heading">Data Available: <span class="number" id="dataHacked">10 Bytes</span></p>
         <p class="heading">Total income rate: <span class="number" id="totalIncome">0</span> per second</p>
         <hr class="hr" id="item0HR" style="color: yellow;">
-        <script id="address-template" type="text/x-handlebars-template">
-  <p>Create a <span class="click{{{class}}}"" onclick="buyItem(itemList[{{{itemListIndex}}}], 1);">{{itemName}}</span> | 
-</script>
 
-<!--Your new content will be displayed in here-->
-<div class="content-placeholder"></div>
+
+
+<!-- Template -->
+    <script id="itemTemplate" type="text/x-handlebars-template">
+        <div class="flex-container" id="{{itemID}}Flex">
+    <div class="flex-item" id="{{itemID}}Menu">
+        <p>Crefate a <span class="clickRed" onclick="buyItem(itemList[{{itemListIndex}}], 1);">{{itemName}}</span> |
+        <span class="clickRed" onclick="buyItem(itemList[{{{itemListIndex}}}], 100);">X100</span> | 
+        <span class="clickRed" onclick="buyItem(itemList[{{{itemListIndex}}}], Infinity);">Max</span></p>
+        <p>A {{itemName}} costs <span class="number" id="{{itemID}}Cost"></span></p>
+        <p>You have <span class="number" id="{{itemID}}Number">0</span>/<span class="number" id="{{itemID}}NumberMax">100</span> {{itemName}}s</p>
+        <p>A {{itemName}} hacks at <span class="number" id="{{itemID}}Rate"></span> per second</p>
+        <p>All {{itemName}}s are hacking at <span class="number" id="{{itemID}}RateTotal"></span> per second</p>
+    </div> 
+    <div class="flex-item" id="{{itemID}}UpgradeMenu">
+    <p>
+    <span class="clickRed" id="{{itemID}}UpgradeName" onclick="buyUpgrade(itemList[{{{itemListIndex}}}]);"></span></p>
+        <p>This will cost <span class="number" id="{{itemID}}pgradeCost"></span></p>
+        <p><span id="{{itemID}}UpgradeDesc"></span></p>
+        <p><span class="number" id="{{itemID}}pgradeDetails"></span></p>
+    </div>
+    </div>
+    </script>
+
+
+
         <div class="tabContent" id="itemTab">
             <div class="FirefoxFix">
                 <div class="scroll">
+                
+
+
                     <!-- Cyberdeck -->
+        <div class="itemInsert"></div>
+
                     <div class="flex-container" id="item0Flex">
                         <!-- Cyberdeck Buy Menu -->
                         <div class="flex-item" id="item0Menu">

@@ -609,8 +609,8 @@ function itemsIncome() {
         // let foo = 5; foo += 3;
         // I have not been able to find an explanation for this, only confirmation that it is true.  
         incomePerItemPerTick = item.itemData.baseIncome / gameData.tickRate; // Base rate.
-        incomePerItemPerTick = incomePerItemPerTick * Math.pow(2, item.upgrade.upgradeCount); // With upgrades.
-        incomePerItemPerTick = incomePerItemPerTick * item.achievement.achCount + 1; // With achievements.
+        incomePerItemPerTick *= Math.pow(2, item.upgrade.upgradeCount); // With upgrades.
+        incomePerItemPerTick *= item.achievement.achCount + 1; // With achievements.
 
         incomePerItemPerSecond = incomePerItemPerTick * gameData.tickRate;
         incomePerTypePerTick = incomePerItemPerTick * item.itemData.itemCount;
@@ -1216,7 +1216,8 @@ function changeUpgradeText(item) {
 
 
 
-function test() {
+function template() {
+    var item = itemList[0];
   // Grab the template script
   var theTemplateScript = $("#itemTemplate").html();
 
@@ -1225,14 +1226,14 @@ function test() {
 
   // Define our data object
   var context={
-    "itemName": "Cyberdeck",
-    "itemID": "item0",
-    "class": "Red"
+    "itemName": item.info.name,
+    "itemID": "item" + item.info.ID,
+    "itemListIndex": item.info.ID
   };
 
   // Pass our data to the template
   var theCompiledHtml = theTemplate(context);
 
   // Add the compiled html to the page
-  $('.content-placeholder').html(theCompiledHtml);
+  $('.itemInsert').html(theCompiledHtml);
 };
