@@ -1,0 +1,24 @@
+<!-- Template -->
+<script id="itemTemplate" type="text/x-handlebars-template">
+
+<div class="flex-container" id="{{itemName}}Flex">
+    <div class="flex-item" id="{{itemID}}Menu">
+        <p>Create a <span class="clickRed" onclick="buyItem(itemList[{{itemListIndex}}], 1);">{{itemName}}</span> |
+        <span class="clickRed" onclick="buyItem(itemList[{{{itemListIndex}}}], 100);">X100</span> | 
+        <span class="clickRed" onclick="buyItem(itemList[{{{itemListIndex}}}], Infinity);">Max</span></p>
+        <p>A {{itemName}} costs <span class="number" id="{{itemID}}Cost"></span></p>
+        <p>You have <span class="number" id="{{itemID}}Number">0</span>/<span class="number" id="{{itemID}}NumberMax">100</span> {{itemName}}s</p>
+        <p>A {{itemName}} hacks at <span class="number" id="{{itemID}}Rate"></span> per second</p>
+        <p>All {{itemName}}s are hacking at <span class="number" id="{{itemID}}RateTotal"></span> per second</p>
+    </div> 
+    <div class="flex-item" id="{{itemID}}UpgradeMenu">
+    <p>
+    <span class="clickRed" id="{{itemID}}UpgradeName" onclick="buyUpgrade(itemList[{{{itemListIndex}}}]);"></span></p>
+        <p>This will cost <span class="number" id="{{itemID}}pgradeCost"></span></p>
+        <p><span id="{{itemID}}UpgradeDesc"></span></p>
+        <p><span class="number" id="{{itemID}}pgradeDetails"></span></p>
+    </div>
+</div>
+</script>
+
+<div class="itemInsert"></div>
