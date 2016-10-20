@@ -25,6 +25,7 @@ body {
     user-select: none;
     font-size: 100%;
     line-height: 1.2;
+    font-family: Courier;
 }
 
 .unsupportedBrowser {
@@ -32,7 +33,7 @@ body {
     color: orange;
 }
 
-.clickRed {
+.clickable {
     color: red;
     cursor: pointer;
     cursor: hand;
@@ -44,7 +45,7 @@ body {
     user-select: none;
 }
 
-#footerSave {
+#menuBar {
     position: absolute;
     right: 0;
     top: 0;
@@ -53,21 +54,17 @@ body {
     text-align: right;
 }
 
-* {
-    font-family: Courier;
-}
-
 .heading {
     margin-left: 10px;
 }
 
-.title {
+.titleArt {
     margin-left: 10px;
     font-size: 20%;
 }
 
-.picture {
-    font-size: 0.44vw;
+#prestigeArt {
+    font-size: .44vw;
     line-height: 130%;
 }
 
@@ -77,7 +74,7 @@ body {
     border-bottom: 1px dashed;
 }
 
-.number {
+.important {
     color: #ff0;
 }
 
@@ -116,13 +113,10 @@ p {
 
 ::-webkit-scrollbar {
     width: 0;
-/* remove scrollbar space */
     background: transparent;
-/* optional: just make scrollbar invisible */
     display: none;
 }
 
-/* Style the list */
 ul.tab {
     list-style-type: none;
     padding: 0;
@@ -131,7 +125,6 @@ ul.tab {
     right: 0;
 }
 
-/* Float the list items side by side */
 ul.tab li {
     float: left;
 }
@@ -142,12 +135,6 @@ ul.tab li a {
     padding: 14px 16px;
 }
 
-/* Change background color of links on hover */
-/* ul.tab li a:hover {background-color: #ddd;}
-
-/* Create an active/current tablink class */
-/* ul.tab li a:focus, .active {background-color: #ccc;} */
-/* Style the tab content */
 .tabContent {
     display: none;
 }
@@ -173,17 +160,21 @@ ul.tab li a {
     display: none;
     position: absolute;
     overflow: auto;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    background-color: black;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    background-color: #000;
 }
 
 .dropdown-content a {
-    color: black;
+    color: #000;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
 }
 
-.dropdown a:hover {background-color: #f1f1f1}
+.dropdown a:hover {
+    background-color: #f1f1f1;
+}
 
-.show {display:block;}
+.show {
+    display: block;
+}

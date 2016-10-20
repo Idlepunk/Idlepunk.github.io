@@ -57,23 +57,23 @@ const theme = {
         {
             bodyColor:      '#ffa500', // Orange.
             clickColor:     '#FF0000',
-            numberColor:    '#FFFF00'
+            importantColor:    '#FFFF00'
     }, {
             bodyColor:      '#FF5733', // Burgundy.
             clickColor:     '#C70039',
-            numberColor:    '#CC7320'
+            importantColor:    '#CC7320'
     }, {
             bodyColor:      '#8E44AD', // Purple.
             clickColor:     '#BB0E96',
-            numberColor:    '#D2B4DE'
+            importantColor:    '#D2B4DE'
     }, {
             bodyColor:      '#27E700', // Green.
             clickColor:     '#0B8C0F',
-            numberColor:    '#B1FFB3'
+            importantColor:    '#B1FFB3'
     }, {
             bodyColor:      '#FDFEFE', // White.
             clickColor:     '#85929E',
-            numberColor:    '#ABEBC6'
+            importantColor:    '#ABEBC6'
     },]
 };
 
@@ -132,16 +132,16 @@ const itemList = [
     new item('Cyberdeck',                    0,  Math.pow(BIC, 1),  Math.pow(BUC, 3)),
     new item('ICE Pick',                     1,  Math.pow(BIC, 3),  Math.pow(BUC, 5)),
     new item('Botnet',                       2,  Math.pow(BIC, 5),  Math.pow(BUC, 7)),
-    new item('Femtocell Hijacker',           3,  Math.pow(BIC, 4),  Math.pow(BUC, 6)),
-    new item('Neural TETRA',                 4,  Math.pow(BIC, 5),  Math.pow(BUC, 7)),
-    new item('Quantum Cryptograph',          5,  Math.pow(BIC, 6),  Math.pow(BUC, 8)),
-    new item('Infovault Mining',             6,  Math.pow(BIC, 7),  Math.pow(BUC, 9)),
-    new item('Neural Zombie',                7,  Math.pow(BIC, 8),  Math.pow(BUC, 10)),
-    new item('Satellite Jumper',             8,  Math.pow(BIC, 9),  Math.pow(BUC, 11)),
-    new item('Dark Matter Semiconductor',    9,  Math.pow(BIC, 10), Math.pow(BUC, 12)),
-    new item('Artificial Intelligence',      10, Math.pow(BIC, 11), Math.pow(BUC, 13)),
-    new item('Actual Intelligence',          11, Math.pow(BIC, 12), Math.pow(BUC, 14)),
-    new item('Simulated Universe',           12, Math.pow(BIC, 13), Math.pow(BUC, 15))
+    new item('Femtocell Hijacker',           3,  Math.pow(BIC, 4),  Math.pow(BUC, 8)),
+    new item('Neural TETRA',                 4,  Math.pow(BIC, 5),  Math.pow(BUC, 9)),
+    new item('Quantum Cryptograph',          5,  Math.pow(BIC, 6),  Math.pow(BUC, 10)),
+    new item('Infovault Mining',             6,  Math.pow(BIC, 7),  Math.pow(BUC, 11)),
+    new item('Neural Zombie',                7,  Math.pow(BIC, 8),  Math.pow(BUC, 12)),
+    new item('Satellite Jumper',             8,  Math.pow(BIC, 9),  Math.pow(BUC, 13)),
+    new item('Dark Matter Semiconductor',    9,  Math.pow(BIC, 10), Math.pow(BUC, 14)),
+    new item('Artificial Intelligence',      10, Math.pow(BIC, 11), Math.pow(BUC, 15)),
+    new item('Actual Intelligence',          11, Math.pow(BIC, 12), Math.pow(BUC, 16)),
+    new item('Simulated Universe',           12, Math.pow(BIC, 13), Math.pow(BUC, 17))
 ];
 
 // 2d arrays of upgrade names and descriptions.
@@ -448,10 +448,9 @@ let prestige = new function() {
 
 function startUp() {
     // Runs when page is loaded.
-    gogo();
-
+    template();
     addData(BIC); // Adds data equal to the cost of the first item.
-    //load();
+    load();
     showGame();
     window.requestAnimationFrame(refreshGameTick); // Calls the first tick of the game.
 
@@ -471,9 +470,6 @@ function startUp() {
             buyItemUI(itemList[i]);
         }
     }
-}
-
-function buildTemplates() {
 }
 
 function refreshGameTick() {
@@ -696,12 +692,12 @@ function achievementsUI() {
     }
 
     function allItemAchUnlocked(item) {
-        document.getElementById(item.div.achDisplay).style.color = theme.colorTheme[theme.currentTheme].numberColor;
+        document.getElementById(item.div.achDisplay).style.color = theme.colorTheme[theme.currentTheme].importantColor;
     }
 
     function flashAchTab(){
         if (gameData.flashAchTab === true && gameData.achievementTabSelected !== true) {
-            document.getElementById('achTab').style.color = theme.colorTheme[theme.currentTheme].numberColor;
+            document.getElementById('achTab').style.color = theme.colorTheme[theme.currentTheme].importantColor;
         }
     }
 }
@@ -896,7 +892,6 @@ function subtractData(number) {
 function HTMLEditor(elementID, input) {
     // changes the inner HTML of an element.
     // Mostly used to change text but can also insert other HTML stuff.
-
     document.getElementById(elementID).innerHTML = input;
 }
 
@@ -1026,7 +1021,7 @@ function colorDropDown() {
     document.getElementById("myDropdown").classList.toggle("show");
     document.getElementById('bodyColorPicker').jscolor.fromString(theme.colorTheme[theme.currentTheme].bodyColor);
     document.getElementById('clickColorPicker').jscolor.fromString(theme.colorTheme[theme.currentTheme].clickColor);
-    document.getElementById('numberColorPicker').jscolor.fromString(theme.colorTheme[theme.currentTheme].numberColor);
+    document.getElementById('numberColorPicker').jscolor.fromString(theme.colorTheme[theme.currentTheme].importantColor);
 }
 
 
@@ -1056,8 +1051,8 @@ function prestigeCost() {
 function prestigePrint() {
     // Each time this is called it will add one row to the prestige message.
     if (prestige.data.sentancesDisplayed < prestige.display.message.length) { // If there are sentences left to display.
-        document.getElementById("picture").innerHTML += prestige.display.message[prestige.data.sentancesDisplayed][prestige.data.rowsDisplayed]; // Displays next row.
-        document.getElementById("picture").innerHTML += "<br />";
+        document.getElementById("prestigeArt").innerHTML += prestige.display.message[prestige.data.sentancesDisplayed][prestige.data.rowsDisplayed]; // Displays next row.
+        document.getElementById("prestigeArt").innerHTML += "<br />";
         prestige.data.rowsDisplayed ++;
         if (prestige.data.rowsDisplayed >= prestige.display.message[prestige.data.sentancesDisplayed].length) { // If the displayed row is the last row in the sentence.
             prestige.data.sentancesDisplayed ++; // Moves to the next sentence.
@@ -1112,13 +1107,13 @@ function applyColorTheme() {
     // Changes the UI color theme.
     // Gets an array of elements of a class.
     changeClassColor(document.getElementsByClassName('bodyAll'), theme.colorTheme[theme.currentTheme].bodyColor);
-    changeClassColor(document.getElementsByClassName('clickRed'), theme.colorTheme[theme.currentTheme].clickColor);
-    changeClassColor(document.getElementsByClassName('number'), theme.colorTheme[theme.currentTheme].numberColor);
+    changeClassColor(document.getElementsByClassName('clickable'), theme.colorTheme[theme.currentTheme].clickColor);
+    changeClassColor(document.getElementsByClassName('important'), theme.colorTheme[theme.currentTheme].importantColor);
     changeClassColor(document.getElementsByClassName('dropbtn'), theme.colorTheme[theme.currentTheme].clickColor);
     // This is weird but HRs don't inherit color properly in Firefox so this is necessary.
-    //changeClassColor(document.getElementsByClassName('hr'), theme.colorTheme[theme.currentTheme].bodyColor); 
+    changeClassColor(document.getElementsByClassName('hr'), theme.colorTheme[theme.currentTheme].bodyColor); 
 
-    //document.getElementById('item0HR').style.color = theme.colorTheme[theme.currentTheme].numberColor;
+    //document.getElementById('item0HR').style.color = theme.colorTheme[theme.currentTheme].importantColor;
 
     function changeClassColor(classes, color) {
         // Sets an array of elements to a given color.
@@ -1139,7 +1134,7 @@ function customTheme(color, elementType) {
     // if (!colorTheme[5]) colorTheme[5] = JSON.parse(JSON.stringify(colorTheme[theme.currentTheme]));
     if (elementType === 0) theme.colorTheme[theme.currentTheme].bodyColor = color.toHEXString();
     if (elementType === 1) theme.colorTheme[theme.currentTheme].clickColor = color.toHEXString();
-    if (elementType === 2) theme.colorTheme[theme.currentTheme].numberColor = color.toHEXString();
+    if (elementType === 2) theme.colorTheme[theme.currentTheme].importantColor = color.toHEXString();
     // theme.currentTheme = 5; // Changes the selected theme to the custom one.
     applyColorTheme();
 }
@@ -1217,30 +1212,25 @@ function changeUpgradeText(item) {
 }
 
 
-function gogo() {
+function template() {
     for (var i = 0; i < itemList.length; i++) {
-        template(itemList[i])
+        insertTemplate(itemList[i])
+    }
+
+    function insertTemplate(item = itemList[0]) {
+        // Grab the template script
+        var theTemplateScript = $("#itemTemplate").html();
+        // Compile the template
+        var theTemplate = Handlebars.compile(theTemplateScript);
+        // Define our data object
+        var context = {
+            "itemName": item.info.name,
+            "itemID": "item" + item.info.ID,
+            "itemListIndex": item.info.ID
+        };
+        // Pass our data to the template
+        var theCompiledHtml = theTemplate(context);
+        // Add the compiled html to the page
+        $('.item' + item.info.ID + 'Insert').html(theCompiledHtml);
     }
 }
-
-
-function template(item = itemList[0]) {
-  // Grab the template script
-  var theTemplateScript = $("#itemTemplate").html();
-
-  // Compile the template
-  var theTemplate = Handlebars.compile(theTemplateScript);
-
-  // Define our data object
-  var context={
-    "itemName": item.info.name,
-    "itemID": "item" + item.info.ID,
-    "itemListIndex": item.info.ID
-  };
-
-  // Pass our data to the template
-  var theCompiledHtml = theTemplate(context);
-
-  // Add the compiled html to the page
-  $('.item' + item.info.ID + 'Insert').html(theCompiledHtml);
-};
