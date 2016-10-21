@@ -31,6 +31,7 @@ body {
 .unsupportedBrowser {
     display: inline;
     color: orange;
+    font-family: Courier;
 }
 
 .clickable {

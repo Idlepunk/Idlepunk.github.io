@@ -47,7 +47,9 @@ let gameData = {
     totalDataHacked: 0, // The total amount of data that has been hacked.
     maxAchievements: 20, // The max number of allowed achievements for each item.
     achievementTabSelected: false, // The ach tab won't flash if the player is already on it.
-    flashAchTab: false // Whether the ach tab is set to flash.
+    flashAchTab: false, // Whether the ach tab is set to flash.
+    BIC: 15, // Base item cost.
+    BUC: 11 // Base upgrade cost.
 };
 
 // Color themes.
@@ -78,11 +80,6 @@ const theme = {
 };
 
 // Item Construction.
-const BIC = 15; // Base item cost.
-const BUC = 11; // Base upgrade cost.
-
-
-
 const item = function(name, ID, baseCost, baseUpgradeCost) {
     this.info = {
         name: name, // The name of the item, not really used for anything except debugging.
@@ -91,7 +88,7 @@ const item = function(name, ID, baseCost, baseUpgradeCost) {
     this.itemData = {
         itemCount       : 0, // The amount you have of this item.
         baseCost        : baseCost, // The initial cost of the item, the future costs are calculated from 
-        baseIncome      : baseCost / BIC, // The initial amount of data this generates.
+        baseIncome      : baseCost / gameData.BIC, // The initial amount of data this generates.
         incomeRateSingle: 0,
         incomeRateTotal : 0  
     };
@@ -129,19 +126,19 @@ const item = function(name, ID, baseCost, baseUpgradeCost) {
 };
 
 const itemList = [
-    new item('Cyberdeck',                    0,  Math.pow(BIC, 1),  Math.pow(BUC, 3)),
-    new item('ICE Pick',                     1,  Math.pow(BIC, 3),  Math.pow(BUC, 5)),
-    new item('Botnet',                       2,  Math.pow(BIC, 5),  Math.pow(BUC, 7)),
-    new item('Femtocell Hijacker',           3,  Math.pow(BIC, 4),  Math.pow(BUC, 8)),
-    new item('Neural TETRA',                 4,  Math.pow(BIC, 5),  Math.pow(BUC, 9)),
-    new item('Quantum Cryptograph',          5,  Math.pow(BIC, 6),  Math.pow(BUC, 10)),
-    new item('Infovault Mining',             6,  Math.pow(BIC, 7),  Math.pow(BUC, 11)),
-    new item('Neural Zombie',                7,  Math.pow(BIC, 8),  Math.pow(BUC, 12)),
-    new item('Satellite Jumper',             8,  Math.pow(BIC, 9),  Math.pow(BUC, 13)),
-    new item('Dark Matter Semiconductor',    9,  Math.pow(BIC, 10), Math.pow(BUC, 14)),
-    new item('Artificial Intelligence',      10, Math.pow(BIC, 11), Math.pow(BUC, 15)),
-    new item('Actual Intelligence',          11, Math.pow(BIC, 12), Math.pow(BUC, 16)),
-    new item('Simulated Universe',           12, Math.pow(BIC, 13), Math.pow(BUC, 17))
+    new item('Cyberdeck',                    0,  Math.pow(gameData.BIC, 1),  Math.pow(gameData.BUC, 3)),
+    new item('ICE Pick',                     1,  Math.pow(gameData.BIC, 3),  Math.pow(gameData.BUC, 5)),
+    new item('Botnet',                       2,  Math.pow(gameData.BIC, 5),  Math.pow(gameData.BUC, 7)),
+    new item('Femtocell Hijacker',           3,  Math.pow(gameData.BIC, 4),  Math.pow(gameData.BUC, 8)),
+    new item('Neural TETRA',                 4,  Math.pow(gameData.BIC, 5),  Math.pow(gameData.BUC, 9)),
+    new item('Quantum Cryptograph',          5,  Math.pow(gameData.BIC, 6),  Math.pow(gameData.BUC, 10)),
+    new item('Infovault Mining',             6,  Math.pow(gameData.BIC, 7),  Math.pow(gameData.BUC, 11)),
+    new item('Neural Zombie',                7,  Math.pow(gameData.BIC, 8),  Math.pow(gameData.BUC, 12)),
+    new item('Satellite Jumper',             8,  Math.pow(gameData.BIC, 9),  Math.pow(gameData.BUC, 13)),
+    new item('Dark Matter Semiconductor',    9,  Math.pow(gameData.BIC, 10), Math.pow(gameData.BUC, 14)),
+    new item('Artificial Intelligence',      10, Math.pow(gameData.BIC, 11), Math.pow(gameData.BUC, 15)),
+    new item('Actual Intelligence',          11, Math.pow(gameData.BIC, 12), Math.pow(gameData.BUC, 16)),
+    new item('Simulated Universe',           12, Math.pow(gameData.BIC, 13), Math.pow(gameData.BUC, 17))
 ];
 
 // 2d arrays of upgrade names and descriptions.
@@ -199,8 +196,8 @@ itemList[2].upgradeText = [
                                             them.']
 ]; // Femtocells
 itemList[3].upgradeText = [
-    ['Range Extenders',                 'Some say that cone shaped tinfoil doesn"t have a measurable affect on signal\
-                                        ranges. Those people aren"t using Sawa Cookeries Faraday Aluminum cones.'],
+    ['Range Extenders',                 'Some say that cone shaped tinfoil doesn\'t have a measurable affect on signal\
+                                        ranges. Those people aren\'t using Sawa Cookeries Faraday Aluminum cones.'],
 
     ['Macrocell Scramblers',            'Interference from macro networks can cause annoying delays for bludgeoning\
                                         Femtocell hackers. Your Femtocells can now scramble nearby macrocell signals\
@@ -217,7 +214,7 @@ itemList[3].upgradeText = [
 ]; // TETRAs
 itemList[4].upgradeText = [
     ['Man-in-the-trunk attack',     'TETRAs provide near instant communication, brain to brain. Now you can have fast,\
-                                    efficient, three way communication. It"s just that some conversation partners may\
+                                    efficient, three way communication. It\'s just that some conversation partners may\
                                     not be aware of the number of conversers.'],
 
     ['Priority trafficking',        'You have sufficient data to lobby certain groups to get your TETRAs higher up on\
@@ -341,7 +338,7 @@ itemList[11].upgradeText = [
                             as existence. It is a good idea to wipe them clean every now and then to help them focus.']
 ]; // Simulated Universes.
 itemList[12].upgradeText = [
-    ['Impose Limitations',              'So it turns out that if you simulate a universe, it"s inhabitants tend to find\
+    ['Impose Limitations',              'So it turns out that if you simulate a universe, it\'s inhabitants tend to find\
                                         out if you leave it running long enough. Placing constraints like a maximum\
                                         speed and minimum temperature helps inhibit their escape.'],
 
@@ -449,14 +446,35 @@ let prestige = new function() {
 function startUp() {
     // Runs when page is loaded.
     template();
-    addData(BIC); // Adds data equal to the cost of the first item.
+    addData(gameData.BIC); // Adds data equal to the cost of the first item.
     load();
     showGame();
     window.requestAnimationFrame(refreshGameTick); // Calls the first tick of the game.
+    function template() {
+        for (let i = 0; i < itemList.length; i++) {
+            insertTemplate(itemList[i]);
+        }
+
+        function insertTemplate(item = itemList[0]) {
+            // Grab the template script
+            const theTemplateScript = $("#itemTemplate").html();
+            // Compile the template
+            const theTemplate = Handlebars.compile(theTemplateScript);
+            // Define our data object
+            const context = {
+                "itemName": item.info.name,
+                "itemID": "item" + item.info.ID,
+                "itemListIndex": item.info.ID
+            };
+            // Pass our data to the template
+            const theCompiledHtml = theTemplate(context);
+            // Add the compiled html to the page
+            $('.item' + item.info.ID + 'Insert').html(theCompiledHtml);
+        }
+    }
 
     function showGame() {
         // Displays the initial UI elements for the game.
-
         // Hides message for unsupported browsers.
         document.getElementById('unsupportedBrowser').style.display = 'none';
         // Display is set to none in css to hide the body while loading, this makes it visible.
@@ -805,7 +823,7 @@ function save() {
     function obfuscateSave(savegame) {
         // Objects get weird if you save them as a local key, so it is converted to a string first.
         // Because there is a feature that imports/exports saves as string we want to have them unreadable to humans.
-        let savegameString = JSON.stringify(savegame); // foo = JSON.stringify(foo) doesn't work, foo = JSON.stringify(bar) must be used instead.
+        const savegameString = JSON.stringify(savegame); // foo = JSON.stringify(foo) doesn't work, foo = JSON.stringify(bar) must be used instead.
         const obfuscatedSave = window.btoa(savegameString); // String is converted to base 64
         return obfuscatedSave;
     }
@@ -817,7 +835,7 @@ function save() {
 
 function load() {
     if (localStorage.getItem(gameData.saveName)) { // If save exists in local storage.
-        let savegame = getSaveFromLocalStorage();
+        const savegame = getSaveFromLocalStorage();
         loadDataFromSave(savegame);
         loadUIElements();
         applyColorTheme();
@@ -1208,29 +1226,5 @@ function changeUpgradeText(item) {
             HTMLEditor(item.div.upgradeDetails, doublingText + '<br>' + autoBuyingText);
         }
         else HTMLEditor(item.div.upgradeDetails, doublingText);
-    }
-}
-
-
-function template() {
-    for (var i = 0; i < itemList.length; i++) {
-        insertTemplate(itemList[i])
-    }
-
-    function insertTemplate(item = itemList[0]) {
-        // Grab the template script
-        var theTemplateScript = $("#itemTemplate").html();
-        // Compile the template
-        var theTemplate = Handlebars.compile(theTemplateScript);
-        // Define our data object
-        var context = {
-            "itemName": item.info.name,
-            "itemID": "item" + item.info.ID,
-            "itemListIndex": item.info.ID
-        };
-        // Pass our data to the template
-        var theCompiledHtml = theTemplate(context);
-        // Add the compiled html to the page
-        $('.item' + item.info.ID + 'Insert').html(theCompiledHtml);
     }
 }
