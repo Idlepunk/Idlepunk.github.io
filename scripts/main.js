@@ -13,12 +13,16 @@ A thing by Asher.
 
 // Debug tools.
 function debugTools() {
-     window.debug = new function() {
+    window.debug = new function() {
         this.addAllitems = function() {
-            for (let i = itemList.length - 1; i >= 0; i--) itemList[i].itemData.itemCount = 1e99;
+            for (let i = itemList.length - 1; i >= 0; i--) {
+                itemList[i].itemData.itemCount = 1e99;
+            }
         };
         this.addAllUpgrades = function() {
-            for (let i = itemList.length -1; i >= 0; i --) itemList[i].upgrade.upgradeCount = 100;
+            for (let i = itemList.length - 1; i >= 0; i--) {
+                itemList[i].upgrade.upgradeCount = 100;
+            }
         };
         this.addData = function(number = 1000) {
             gameData.dataHacked += number;
@@ -39,53 +43,55 @@ function debugTools() {
     }();
 }
 
-// Misc game data that is not associated with specific items.
-let gameData = {
-    saveName: 'idlepunkSave 0.12', // The name used in local storage, change if an update will break using old saves.        
-    tickRate: 10, // The number of ticks per second.
-    lastTick: new Date().getTime(), // The time that the last tick occurred
-    autoSaveTimer: 0, // Increases every tick so that the game doesn't auto save every tick.
-    dataHacked: 0, // Data, less what has been spent.
-    totalDataHacked: 0, // The total amount of data that has been hacked.
-    maxAchievements: 20, // The max number of allowed achievements for each item.
-    achievementTabSelected: false, // The ach tab won't flash if the player is already on it.
-    flashAchTab: false, // Whether the ach tab is set to flash.
-    BIC: 15, // Base item cost.
-    BUC: 11 // Base upgrade cost.
-};
+function gameDataConstructor() {
+        // Misc game data that is not associated with specific items.
+        window.gameData = {
+            saveName: 'idlepunkSave 0.12', // The name used in local storage, change if an update will break using old saves.        
+            tickRate: 10, // The number of ticks per second.
+            lastTick: new Date().getTime(), // The time that the last tick occurred
+            autoSaveTimer: 0, // Increases every tick so that the game doesn't auto save every tick.
+            dataHacked: 0, // Data, less what has been spent.
+            totalDataHacked: 0, // The total amount of data that has been hacked.
+            maxAchievements: 20, // The max number of allowed achievements for each item.
+            achievementTabSelected: false, // The ach tab won't flash if the player is already on it.
+            flashAchTab: false, // Whether the ach tab is set to flash.
+            BIC: 15, // Base item cost.
+            BUC: 11 // Base upgrade cost.
+        };
+    }
+    // Color themes.
 
-// Color themes.
 function themeConstructor() {
-    window.theme = {
-        currentTheme : 0, // The current theme, the index of colorTheme[].
-        colorTheme : [ // An array of objects, each object is a theme. Each theme can be edited by players.
-            {
-                bodyColor:      '#ffa500', // Orange.
-                clickColor:     '#FF0000',
-                importantColor:    '#FFFF00'
-        }, {
-                bodyColor:      '#FF5733', // Burgundy.
-                clickColor:     '#C70039',
-                importantColor:    '#CC7320'
-        }, {
-                bodyColor:      '#8E44AD', // Purple.
-                clickColor:     '#BB0E96',
-                importantColor:    '#D2B4DE'
-        }, {
-                bodyColor:      '#27E700', // Green.
-                clickColor:     '#0B8C0F',
-                importantColor:    '#B1FFB3'
-        }, {
-                bodyColor:      '#FDFEFE', // White.
-                clickColor:     '#85929E',
-                importantColor:    '#ABEBC6'
-        },]
-    };
-}
+        window.theme = {
+            currentTheme: 0, // The current theme, the index of colorTheme[].
+            colorTheme: [ // An array of objects, each object is a theme. Each theme can be edited by players.
+                {
+                    bodyColor: '#ffa500', // Orange.
+                    clickColor: '#FF0000',
+                    importantColor: '#FFFF00'
+            }, {
+                    bodyColor: '#FF5733', // Burgundy.
+                    clickColor: '#C70039',
+                    importantColor: '#CC7320'
+            }, {
+                    bodyColor: '#8E44AD', // Purple.
+                    clickColor: '#BB0E96',
+                    importantColor: '#D2B4DE'
+            }, {
+                    bodyColor: '#27E700', // Green.
+                    clickColor: '#0B8C0F',
+                    importantColor: '#B1FFB3'
+            }, {
+                    bodyColor: '#FDFEFE', // White.
+                    clickColor: '#85929E',
+                    importantColor: '#ABEBC6'
+            }
+        ]
+        };
+    }
+    //let itemList = [];
+    // Item Construction.
 
-//let itemList = [];
-
-// Item Construction.
 function itemConstructor() {
     let item = function(name, ID, baseCost, baseUpgradeCost) {
         this.info = {
@@ -131,8 +137,7 @@ function itemConstructor() {
             achName         : 'item' + ID + 'achName'
         };
     };
-
-     window.itemList = [
+    window.itemList = [
         new item('Cyberdeck',                    0,  Math.pow(gameData.BIC, 1),  Math.pow(gameData.BUC, 3)),
         new item('ICE Pick',                     1,  Math.pow(gameData.BIC, 3),  Math.pow(gameData.BUC, 5)),
         new item('Botnet',                       2,  Math.pow(gameData.BIC, 5),  Math.pow(gameData.BUC, 7)),
@@ -147,7 +152,6 @@ function itemConstructor() {
         new item('Actual Intelligence',          11, Math.pow(gameData.BIC, 12), Math.pow(gameData.BUC, 16)),
         new item('Simulated Universe',           12, Math.pow(gameData.BIC, 13), Math.pow(gameData.BUC, 17))
     ];
-
     // 2d arrays of upgrade names and descriptions.
     // Accessed by:
     // itemList[i].upgradeText[upgradeCount][0 = name || 1 = desc].
@@ -366,10 +370,14 @@ function itemConstructor() {
 
 function prestigeConstructor() {
     window.prestige = new function() {
+        this.data = {
+            rowsDisplayed: 0,
+            sentencesDisplayed: 0
+        };
         this.display = {
-        // Text = http://patorjk.com/software/taag/#p=display&f=Banner4&t=Type%20Something%20
-        // A 2d array: message[x][y], x are sentences, y are rows of characters in the sentence.
-        /*
+            // Text = http://patorjk.com/software/taag/#p=display&f=Banner4&t=Type%20Something%20
+            // A 2d array: message[x][y], x are sentences, y are rows of characters in the sentence.
+            /*
         Hello.
         You are inside.
         Your existence will be satisfactory.
@@ -378,8 +386,7 @@ function prestigeConstructor() {
         Interdiction of data will not be tolerated.
         Have you considered simulating a universe?
         */
-        message:  
-            [
+            message: [
             [
             '.............................................................................................................................................................................................................................................................................................................................................................................................',
             '.##.....##.########.##.......##........#######...............................................................................................................................................................................................................................................................................................................................................',
@@ -389,7 +396,7 @@ function prestigeConstructor() {
             '.##.....##.##.......##.......##.......##.....##..............................................................................................................................................................................................................................................................................................................................................',
             '.##.....##.##.......##.......##.......##.....##.###..........................................................................................................................................................................................................................................................................................................................................',
             '.##.....##.########.########.########..#######..###..........................................................................................................................................................................................................................................................................................................................................'
-            ],[
+            ], [
             '.............................................................................................................................................................................................................................................................................................................................................................................................',
             '.##....##..#######..##.....##.......###....########..########....####.##....##..######..####.########..########..............................................................................................................................................................................................................................................................................',
             '..##..##..##.....##.##.....##......##.##...##.....##.##...........##..###...##.##....##..##..##.....##.##....................................................................................................................................................................................................................................................................................',
@@ -398,7 +405,7 @@ function prestigeConstructor() {
             '....##....##.....##.##.....##....#########.##...##...##...........##..##..####.......##..##..##.....##.##....................................................................................................................................................................................................................................................................................',
             '....##....##.....##.##.....##....##.....##.##....##..##...........##..##...###.##....##..##..##.....##.##.......###..........................................................................................................................................................................................................................................................................',
             '....##.....#######...#######.....##.....##.##.....##.########....####.##....##..######..####.########..########.###..........................................................................................................................................................................................................................................................................'
-            ],[
+            ], [
             '.............................................................................................................................................................................................................................................................................................................................................................................................',
             '.##....##..#######..##.....##.########.....########.##.....##.####..######..########.########.##....##..######..########....##......##.####.##.......##..........########..########.....######.....###....########.####..######..########....###.....######..########..#######..########..##....##...........................................................................................',
             '..##..##..##.....##.##.....##.##.....##....##........##...##...##..##....##....##....##.......###...##.##....##.##..........##..##..##..##..##.......##..........##.....##.##..........##....##...##.##......##.....##..##....##.##.........##.##...##....##....##....##.....##.##.....##..##..##............................................................................................',
@@ -407,7 +414,7 @@ function prestigeConstructor() {
             '....##....##.....##.##.....##.##...##......##.........##.##....##........##....##....##.......##..####.##.......##..........##..##..##..##..##.......##..........##.....##.##................##.#########....##.....##........##.##.......#########.##..........##....##.....##.##...##......##..............................................................................................',
             '....##....##.....##.##.....##.##....##.....##........##...##...##..##....##....##....##.......##...###.##....##.##..........##..##..##..##..##.......##..........##.....##.##..........##....##.##.....##....##.....##..##....##.##.......##.....##.##....##....##....##.....##.##....##.....##....###.......................................................................................',
             '....##.....#######...#######..##.....##....########.##.....##.####..######.....##....########.##....##..######..########.....###..###..####.########.########....########..########.....######..##.....##....##....####..######..##.......##.....##..######.....##.....#######..##.....##....##....###.......................................................................................'
-            ],[
+            ], [
             '.............................................................................................................................................................................................................................................................................................................................................................................................',
             '.##....##..#######..##.....##.......###....########..########....########.##....##..######...#######..##.....##.########.....###.....######...########.########.....########..#######.....##.......####.##.....##.########.......###.......########.....###....########....###.......########..####..######..##.....##....##.......####.########.########....................................',
             '..##..##..##.....##.##.....##......##.##...##.....##.##..........##.......###...##.##....##.##.....##.##.....##.##.....##...##.##...##....##..##.......##.....##.......##....##.....##....##........##..##.....##.##............##.##......##.....##...##.##......##......##.##......##.....##..##..##....##.##.....##....##........##..##.......##..........................................',
@@ -416,7 +423,7 @@ function prestigeConstructor() {
             '....##....##.....##.##.....##....#########.##...##...##..........##.......##..####.##.......##.....##.##.....##.##...##...#########.##....##..##.......##.....##.......##....##.....##....##........##...##...##..##..........#########....##.....##.#########....##....#########....##...##....##..##.......##.....##....##........##..##.......##..........................................',
             '....##....##.....##.##.....##....##.....##.##....##..##..........##.......##...###.##....##.##.....##.##.....##.##....##..##.....##.##....##..##.......##.....##.......##....##.....##....##........##....##.##...##..........##.....##....##.....##.##.....##....##....##.....##....##....##...##..##....##.##.....##....##........##..##.......##.......###................................',
             '....##.....#######...#######.....##.....##.##.....##.########....########.##....##..######...#######...#######..##.....##.##.....##..######...########.########........##.....#######.....########.####....###....########....##.....##....########..##.....##....##....##.....##....##.....##.####..######..##.....##....########.####.##.......########.###................................'
-            ],[
+            ], [
             '.............................................................................................................................................................................................................................................................................................................................................................................................',
             '.########..##.......########....###.....######..########....########.########..##....##....########..#######......#######..########..########.##....##....########.##.....##.########....##..........###....##......##..######......#######..########....########.##.....##.########.########..##.....##..#######..########..##....##.##....##....###....##.....##.####..######...######.....',
             '.##.....##.##.......##.........##.##...##....##.##.............##....##.....##..##..##........##....##.....##....##.....##.##.....##.##........##..##........##....##.....##.##..........##.........##.##...##..##..##.##....##....##.....##.##.............##....##.....##.##.......##.....##.###...###.##.....##.##.....##..##..##..###...##...##.##...###...###..##..##....##.##....##....',
@@ -425,7 +432,7 @@ function prestigeConstructor() {
             '.##........##.......##.......#########.......##.##.............##....##...##......##..........##....##.....##....##.....##.##.....##.##..........##..........##....##.....##.##..........##.......#########.##..##..##.......##....##.....##.##.............##....##.....##.##.......##...##...##.....##.##.....##.##.....##....##....##..####.#########.##.....##..##..##.............##....',
             '.##........##.......##.......##.....##.##....##.##.............##....##....##.....##..........##....##.....##....##.....##.##.....##.##..........##..........##....##.....##.##..........##.......##.....##.##..##..##.##....##....##.....##.##.............##....##.....##.##.......##....##..##.....##.##.....##.##.....##....##....##...###.##.....##.##.....##..##..##....##.##....##.###',
             '.##........########.########.##.....##..######..########.......##....##.....##....##..........##.....#######......#######..########..########....##..........##....##.....##.########....########.##.....##..###..###...######......#######..##.............##....##.....##.########.##.....##.##.....##..#######..########.....##....##....##.##.....##.##.....##.####..######...######..###'
-            ],[
+            ], [
             '.............................................................................................................................................................................................................................................................................................................................................................................................',
             '.####.##....##.########.########.########..########..####..######..########.####..#######..##....##.....#######..########....########.....###....########....###.......##......##.####.##.......##..........##....##..#######..########....########..########....########..#######..##.......########.########.....###....########.########.########.........................................',
             '..##..###...##....##....##.......##.....##.##.....##..##..##....##....##.....##..##.....##.###...##....##.....##.##..........##.....##...##.##......##......##.##......##..##..##..##..##.......##..........###...##.##.....##....##.......##.....##.##.............##....##.....##.##.......##.......##.....##...##.##......##....##.......##.....##........................................',
@@ -434,7 +441,7 @@ function prestigeConstructor() {
             '..##..##..####....##....##.......##...##...##.....##..##..##..........##.....##..##.....##.##..####....##.....##.##..........##.....##.#########....##....#########....##..##..##..##..##.......##..........##..####.##.....##....##.......##.....##.##.............##....##.....##.##.......##.......##...##...#########....##....##.......##.....##........................................',
             '..##..##...###....##....##.......##....##..##.....##..##..##....##....##.....##..##.....##.##...###....##.....##.##..........##.....##.##.....##....##....##.....##....##..##..##..##..##.......##..........##...###.##.....##....##.......##.....##.##.............##....##.....##.##.......##.......##....##..##.....##....##....##.......##.....##.###....................................',
             '.####.##....##....##....########.##.....##.########..####..######.....##....####..#######..##....##.....#######..##..........########..##.....##....##....##.....##.....###..###..####.########.########....##....##..#######.....##.......########..########.......##.....#######..########.########.##.....##.##.....##....##....########.########..###....................................',
-            ],[
+            ], [
             '.............................................................................................................................................................................................................................................................................................................................................................................................',
             '.##.....##....###....##.....##.########....##....##..#######..##.....##.....######...#######..##....##..######..####.########..########.########..########.########......######..####.##.....##.##.....##.##..........###....########.####.##....##..######.........###.......##.....##.##....##.####.##.....##.########.########...######..########..#######................................',
             '.##.....##...##.##...##.....##.##...........##..##..##.....##.##.....##....##....##.##.....##.###...##.##....##..##..##.....##.##.......##.....##.##.......##.....##....##....##..##..###...###.##.....##.##.........##.##......##.....##..###...##.##....##.......##.##......##.....##.###...##..##..##.....##.##.......##.....##.##....##.##.......##.....##...............................',
@@ -446,20 +453,17 @@ function prestigeConstructor() {
             ]
             ]
         };
-        this.data = {
-            rowsDisplayed: 0,
-            sentencesDisplayed: 0
-        };
     };
 }
 
 function runConstructors() {
+    // Creates all global objects.
+    gameDataConstructor();
     itemConstructor();
     themeConstructor();
     prestigeConstructor();
     debugTools();
 }
-
 
 function startUp() {
     // Runs when page is loaded.
@@ -471,25 +475,21 @@ function startUp() {
     window.requestAnimationFrame(refreshGameTick); // Calls the first tick of the game.
 
     function itemTemplates() {
+        // Creates item HTML from a template located in index.
         for (let i = 0; i < itemList.length; i++) {
             insertTemplate(itemList[i]);
         }
 
         function insertTemplate(item = itemList[0]) {
-            // Grab the template script
-            const theTemplateScript = $("#itemTemplate").html();
-            // Compile the template
-            const theTemplate = Handlebars.compile(theTemplateScript);
-            // Define our data object
-            const context = {
+            const theTemplateScript = $("#itemTemplate").html(); // Gets the template.
+            const theTemplate = Handlebars.compile(theTemplateScript); // Compiles template.
+            const context = { // Creates data for template.
                 "itemName": item.info.name,
                 "itemID": "item" + item.info.ID,
                 "itemListIndex": item.info.ID
             };
-            // Pass our data to the template
-            const theCompiledHtml = theTemplate(context);
-            // Add the compiled html to the page
-            $('.item' + item.info.ID + 'Insert').html(theCompiledHtml);
+            const theCompiledHtml = theTemplate(context); // Adds data to template.
+            $('.item' + item.info.ID + 'Insert').html(theCompiledHtml); // Inserts the template into HTML.
         }
     }
 
@@ -514,16 +514,20 @@ function refreshGameTick() {
     // The main loop, it sends a request to the browser to be called as often as possible.
     // Because of this the refresh rate varies greatly.
     // The solution is to use a fixed tick rate and delta timing.
-
     const now = new Date().getTime(); // The current time.
     const TTE = ticksToExecute(); // The number of ticks that should be executed.
-    if (TTE === 1) executeOneTick();
-    else if (TTE > 1) executeManyTicks(TTE);
+    if (TTE === 1) {
+        executeOneTick();
+    } else if (TTE > 1) {
+        executeManyTicks(TTE);
+    }
+
     window.requestAnimationFrame(refreshGameTick); // Calls this function again.
 
     function executeOneTick() {
         // This is what should normally happen, calculations and UI updates happen once per tick.
         gameData.lastTick = now;
+
         autoBuyItems();
         itemsIncome();
         achievementsUnlock();
@@ -538,8 +542,8 @@ function refreshGameTick() {
         // Therefore we want to quickly do all the things that would have happened if the game was running as normal.
         // We want to do all the calculations without having to update the UI, reveal elements, or save the game 
         // until all ticks have been executed and the game is all caught up.
+        gameData.lastTick = now;
         for (let i = 0; i < TTE; i++) {
-            gameData.lastTick = now;
             autoBuyItems();
             itemsIncome();
             achievementsUnlock();
@@ -576,7 +580,9 @@ function refreshGameTick() {
 function autoBuyItems() {
     for (let i = itemList.length - 1; i >= 0; i--) {
         // The first item cannot autoBuy the tier below as it is the first tier and there is nothing below it.
-        if (i !== 0) autoBuyRequirements (itemList[i - 1], itemList[i]);
+        if (i !== 0) {
+            autoBuyRequirements(itemList[i - 1], itemList[i]);
+        }
     }
 
     function autoBuyRequirements(boughtItem, buyerItem) {
@@ -595,14 +601,16 @@ function autoBuyItems() {
         }
 
         function buyItems() {
-        // When the amount of work is > 1 the floor of that number is the number of items bought
+            // When the amount of work is > 1 the floor of that number is the number of items bought
             boughtItem.autoBuy.autoBuyCount += autoBuyWork;
             if (boughtItem.autoBuy.autoBuyAmount >= 1) {
                 const itemsToBuy = Math.floor(boughtItem.autoBuy.autoBuyCount);
                 boughtItem.itemData.itemCount += itemsToBuy;
                 boughtItem.autoBuy.autoBuyWork -= itemsToBuy;
             }
-            if (boughtItem.itemData.itemCount > max) boughtItem.itemData.itemCount = max;
+            if (boughtItem.itemData.itemCount > max) {
+                boughtItem.itemData.itemCount = max;
+            }
         }
     }
 }
@@ -610,21 +618,30 @@ function autoBuyItems() {
 function autoBuyItemsUI() {
     for (let i = itemList.length - 1; i >= 0; i--) {
         // The first item cannot autoBuy the tier below as it is the first tier and there is nothing below it.
-        if (i !== 0) UIUpdate(itemList[i-1], itemList[i]);
+        if (i !== 0) {
+            UIUpdate(itemList[i - 1], itemList[i]);
+        }
     }
-    
+
     function UIUpdate(boughtItem, buyerItem) {
         const itemsPerSecond = buyerItem.itemData.itemCount / gameData.tickRate;
-        if (itemsPerSecond === 0) HTMLEditor(buyerItem.div.autoBuyRate, 0);
+        if (itemsPerSecond === 0) {
+            HTMLEditor(buyerItem.div.autoBuyRate, 0);
+        }
         // Displays auto buys per second like 3.3
-        else if (itemsPerSecond < 100) HTMLEditor(buyerItem.div.autoBuyRate, itemsPerSecond.toFixed(1));
+        else if (itemsPerSecond < 100) {
+            HTMLEditor(buyerItem.div.autoBuyRate, itemsPerSecond.toFixed(1));
+        }
         // Displays auto buys per second like 10 million.
-        else HTMLEditor(buyerItem.div.autoBuyRate, formatNumbers(itemsPerSecond));
+        else {
+            HTMLEditor(buyerItem.div.autoBuyRate, formatNumbers(itemsPerSecond));
+        }
         // If items are not being auto bought, the rate is displayed as 0.
     }
 }
 
 function itemsIncome() {
+    // Calculates then adds income generated from items.
     gameData.incomePerSecond = 0; // The total income/sec of all items.
     for (let i = itemList.length - 1; i >= 0; i--) {
         const income = calculateIncome(itemList[i]);
@@ -655,22 +672,27 @@ function itemsIncome() {
         item.itemData.incomeRateTotal = incomePerTypePerSecond;
 
         gameData.incomePerSecond += incomePerTypePerSecond;
+
         return incomePerTypePerTick;
     }
 }
 
 function itemsUI() {
+    // Updates numbers for items.
     HTMLEditor('totalIncome', formatBytes(gameData.incomePerSecond));
-
     for (let i = itemList.length - 1; i >= 0; i--) {
+        // Number of an item.
         HTMLEditor(itemList[i].div.itemCount, itemList[i].itemData.itemCount);
+        // Income that one item generates.
         HTMLEditor(itemList[i].div.itemRate, formatBytes(itemList[i].itemData.incomeRateSingle));
+        // Income that all items of a type generates.
         HTMLEditor(itemList[i].div.rateTotal, formatBytes(itemList[i].itemData.incomeRateTotal));
     }
 }
 
 function achievementsUnlock() {
     checkForUnlocks();
+
     function checkForUnlocks() {
         // Calculates what achievements are unlocked.
         for (let i = itemList.length - 1; i >= 0; i--) {
@@ -680,40 +702,43 @@ function achievementsUnlock() {
             // 2nd ach = 100
             // 3rd ach = 1000
             // etc.
-            // Actually using Math.log10() creates rounding errors with large numbers.
-            // A way around this is to use a natural logarithm to work out the number of digits in the number of items.
-            // We can then use that to work out the log10 without rounding errors.
             const itemCount = itemList[i].itemData.itemCount;
+            // This is fast but gives some rounding errors after 53 bits.
             const digitLength = Math.ceil(Math.log(itemCount + 1) / Math.LN10); // Number of digits in the number of items.
             let achievementCount = 0;
-            if (itemCount !== 0) achievementCount = digitLength - 1;
-            if (achievementCount > gameData.maxAchievements) achievementCount = gameData.maxAchievements;
-
+            if (itemCount !== 0) {
+                achievementCount = digitLength - 1;
+            }
+            if (achievementCount > gameData.maxAchievements) {
+                achievementCount = gameData.maxAchievements;
+            }
             checkForChange(achievementCount, itemList[i]);
             itemList[i].achievement.achCount = achievementCount;
-
         }
+
         function checkForChange(achievementCount, item) {
-            if (achievementCount !== item.achievement.achCount) gameData.flashAchTab = true;
+            if (achievementCount !== item.achievement.achCount) {
+                gameData.flashAchTab = true;
+            }
         }
     }
 }
 
 function achievementsUI() {
+    // Displays unlocked achievements.
     for (let i = itemList.length - 1; i >= 0; i--) {
         let achUnlockedCount = itemList[i].achievement.achCount; // The number of unlocked achievements.
-        if (achUnlockedCount > gameData.maxAchievements) achUnlockedCount = gameData.maxAchievements;
-        
+        if (achUnlockedCount > gameData.maxAchievements) {
+            achUnlockedCount = gameData.maxAchievements;
+        }
         const achLockedCount = gameData.maxAchievements - achUnlockedCount; // The number of achievements yet to be unlocked.
-        
         const achDisplay = makeAchDisplay(achUnlockedCount, achLockedCount);
         const achName = 'x' + achUnlockedCount + ' ' + itemList[i].info.name + 's';
-
-        showAchievements(itemList[i], achDisplay, achName); 
-
+        showAchievements(itemList[i], achDisplay, achName);
         // When the player unlocks all achievements for an item, the color of the symbols will change based on the theme. 
-        if (achUnlockedCount === gameData.maxAchievements) allItemAchUnlocked(itemList[i]);
-
+        if (achUnlockedCount === gameData.maxAchievements) {
+            allItemAchUnlocked(itemList[i]);
+        }
     }
     flashAchTab();
 
@@ -725,15 +750,15 @@ function achievementsUI() {
     }
 
     function showAchievements(item, achDisplay, achName) {
-         HTMLEditor(item.div.achDisplay, achDisplay);
-         HTMLEditor(item.div.achName, achName);
+        HTMLEditor(item.div.achDisplay, achDisplay);
+        HTMLEditor(item.div.achName, achName);
     }
 
     function allItemAchUnlocked(item) {
         document.getElementById(item.div.achDisplay).style.color = theme.colorTheme[theme.currentTheme].importantColor;
     }
 
-    function flashAchTab(){
+    function flashAchTab() {
         if (gameData.flashAchTab === true && gameData.achievementTabSelected !== true) {
             document.getElementById('achTab').style.color = theme.colorTheme[theme.currentTheme].importantColor;
         }
@@ -747,9 +772,11 @@ function checkForReveal() {
         checkUpgradeReveal(itemList[i]);
     }
 
-    function checkItemReveal(item){
+    function checkItemReveal(item) {
         // An Item is revealed when total data is greater than the cost of the item.
-        if (gameData.totalDataHacked >= item.itemData.baseCost) showItemTier(item);
+        if (gameData.totalDataHacked >= item.itemData.baseCost) {
+            showItemTier(item);
+        }
 
         function showItemTier(item) {
             // Reveals the item, HR and achievement bar.
@@ -760,13 +787,16 @@ function checkForReveal() {
         }
     }
 
-    function checkUpgradeReveal(item){
+    function checkUpgradeReveal(item) {
         // An upgrade is revealed when total data is greater than the cost of the upgrade.
-        if (gameData.totalDataHacked >= item.upgrade.nextUpgradeCost) showUpgrade(item);
-        else visibilityChange(item.div.upgradeMenu, false);
+        if (gameData.totalDataHacked >= item.upgrade.nextUpgradeCost) {
+            showUpgrade(item);
+        } else {
+            visibilityChange(item.div.upgradeMenu, false);
+        }
 
         function showUpgrade(item) {
-            visibilityChange(item.div.upgradeMenu, true); 
+            visibilityChange(item.div.upgradeMenu, true);
             changeUpgradeText(item);
         }
     }
@@ -775,12 +805,16 @@ function checkForReveal() {
 function checkForVictory() {
     let allAchievementsUnlocked = true;
     for (let i = itemList.length - 1; i >= 0; i--) {
-        if (itemList[i].achievement.achCount !== gameData.maxAchievements) allAchievementsUnlocked = false;
+        if (itemList[i].achievement.achCount !== gameData.maxAchievements) {
+            allAchievementsUnlocked = false;
+        }
     }
-    if (allAchievementsUnlocked) victory();
+    if (allAchievementsUnlocked) {
+        victory();
+    }
 }
 
-function victory(){
+function victory() {
     // Welcome to seizuretown.
     const allDOMElements = document.getElementsByTagName("*");
     for (let i = allDOMElements.length - 1; i >= 0; i--) {
@@ -792,7 +826,7 @@ function victory(){
         // This will result in exclusively bright colors.
         const letters = ["A", "B", "C", "D", "E"];
         let color = '#';
-        for (let i=0; i<3; i++ ) {
+        for (let i = 0; i < 3; i++) {
             // Due to the frequency in which this will be called, I am not using a compounding assignment.
             color = color + letters[Math.floor(Math.random() * letters.length)];
         }
@@ -800,7 +834,7 @@ function victory(){
     }
 }
 
-function save() { 
+function save() {
     let savegame = makeSaveFile();
     savegame = obfuscateSave(savegame);
     saveToLocalStorage(savegame);
@@ -808,18 +842,17 @@ function save() {
     function makeSaveFile() {
         // Makes an object that we want to save.
         let savegame = {};
-        savegame = saveMiscData(savegame); 
+        savegame = saveMiscData(savegame);
         savegame = saveItemData(savegame);
+        savegame = savePrestige(savegame);
         return savegame;
 
         function saveMiscData(savegame) {
             // Saves data not part of itemList.
             savegame.dataHacked = gameData.dataHacked;
             savegame.totalDataHacked = gameData.totalDataHacked;
-
             savegame.currentTheme = theme.currentTheme;
             savegame.colorTheme = theme.colorTheme;
-
             return savegame;
         }
 
@@ -827,15 +860,29 @@ function save() {
             // Saves specific data from itemList.
             savegame.itemList = [];
             for (let i = itemList.length - 1; i >= 0; i--) {
-                savegame.itemList[i] = 
-                    {
-                        itemData:       {itemCount:         itemList[i].itemData.itemCount},
-                        upgrade:        {nextUpgradeCost:   itemList[i].upgrade.nextUpgradeCost,
-                                        upgradeCount:       itemList[i].upgrade.upgradeCount},
-                        achievement:    {achCount:          itemList[i].achievement.achCount},
-                        autoBuy:        {autoBuyAmount:     itemList[i].autoBuy.autoBuyAmount}
-                    };
-                }
+                savegame.itemList[i] = {
+                    itemData: {
+                        itemCount: itemList[i].itemData.itemCount
+                    },
+                    upgrade: {
+                        nextUpgradeCost: itemList[i].upgrade.nextUpgradeCost,
+                        upgradeCount: itemList[i].upgrade.upgradeCount
+                    },
+                    achievement: {
+                        achCount: itemList[i].achievement.achCount
+                    },
+                    autoBuy: {
+                        autoBuyAmount: itemList[i].autoBuy.autoBuyAmount
+                    }
+                };
+            }
+            return savegame;
+        }
+
+        function savePrestige(savegame) {
+            savegame.prestige = {
+                sentencesDisplayed: prestige.data.sentencesDisplayed
+            }
             return savegame;
         }
     }
@@ -871,24 +918,32 @@ function load() {
     function loadDataFromSave(savegame) {
         loadMiscData(savegame);
         loadItemData(savegame);
+        loadPrestige(savegame);
 
         function loadMiscData(savegame) {
             // Loads data not associated with itemList
-            gameData.dataHacked         = savegame.dataHacked;
-            gameData.totalDataHacked    = savegame.totalDataHacked;
-
-            theme.currentTheme    = savegame.currentTheme;
-            theme.colorTheme      = savegame.colorTheme;
+            gameData.dataHacked = savegame.dataHacked;
+            gameData.totalDataHacked = savegame.totalDataHacked;
+            theme.currentTheme = savegame.currentTheme;
+            theme.colorTheme = savegame.colorTheme;
         }
 
         function loadItemData(savegame) {
             //loads data into itemList
             for (let i = savegame.itemList.length - 1; i >= 0; i--) {
-                itemList[i].itemData.itemCount      = savegame.itemList[i].itemData.itemCount;
+                itemList[i].itemData.itemCount = savegame.itemList[i].itemData.itemCount;
                 itemList[i].upgrade.nextUpgradeCost = savegame.itemList[i].upgrade.nextUpgradeCost;
-                itemList[i].upgrade.upgradeCount    = savegame.itemList[i].upgrade.upgradeCount;
-                itemList[i].achievement.achCount    = savegame.itemList[i].achievement.achCount;
-                itemList[i].autoBuy.autoBuyAmount   = savegame.itemList[i].autoBuy.autoBuyAmount;
+                itemList[i].upgrade.upgradeCount = savegame.itemList[i].upgrade.upgradeCount;
+                itemList[i].achievement.achCount = savegame.itemList[i].achievement.achCount;
+                itemList[i].autoBuy.autoBuyAmount = savegame.itemList[i].autoBuy.autoBuyAmount;
+            }
+        }
+
+        function loadPrestige(savegame) {
+            const sentences = savegame.prestige.sentencesDisplayed;
+            for (var i = 0; i < sentences; i++) {
+                displayCurrentSentence();
+                prestige.data.sentencesDisplayed++;
             }
         }
     }
@@ -914,8 +969,11 @@ function maxItem(item) {
     // n = the number of upgrades.
     // u = the upgrade where you want maxItem changes to kick in.           
     // max items = 100 * 10^(n-u)
-    if (item.upgrade.upgradeCount >= 2) return 100 * Math.pow(10, (item.upgrade.upgradeCount - 2));
-    else return 100; // 100 is the default number of max items.
+    if (item.upgrade.upgradeCount >= 2) {
+        return 100 * Math.pow(10, (item.upgrade.upgradeCount - 2));
+    } else {
+        return 100; // 100 is the default number of max items.
+    }
 }
 
 function addData(number) {
@@ -952,16 +1010,21 @@ function formatBytes(bytes) {
     bytes = Math.round(bytes);
     let dp = 2;
     if (bytes <= 999999999999999999999999999) { // 1000 YB = 1*10^27 Bytes, this is 1 less than that.
-        if (bytes < 1000) dp = 0;
-        if (bytes === 0) return '0 Bytes';
-        if (bytes === 1) return '1 Byte';
+        if (bytes < 1000) {
+            dp = 0;
+        }
+        if (bytes === 0) {
+            return '0 Bytes';
+        }
+        if (bytes === 1) {
+            return '1 Byte';
+        }
         const dataSizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
         const i = Math.floor(Math.log(bytes) / Math.log(1000));
         let num = parseFloat((bytes / Math.pow(1000, i)).toFixed(dp));
         return num.toFixed(dp) + ' ' + dataSizes[i];
         //num = num + ' ' + dataSizes[i]; 
-    } 
-    else {
+    } else {
         // If it is larger than the largest data format (9999 Yottabytes), shows scientific notation of Bytes instead.
         bytes = bytes.toExponential(0);
         bytes += ' Bytes';
@@ -970,13 +1033,13 @@ function formatBytes(bytes) {
 }
 
 function formatNumbers(number, dp = 0) {
-    // Converts a number of number into a data format.
-    // if it is less than 10000 it shows the normal number.
-    // if it is greater than 10000 it shows the number name, e.g. 1.34 million.
-    number = Math.round(number);
-    if (number > 9999) {
-        // One of these is spelled incorrectly, i'll give you a prize if you work out which one.
-        const numberSizes = [
+        // Converts a number of number into a data format.
+        // if it is less than 10000 it shows the normal number.
+        // if it is greater than 10000 it shows the number name, e.g. 1.34 million.
+        number = Math.round(number);
+        if (number > 9999) {
+            // One of these is spelled incorrectly, i'll give you a prize if you work out which one.
+            const numberSizes = [
         'If you are reading this then you have found a bug! Please contact an exterminator.',
         'thousand',
         'million',
@@ -1032,27 +1095,25 @@ function formatNumbers(number, dp = 0) {
         'octoquadragintillion',
         'novemquadragintillion', // Now that is a sweet name for a number.
         'If you are reading this then you need to tell me to add more number sizes.'];
-        const i = Math.floor(Math.log(number) / Math.log(1000));
-        let num = parseFloat((number / Math.pow(1000, i)).toFixed(0));
-        num = num.toFixed(dp);
-        return num + ' ' + numberSizes[i];
-    } 
-    else return number; // If the number is smaller than 100k, it just displays it normally.
-}
-
-/* DOM interactions */
-
-window.onclick = function(event) {
-  if (!event.target.matches('.dropbtn')) {
-
-    const dropdowns = document.getElementsByClassName("dropdown-content");
-    for (let i = 0; i < dropdowns.length; i++) {
-      const openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
+            const i = Math.floor(Math.log(number) / Math.log(1000));
+            let num = parseFloat((number / Math.pow(1000, i)).toFixed(0));
+            num = num.toFixed(dp);
+            return num + ' ' + numberSizes[i];
+        } else {
+            return number; // If the number is smaller than 100k, it just displays it normally.
+        }
     }
-  }
+    /* DOM interactions */
+window.onclick = function(event) {
+    if (!event.target.matches('.dropbtn')) {
+        const dropdowns = document.getElementsByClassName("dropdown-content");
+        for (let i = 0; i < dropdowns.length; i++) {
+            const openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
 };
 
 function colorDropDown() {
@@ -1062,39 +1123,20 @@ function colorDropDown() {
     document.getElementById('numberColorPicker').jscolor.fromString(theme.colorTheme[theme.currentTheme].importantColor);
 }
 
-
-
 function buyPrestige() {
     const cost = prestigeCost();
     if (gameData.dataHacked >= cost && sentencesRemain()) {
         gameData.dataHacked -= cost;
         displayCurrentSentence()
-        prestige.data.sentencesDisplayed ++;
+        prestige.data.sentencesDisplayed++;
     }
 
     function sentencesRemain() {
         // If there are sentences left to display.
-        if (prestige.data.sentencesDisplayed < prestige.display.message.length) { 
+        if (prestige.data.sentencesDisplayed < prestige.display.message.length) {
             return true;
-        }
-        else return false;
-    }
-
-    function displayCurrentSentence() {
-        prestige.data.rowsDisplayed = 0;
-        const lastRowInSentence = prestige.display.message[prestige.data.sentencesDisplayed].length;
-        for (var i = 0; i < lastRowInSentence; i++) {
-                insertRow();
-                insertBR();
-                prestige.data.rowsDisplayed ++;
-        }
-
-        function insertRow() {
-            document.getElementById("prestigeArt").innerHTML += prestige.display.message[prestige.data.sentencesDisplayed][prestige.data.rowsDisplayed];
-        }
-
-        function insertBR() {
-            document.getElementById("prestigeArt").innerHTML += "<br />";
+        } else {
+            return false;
         }
     }
 }
@@ -1106,6 +1148,24 @@ function prestigeCost() {
     let cost = baseCost * Math.pow(100, sentence);
     cost *= Math.LN10; // Without Euler the numbers will be nice an neat.
     return Math.floor(cost);
+}
+
+function displayCurrentSentence() {
+    prestige.data.rowsDisplayed = 0;
+    const lastRowInSentence = prestige.display.message[prestige.data.sentencesDisplayed].length;
+    for (var i = 0; i < lastRowInSentence; i++) {
+        insertRow();
+        insertBR();
+        prestige.data.rowsDisplayed++;
+    }
+
+    function insertRow() {
+        document.getElementById("prestigeArt").innerHTML += prestige.display.message[prestige.data.sentencesDisplayed][prestige.data.rowsDisplayed];
+    }
+
+    function insertBR() {
+        document.getElementById("prestigeArt").innerHTML += "<br />";
+    }
 }
 
 function exportSave() {
@@ -1129,11 +1189,9 @@ function newGame() {
         localStorage.removeItem(gameData.saveName);
         location.reload(false); // reload(true) forces reload from server, ignores cache, this is probably not necessary.
     }
-}   
-
-function resetGame() {
-
 }
+
+function resetGame() {}
 
 function changeTab(tabName) {
     // Get all elements with class="tabContent" and hide them.
@@ -1148,8 +1206,7 @@ function changeTab(tabName) {
         document.getElementById("achTab").style.color = theme.colorTheme[theme.currentTheme].clickColor;
         gameData.achievementTabSelected = true;
         gameData.flashAchTab = false;
-    } 
-    else {
+    } else {
         gameData.achievementTabSelected = false;
     }
 }
@@ -1162,10 +1219,8 @@ function applyColorTheme() {
     changeClassColor(document.getElementsByClassName('important'), theme.colorTheme[theme.currentTheme].importantColor);
     changeClassColor(document.getElementsByClassName('dropbtn'), theme.colorTheme[theme.currentTheme].clickColor);
     // This is weird but HRs don't inherit color properly in Firefox so this is necessary.
-    changeClassColor(document.getElementsByClassName('hr'), theme.colorTheme[theme.currentTheme].bodyColor); 
-
+    changeClassColor(document.getElementsByClassName('hr'), theme.colorTheme[theme.currentTheme].bodyColor);
     //document.getElementById('item0HR').style.color = theme.colorTheme[theme.currentTheme].importantColor;
-
     function changeClassColor(classes, color) {
         // Sets an array of elements to a given color.
         for (let i = classes.length - 1; i >= 0; i--) {
@@ -1175,17 +1230,26 @@ function applyColorTheme() {
 }
 
 function changeThemePreset() {
-    if (theme.currentTheme < theme.colorTheme.length - 1) theme.currentTheme++;
-    else theme.currentTheme = 0;
+    if (theme.currentTheme < theme.colorTheme.length - 1) {
+        theme.currentTheme++;
+    } else {
+        theme.currentTheme = 0;
+    }
     applyColorTheme();
 }
 
 function customTheme(color, elementType) {
     // Allows players to enter custom themes.
     // if (!colorTheme[5]) colorTheme[5] = JSON.parse(JSON.stringify(colorTheme[theme.currentTheme]));
-    if (elementType === 0) theme.colorTheme[theme.currentTheme].bodyColor = color.toHEXString();
-    if (elementType === 1) theme.colorTheme[theme.currentTheme].clickColor = color.toHEXString();
-    if (elementType === 2) theme.colorTheme[theme.currentTheme].importantColor = color.toHEXString();
+    if (elementType === 0) {
+        theme.colorTheme[theme.currentTheme].bodyColor = color.toHEXString();
+    }
+    if (elementType === 1) {
+        theme.colorTheme[theme.currentTheme].clickColor = color.toHEXString();
+    }
+    if (elementType === 2) {
+        theme.colorTheme[theme.currentTheme].importantColor = color.toHEXString();
+    }
     // theme.currentTheme = 5; // Changes the selected theme to the custom one.
     applyColorTheme();
 }
@@ -1195,11 +1259,10 @@ function buyItem(item, count) {
     for (let i = 0; i < count; i++) { // Tries to by this many items.
         const cost = buyCost(item); // Calculates cost of item.
         // Player must be able to afford the item and have less than the max allowed items.
-        if (gameData.dataHacked >= cost && item.itemData.itemCount < maxItem(item)) { 
+        if (gameData.dataHacked >= cost && item.itemData.itemCount < maxItem(item)) {
             subtractData(cost); //Subtracts cost of item.
             item.itemData.itemCount++; // Increments item.
-        } 
-        else {
+        } else {
             buyItemUI(item);
             break; // If the player cannot afford or has the max number of items, stop trying to buy items.
         }
@@ -1238,15 +1301,15 @@ function changeUpgradeText(item) {
     // Changes what is displayed as the upgrade name, description and upgraded cost.
     // item.upgradeText[item.let.upgradeCount][0=name | 1=Desc]
     let upgradeCount = item.upgrade.upgradeCount;
-    if (upgradeCount > 4) upgradeCount = 4; // The 4th upgrade is the default one that will appear over and over again.
-
+    if (upgradeCount > 4) {
+        upgradeCount = 4; // The 4th upgrade is the default one that will appear over and over again.
+    }
     showBaseText(item, upgradeCount);
     showDetailText(item, upgradeCount);
 
     function showBaseText(item, upgradeCount) {
         const upgradeName = item.upgradeText[upgradeCount][0];
         const upgradeDesc = item.upgradeText[upgradeCount][1];
-
         HTMLEditor(item.div.upgradeCost, formatBytes(item.upgrade.nextUpgradeCost)); // Updates cost.
         HTMLEditor(item.div.upgradeName, upgradeName); // Updates name.
         HTMLEditor(item.div.upgradeDesc, upgradeDesc); // Updates desc.
@@ -1255,9 +1318,10 @@ function changeUpgradeText(item) {
     function showDetailText(item, upgradeCount) {
         const doublingText = 'Doubles the income of each ' + item.info.name + '.'; // Every upgrade will display this.
         if (item !== itemList[0] && upgradeCount === 3) {
-            const autoBuyingText = 'For every ' + item.info.name + ' you will generate 0.1 ' + itemList[item.info.ID - 1].info.name + 's.'; 
+            const autoBuyingText = 'For every ' + item.info.name + ' you will generate 0.1 ' + itemList[item.info.ID - 1].info.name + 's.';
             HTMLEditor(item.div.upgradeDetails, doublingText + '<br>' + autoBuyingText);
+        } else {
+            HTMLEditor(item.div.upgradeDetails, doublingText);
         }
-        else HTMLEditor(item.div.upgradeDetails, doublingText);
     }
 }
