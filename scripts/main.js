@@ -56,7 +56,8 @@ function gameDataConstructor() {
             achievementTabSelected: false, // The ach tab won't flash if the player is already on it.
             flashAchTab: false, // Whether the ach tab is set to flash.
             BIC: 15, // Base item cost.
-            BUC: 11 // Base upgrade cost.
+            BUC: 11, // Base upgrade cost.
+            resetCount: 1
         };
     }
     // Color themes.
@@ -465,12 +466,12 @@ function runConstructors() {
     debugTools();
 }
 
-function startUp() {
+function startUp(loads = true) {
     // Runs when page is loaded.
     runConstructors();
     itemTemplates();
     addData(gameData.BIC); // Adds data equal to the cost of the first item.
-    load();
+    if (loads) load();
     showGame();
     window.requestAnimationFrame(refreshGameTick); // Calls the first tick of the game.
 
@@ -882,7 +883,7 @@ function save() {
         function savePrestige(savegame) {
             savegame.prestige = {
                 sentencesDisplayed: prestige.data.sentencesDisplayed
-            }
+            };
             return savegame;
         }
     }
@@ -1125,10 +1126,13 @@ function colorDropDown() {
 
 function buyPrestige() {
     const cost = prestigeCost();
-    if (gameData.dataHacked >= cost && sentencesRemain()) {
+    if (gameData.dataHacked >= cost && sentencesRemain() && prestige.data.sentencesDisplayed < gameData.resetCount){
         gameData.dataHacked -= cost;
-        displayCurrentSentence()
+        displayCurrentSentence();
         prestige.data.sentencesDisplayed++;
+    }
+    else if (prestige.data.sentencesDisplayed >= gameData.resetCount) {
+        showPrestigeTranscendence()
     }
 
     function sentencesRemain() {
@@ -1168,6 +1172,10 @@ function displayCurrentSentence() {
     }
 }
 
+function showPrestigeTranscendence() {
+    document.getElementById("prestigeRequirements").style.display = "block";
+}
+
 function exportSave() {
     // Puts the save in a prompt box
     save();
@@ -1191,7 +1199,14 @@ function newGame() {
     }
 }
 
-function resetGame() {}
+function resetGame() {
+    const sdp = prestige.data.sentencesDisplayed;
+    const rsC = gameData.resetCount;
+    startUp();
+    gameData.resetCount = 4
+    prestige.data.sentencesDisplayed = 4;
+    location.reload();
+}
 
 function changeTab(tabName) {
     // Get all elements with class="tabContent" and hide them.
@@ -1220,7 +1235,7 @@ function applyColorTheme() {
     changeClassColor(document.getElementsByClassName('dropbtn'), theme.colorTheme[theme.currentTheme].clickColor);
     // This is weird but HRs don't inherit color properly in Firefox so this is necessary.
     changeClassColor(document.getElementsByClassName('hr'), theme.colorTheme[theme.currentTheme].bodyColor);
-    //document.getElementById('item0HR').style.color = theme.colorTheme[theme.currentTheme].importantColor;
+    document.getElementById('menuHR').style.color = theme.colorTheme[theme.currentTheme].importantColor;
     function changeClassColor(classes, color) {
         // Sets an array of elements to a given color.
         for (let i = classes.length - 1; i >= 0; i--) {
@@ -1230,6 +1245,7 @@ function applyColorTheme() {
 }
 
 function changeThemePreset() {
+    // Cycles through themes.
     if (theme.currentTheme < theme.colorTheme.length - 1) {
         theme.currentTheme++;
     } else {
@@ -1270,7 +1286,8 @@ function buyItem(item, count) {
 }
 
 function buyItemUI(item) {
-    HTMLEditor(item.div.cost, formatBytes(buyCost(item))); // Item cost.
+    // Updates the buy cost for an item in the UI.
+    HTMLEditor(item.div.cost, formatBytes(buyCost(item)));
 }
 
 function buyCost(item) {
