@@ -6,7 +6,7 @@
 /___/_____/_____/_____/_/    \____/_/ |_/_/ |_|  
 */
 
-// Idlepunk by Asher is licensed under CC BY-NC-SA 4.0 - https://creativecommons.org/licenses/by-nc-sa/4.0/
+// Idlepunk by Asher is licensed under CC BY-NC-SA 4.0 - https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
 
 /*jshint esversion: 6 */
 /*jshint eqeqeq: true */
