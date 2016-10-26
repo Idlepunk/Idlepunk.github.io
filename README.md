@@ -1,6 +1,10 @@
-# [idlepunk.github.io](https://idlepunk.github.io/)
+# [Play it here.](https://idlepunk.github.io/)
 
-Patch 0.2.  
+**Idlepunk** by **Asher** is licensed under **[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)**
+
+
+**Patch 0.2.** 
+
 -Your data stays at the top of the screen as you scroll down.  
 -Added lots more number sizes (up to 10^150 (which is called novemquadragintillion (which is an awesome name for a number))).  
 -You can now import & export saves.  
