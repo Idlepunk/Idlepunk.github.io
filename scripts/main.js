@@ -106,7 +106,8 @@ function itemConstructor() {
             baseCost: baseCost, // The initial cost of the item, the future costs are calculated from 
             baseIncome: baseCost / gameData.BIC, // The initial amount of data this generates.
             incomeRateSingle: 0,
-            incomeRateTotal: 0
+            incomeRateTotal: 0,
+            maxItems: 100 // Max number of this item, will change with upgrades.
         };
         this.upgrade = {
             baseUpgradeCost: baseUpgradeCost, // The cost of the first upgrade, does not change.
@@ -455,6 +456,7 @@ function showGame() {
         visibilityChange(itemList[i].div.upgradeMenu, false);
         visibilityChange(itemList[i].div.achOuter, false);
         buyItemUI(itemList[i]);
+        updateItemMax(itemList[i]);
     }
 }
 
@@ -531,19 +533,24 @@ function autoBuy() {
             // The buyerItem autoBuys the boughtItem, which is always 1 tier below.
             // buyerItem = itemList[i]
             // boughtItem itemList[i - 1]
-            const max = maxItem(itemList[i - 1]);
             // It may take multiple ticks for an item to be bought.
             // Each tick adds work towards buying the item.
-            if (itemList[i].upgrade.upgradeCount >= 4 && itemList[i - 1].itemData.itemCount < max) {
+            if (autoBuyEligible(itemList[i], itemList[i - 1])) {
                 autoBuyItem(itemList[i], itemList[i - 1]);
             }
         }
     }
 }
 
+function autoBuyEligible(buyerItem, boughtItem) {
+    if (buyerItem.upgrade.upgradeCount >= 4 && boughtItem.itemData.itemCount < boughtItem.itemData.maxItems) {
+        return true;
+    }
+    else return false;
+}
+
 function autoBuyItem(buyerItem, boughtItem) {
     // When the amount of work is > 1 the floor of that number is the number of items bought
-    const max = maxItem(boughtItem);
     let autoBuyWork = autoBuyRate(buyerItem);
     boughtItem.autoBuy.autoBuyAmount += autoBuyWork;
     if (boughtItem.autoBuy.autoBuyAmount >= 1) {
@@ -551,8 +558,8 @@ function autoBuyItem(buyerItem, boughtItem) {
         boughtItem.itemData.itemCount += itemsToBuy;
         boughtItem.autoBuy.autoBuyWork -= itemsToBuy;
     }
-    if (boughtItem.itemData.itemCount > max) {
-        boughtItem.itemData.itemCount = max;
+    if (boughtItem.itemData.itemCount > boughtItem.itemData.maxItems) {
+        boughtItem.itemData.itemCount = boughtItem.itemData.maxItems;
     }
 }
 
@@ -564,24 +571,24 @@ function autoBuyRate(buyerItem) {
 function autoBuyUI() {
     for (let i = itemList.length - 1; i >= 0; i--) {
         // The first item cannot autoBuy the tier below as it is the first tier and there is nothing below it.
-        if (i !== 0) {
-        const buyerItem = itemList[i];
-        const boughtItem = itemList[i - 1];
-        const itemsPerSecond = buyerItem.itemData.itemCount / gameData.tickRate;
-        if (itemsPerSecond === 0) {
-            HTMLEditor(buyerItem.div.autoBuyRate, 0);
+        if (i !== 0 && autoBuyEligible(itemList[i], itemList[i - 1])) {
+            const buyerItem = itemList[i];
+            const boughtItem = itemList[i - 1];
+            const itemsPerSecond = buyerItem.itemData.itemCount / gameData.tickRate;
+            if (itemsPerSecond === 0) {
+                HTMLEditor(buyerItem.div.autoBuyRate, 0);
+            }
+            // Displays auto buys per second like 3.3
+            else if (itemsPerSecond < 100) {
+                HTMLEditor(buyerItem.div.autoBuyRate, itemsPerSecond.toFixed(1));
+            }
+            // Displays auto buys per second like 10 million.
+            else {
+                HTMLEditor(buyerItem.div.autoBuyRate, formatNumbers(itemsPerSecond));
+            }
+            // If items are not being auto bought, the rate is displayed as 0.
         }
-        // Displays auto buys per second like 3.3
-        else if (itemsPerSecond < 100) {
-            HTMLEditor(buyerItem.div.autoBuyRate, itemsPerSecond.toFixed(1));
-        }
-        // Displays auto buys per second like 10 million.
-        else {
-            HTMLEditor(buyerItem.div.autoBuyRate, formatNumbers(itemsPerSecond));
-        }
-        // If items are not being auto bought, the rate is displayed as 0.
     }
-}
 }
 
 function itemsIncome() {
@@ -592,33 +599,36 @@ function itemsIncome() {
         addData(income);
     }
 
-    function calculateIncome(item) {
-        let incomePerItemPerTick; // The amount that a single item will generate in 1 tick.
-        let incomePerItemPerSecond; // The amount that a single item will generate in one second.
-        let incomePerTypePerTick; // The amount that all items of a type will generate in a single tick.        
-        let incomePerTypePerSecond; // The amount that all items of a type will generate in 1 second.
 
-        // Using compound assignments with let is very inefficient.
-        // e.g.
-        // let foo = 5; foo = foo * 3;
-        // Is much more cpu friendly than:
-        // let foo = 5; foo += 3;
-        // I have not been able to find an explanation for this, only confirmation that it is true.  
-        incomePerItemPerTick = item.itemData.baseIncome / gameData.tickRate; // Base rate.
-        incomePerItemPerTick *= Math.pow(2, item.upgrade.upgradeCount); // With upgrades.
-        incomePerItemPerTick *= item.achievement.achCount + 1; // With achievements.
+}
 
-        incomePerItemPerSecond = incomePerItemPerTick * gameData.tickRate;
-        incomePerTypePerTick = incomePerItemPerTick * item.itemData.itemCount;
-        incomePerTypePerSecond = incomePerItemPerSecond * item.itemData.itemCount;
+function calculateIncome(item) {
+    let incomePerItemPerTick; // The amount that a single item will generate in 1 tick.
+    let incomePerItemPerSecond; // The amount that a single item will generate in one second.
+    let incomePerTypePerTick; // The amount that all items of a type will generate in a single tick.        
+    let incomePerTypePerSecond; // The amount that all items of a type will generate in 1 second.
 
-        item.itemData.incomeRateSingle = incomePerItemPerSecond;
-        item.itemData.incomeRateTotal = incomePerTypePerSecond;
+    // Using compound assignments with let is very inefficient.
+    // e.g.
+    // let foo = 5; foo = foo * 3;
+    // Is much more cpu friendly than:
+    // let foo = 5; foo *= 3;
+    // I have not been able to find an explanation for this, only confirmation that it is true.  
 
-        gameData.incomePerSecond += incomePerTypePerSecond;
+    incomePerItemPerTick = item.itemData.baseIncome / gameData.tickRate; // Base rate.
+    incomePerItemPerTick = incomePerItemPerTick * (Math.pow(2, item.upgrade.upgradeCount)); // With upgrades.
+    incomePerItemPerTick = incomePerItemPerTick * (item.achievement.achCount + 1); // With achievements.
 
-        return incomePerTypePerTick;
-    }
+    incomePerItemPerSecond = incomePerItemPerTick * gameData.tickRate;
+    incomePerTypePerTick = incomePerItemPerTick * item.itemData.itemCount;
+    incomePerTypePerSecond = incomePerItemPerSecond * item.itemData.itemCount;
+
+    item.itemData.incomeRateSingle = incomePerItemPerSecond;
+    item.itemData.incomeRateTotal = incomePerTypePerSecond;
+
+    gameData.incomePerSecond += incomePerTypePerSecond;
+
+    return incomePerTypePerTick;
 }
 
 function itemsUI() {
@@ -635,36 +645,32 @@ function itemsUI() {
 }
 
 function achievementsUnlock() {
-    checkForUnlocks();
-
-    function checkForUnlocks() {
-        // Calculates what achievements are unlocked.
-        for (let i = itemList.length - 1; i >= 0; i--) {
-            // const originalAchCount = itemList[i].achievement.achCount;
-            // Number of achievements = log10(itemCount)
-            // 1st ach = 10
-            // 2nd ach = 100
-            // 3rd ach = 1000
-            // etc.
-            const itemCount = itemList[i].itemData.itemCount;
-            // This is fast but gives some rounding errors after 53 bits.
-            const digitLength = Math.ceil(Math.log(itemCount + 1) / Math.LN10); // Number of digits in the number of items.
-            let achievementCount = 0;
-            if (itemCount !== 0) {
-                achievementCount = digitLength - 1;
-            }
-            if (achievementCount > gameData.maxAchievements) {
-                achievementCount = gameData.maxAchievements;
-            }
-            checkForChange(achievementCount, itemList[i]);
-            itemList[i].achievement.achCount = achievementCount;
+    // Calculates what achievements are unlocked.
+    for (let i = itemList.length - 1; i >= 0; i--) {
+        // const originalAchCount = itemList[i].achievement.achCount;
+        // Number of achievements = log10(itemCount)
+        // 1st ach = 10
+        // 2nd ach = 100
+        // 3rd ach = 1000
+        // etc.
+        const itemCount = itemList[i].itemData.itemCount;
+        // This is fast but gives some rounding errors after 53 bits.
+        const digitLength = Math.ceil(Math.log(itemCount + 1) / Math.LN10); // Number of digits in the number of items.
+        let achievementCount = 0;
+        if (itemCount !== 0) {
+            achievementCount = digitLength - 1;
         }
-
-        function checkForChange(achievementCount, item) {
-            if (achievementCount !== item.achievement.achCount) {
-                gameData.flashAchTab = true;
-            }
+        if (achievementCount > gameData.maxAchievements) {
+            achievementCount = gameData.maxAchievements;
         }
+        checkForAchievementChange(achievementCount, itemList[i]);
+        itemList[i].achievement.achCount = achievementCount;
+    }
+}
+
+function checkForAchievementChange(achievementCount, item) {
+    if (achievementCount !== item.achievement.achCount && !gameData.achievementTabSelected) {
+        gameData.flashAchTab = true;
     }
 }
 
@@ -677,7 +683,8 @@ function achievementsUI() {
         }
         const achLockedCount = gameData.maxAchievements - achUnlockedCount; // The number of achievements yet to be unlocked.
         const achDisplay = makeAchDisplay(achUnlockedCount, achLockedCount);
-        const achName = 'x' + achUnlockedCount + ' ' + itemList[i].info.name + 's';
+        const achMultiDisplay = achUnlockedCount + 1; // How the m
+        const achName = 'x' + achMultiDisplay + ' ' + itemList[i].info.name + 's';
         showAchievements(itemList[i], achDisplay, achName);
         // When the player unlocks all achievements for an item, the color of the symbols will change based on the theme. 
         if (achUnlockedCount === gameData.maxAchievements) {
@@ -895,30 +902,12 @@ function load() {
     function loadUIElements() {
         for (let i = itemList.length - 1; i >= 0; i--) {
             changeUpgradeText(itemList[i]);
+            updateItemMax(itemList[i]);
         }
     }
 }
 
-function maxItem(item) {
-    // Calculates the maximum number of items based on upgrades
-    // Number of upgrades = maximum items
-    // 0 = 100
-    // 1 = 100
-    // 2 = 100
-    // 3 = 1000
-    // 4 = 10000
-    // 5 = 100000
-    // etc
-    // How max items are calculated:     
-    // n = the number of upgrades.
-    // u = the upgrade where you want maxItem changes to kick in.           
-    // max items = 100 * 10^(n-u)
-    if (item.upgrade.upgradeCount >= 2) {
-        return 100 * Math.pow(10, (item.upgrade.upgradeCount - 2));
-    } else {
-        return 100; // 100 is the default number of max items.
-    }
-}
+
 
 function addData(number) {
     gameData.dataHacked += number;
@@ -1238,11 +1227,12 @@ function buyItem(item, count) {
     for (let i = 0; i < count; i++) { // Tries to by this many items.
         const cost = buyCost(item); // Calculates cost of item.
         // Player must be able to afford the item and have less than the max allowed items.
-        if (gameData.dataHacked >= cost && item.itemData.itemCount < maxItem(item)) {
+        if (gameData.dataHacked >= cost && item.itemData.itemCount < item.itemData.maxItems) {
             subtractData(cost); //Subtracts cost of item.
             item.itemData.itemCount++; // Increments item.
-        } else {
             buyItemUI(item);
+        } else {
+            //buyItemUI(item);
             break; // If the player cannot afford or has the max number of items, stop trying to buy items.
         }
     }
@@ -1269,6 +1259,7 @@ function buyUpgrade(item) {
         changeUpgradeText(item);
         visibilityChange(item.div.upgradeMenu, false);
         checkForReveal();
+        updateItemMax(item);
     }
 }
 
@@ -1304,6 +1295,28 @@ function changeUpgradeText(item) {
             HTMLEditor(item.div.upgradeDetails, doublingText);
         }
     }
+}
+
+function updateItemMax(item) {
+    // Calculates the maximum number of items based on upgrades
+    // Number of upgrades = maximum items
+    // 0 = 100
+    // 1 = 100
+    // 2 = 100
+    // 3 = 1000
+    // 4 = 10000
+    // 5 = 100000
+    // etc
+    // How max items are calculated:     
+    // n = the number of upgrades.
+    // u = the upgrade where you want maxItem changes to kick in.           
+    // max items = 100 * 10^(n-u)
+    if (item.upgrade.upgradeCount >= 2) {
+        item.itemData.maxItems = 100 * Math.pow(10, (item.upgrade.upgradeCount - 2));
+    } else {
+        item.itemData.maxItems = 100; // 100 is the default number of max items.
+    }
+    HTMLEditor(item.div.numberMax, item.itemData.maxItems);
 }
 
 window.requestAnimationFrame(refreshGameTick); // Starts the first tick.
