@@ -4,8 +4,10 @@
    / '/ / / /   / __/ / /_/ / / / /  |/ /   ,<   
  _/ '/_/ / /___/ /___/ ____/ /_/ / /|  / /| |  
 /___/_____/_____/_____/_/    \____/_/ |_/_/ |_|  
-A thing by Asher.
 */
+
+/*Idlepunk by Asher is licensed under CC BY-NC-SA 4.0 - https://creativecommons.org/licenses/by-nc-sa/4.0/
+
 /*jshint esversion: 6 */
 /*jshint eqeqeq: true */
 /*jshint supernew: true */
