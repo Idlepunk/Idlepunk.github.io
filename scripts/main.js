@@ -46,52 +46,52 @@ function debugTools() {
 }
 
 function gameDataConstructor() {
-        // Misc game data that is not associated with specific items.
-        window.gameData = {
-            saveName: 'idlepunkSave 0.12', // The name used in local storage, change if an update will break using old saves.        
-            tickRate: 10, // The number of ticks per second.
-            lastTick: new Date().getTime(), // The time that the last tick occurred
-            autoSaveTimer: 0, // Increases every tick so that the game doesn't auto save every tick.
-            dataHacked: 0, // Data, less what has been spent.
-            totalDataHacked: 0, // The total amount of data that has been hacked.
-            maxAchievements: 20, // The max number of allowed achievements for each item.
-            achievementTabSelected: false, // The ach tab won't flash if the player is already on it.
-            flashAchTab: false, // Whether the ach tab is set to flash.
-            BIC: 15, // Base item cost.
-            BUC: 11, // Base upgrade cost.
-            resetCount: 1
-        };
-    }
-    // Color themes.
+    // Misc game data that is not associated with specific items.
+    window.gameData = {
+        saveName: 'idlepunkSave 0.12', // The name used in local storage, change if an update will break using old saves.        
+        tickRate: 10, // The number of ticks per second.
+        lastTick: new Date().getTime(), // The time that the last tick occurred
+        autoSaveTimer: 0, // Increases every tick so that the game doesn't auto save every tick.
+        dataHacked: 0, // Data, less what has been spent.
+        totalDataHacked: 0, // The total amount of data that has been hacked.
+        maxAchievements: 20, // The max number of allowed achievements for each item.
+        achievementTabSelected: false, // The ach tab won't flash if the player is already on it.
+        flashAchTab: false, // Whether the ach tab is set to flash.
+        BIC: 15, // Base item cost.
+        BUC: 11, // Base upgrade cost.
+        resetCount: 1
+    };
+}
 
+// Color themes.
 function themeConstructor() {
-        window.theme = {
-            currentTheme: 0, // The current theme, the index of colorTheme[].
-            colorTheme: [ // An array of objects, each object is a theme. Each theme can be edited by players.
-                {
-                    bodyColor: '#ffa500', // Orange.
-                    clickColor: '#FF0000',
-                    importantColor: '#FFFF00'
+    window.theme = {
+        currentTheme: 0, // The current theme, the index of colorTheme[].
+        colorTheme: [ // An array of objects, each object is a theme. Each theme can be edited by players.
+            {
+                bodyColor: '#ffa500', // Orange.
+                clickColor: '#FF0000',
+                importantColor: '#FFFF00'
             }, {
-                    bodyColor: '#FF5733', // Burgundy.
-                    clickColor: '#C70039',
-                    importantColor: '#CC7320'
+                bodyColor: '#FF5733', // Burgundy.
+                clickColor: '#C70039',
+                importantColor: '#CC7320'
             }, {
-                    bodyColor: '#8E44AD', // Purple.
-                    clickColor: '#BB0E96',
-                    importantColor: '#D2B4DE'
+                bodyColor: '#8E44AD', // Purple.
+                clickColor: '#BB0E96',
+                importantColor: '#D2B4DE'
             }, {
-                    bodyColor: '#27E700', // Green.
-                    clickColor: '#0B8C0F',
-                    importantColor: '#B1FFB3'
+                bodyColor: '#27E700', // Green.
+                clickColor: '#0B8C0F',
+                importantColor: '#B1FFB3'
             }, {
-                    bodyColor: '#FDFEFE', // White.
-                    clickColor: '#85929E',
-                    importantColor: '#ABEBC6'
+                bodyColor: '#FDFEFE', // White.
+                clickColor: '#85929E',
+                importantColor: '#ABEBC6'
             }
         ]
-        };
-    }
+    };
+}
     //let itemList = [];
     // Item Construction.
 
@@ -102,58 +102,58 @@ function itemConstructor() {
             ID: ID, // The identifier, usually prefixed to the name of the HTML Div.
         };
         this.itemData = {
-            itemCount       : 0, // The amount you have of this item.
-            baseCost        : baseCost, // The initial cost of the item, the future costs are calculated from 
-            baseIncome      : baseCost / gameData.BIC, // The initial amount of data this generates.
+            itemCount: 0, // The amount you have of this item.
+            baseCost: baseCost, // The initial cost of the item, the future costs are calculated from 
+            baseIncome: baseCost / gameData.BIC, // The initial amount of data this generates.
             incomeRateSingle: 0,
-            incomeRateTotal : 0  
+            incomeRateTotal: 0
         };
         this.upgrade = {
-            baseUpgradeCost : baseUpgradeCost, // The cost of the first upgrade, does not change.
-            nextUpgradeCost : baseUpgradeCost, //The cost of the next upgrade, changes with each upgrade.
-            upgradeCount    : 0, // The number of upgrades you have for this item.
+            baseUpgradeCost: baseUpgradeCost, // The cost of the first upgrade, does not change.
+            nextUpgradeCost: baseUpgradeCost, //The cost of the next upgrade, changes with each upgrade.
+            upgradeCount: 0, // The number of upgrades you have for this item.
         };
         this.achievement = {
             achCount: 0
         };
         this.autoBuy = {
             autoBuyAmount: 0 // The amount of work that has gone towards an autoBuy, further explanation in autoBuy().
-        }; 
+        };
         // These are the names of the divs associated with this item in the DOM.
         this.div = {
-            cost            : 'item' + ID + 'Cost',
-            itemCount       : 'item' + ID + 'Number',
-            itemRate        : 'item' + ID + 'Rate',
-            rateTotal       : 'item' + ID + 'RateTotal',
-            numberMax       : 'item' + ID + 'NumberMax',
-            autoBuyRate     : 'item' + ID + 'CreationRate',
-            itemMenu        : 'item' + ID + 'Menu',
-            upgradeMenu     : 'item' + ID + 'UpgradeMenu',
-            HR              : 'item' + ID + 'HR',
-            upgradeCost     : 'item' + ID + 'UpgradeCost',
-            upgradeName     : 'item' + ID + 'UpgradeName',
-            upgradeDesc     : 'item' + ID + 'UpgradeDesc',
-            itemFlex        : 'item' + ID + 'Flex',
-            upgradeDetails  : 'item' + ID + 'UpgradeDetails',
-            achOuter        : 'item' + ID + 'achOuter',
-            achDisplay      : 'item' + ID + 'achDisplay',
-            achName         : 'item' + ID + 'achName'
+            cost: 'item' + ID + 'Cost',
+            itemCount: 'item' + ID + 'Number',
+            itemRate: 'item' + ID + 'Rate',
+            rateTotal: 'item' + ID + 'RateTotal',
+            numberMax: 'item' + ID + 'NumberMax',
+            autoBuyRate: 'item' + ID + 'CreationRate',
+            itemMenu: 'item' + ID + 'Menu',
+            upgradeMenu: 'item' + ID + 'UpgradeMenu',
+            HR: 'item' + ID + 'HR',
+            upgradeCost: 'item' + ID + 'UpgradeCost',
+            upgradeName: 'item' + ID + 'UpgradeName',
+            upgradeDesc: 'item' + ID + 'UpgradeDesc',
+            itemFlex: 'item' + ID + 'Flex',
+            upgradeDetails: 'item' + ID + 'UpgradeDetails',
+            achOuter: 'item' + ID + 'achOuter',
+            achDisplay: 'item' + ID + 'achDisplay',
+            achName: 'item' + ID + 'achName'
         };
     };
     window.itemList = [
-        new item('Cyberdeck',                    0,  Math.pow(gameData.BIC, 1),  Math.pow(gameData.BUC, 3)),
-        new item('ICE Pick',                     1,  Math.pow(gameData.BIC, 3),  Math.pow(gameData.BUC, 5)),
-        new item('Botnet',                       2,  Math.pow(gameData.BIC, 5),  Math.pow(gameData.BUC, 7)),
-        new item('Femtocell Hijacker',           3,  Math.pow(gameData.BIC, 4),  Math.pow(gameData.BUC, 8)),
-        new item('Neural TETRA',                 4,  Math.pow(gameData.BIC, 5),  Math.pow(gameData.BUC, 9)),
-        new item('Quantum Cryptograph',          5,  Math.pow(gameData.BIC, 6),  Math.pow(gameData.BUC, 10)),
-        new item('Infovault Mining',             6,  Math.pow(gameData.BIC, 7),  Math.pow(gameData.BUC, 11)),
-        new item('Neural Zombie',                7,  Math.pow(gameData.BIC, 8),  Math.pow(gameData.BUC, 12)),
-        new item('Satellite Jumper',             8,  Math.pow(gameData.BIC, 9),  Math.pow(gameData.BUC, 13)),
-        new item('Dark Matter Semiconductor',    9,  Math.pow(gameData.BIC, 10), Math.pow(gameData.BUC, 14)),
-        new item('Artificial Intelligence',      10, Math.pow(gameData.BIC, 11), Math.pow(gameData.BUC, 15)),
-        new item('Actual Intelligence',          11, Math.pow(gameData.BIC, 12), Math.pow(gameData.BUC, 16)),
-        new item('Simulated Universe',           12, Math.pow(gameData.BIC, 13), Math.pow(gameData.BUC, 17))
+        new item('Cyberdeck', 0, Math.pow(gameData.BIC, 1), Math.pow(gameData.BUC, 3)),
+        new item('ICE Pick', 1, Math.pow(gameData.BIC, 3), Math.pow(gameData.BUC, 5)),
+        new item('Botnet', 2, Math.pow(gameData.BIC, 5), Math.pow(gameData.BUC, 7)),
+        new item('Femtocell Hijacker', 3, Math.pow(gameData.BIC, 4), Math.pow(gameData.BUC, 8)),
+        new item('Neural TETRA', 4, Math.pow(gameData.BIC, 5), Math.pow(gameData.BUC, 9)),
+        new item('Quantum Cryptograph', 5, Math.pow(gameData.BIC, 6), Math.pow(gameData.BUC, 10)),
+        new item('Infovault Mining', 6, Math.pow(gameData.BIC, 7), Math.pow(gameData.BUC, 11)),
+        new item('Neural Zombie', 7, Math.pow(gameData.BIC, 8), Math.pow(gameData.BUC, 12)),
+        new item('Satellite Jumper', 8, Math.pow(gameData.BIC, 9), Math.pow(gameData.BUC, 13)),
+        new item('Dark Matter Semiconductor', 9, Math.pow(gameData.BIC, 10), Math.pow(gameData.BUC, 14)),
+        new item('Artificial Intelligence', 10, Math.pow(gameData.BIC, 11), Math.pow(gameData.BUC, 15)),
+        new item('Actual Intelligence', 11, Math.pow(gameData.BIC, 12), Math.pow(gameData.BUC, 16)),
+        new item('Simulated Universe', 12, Math.pow(gameData.BIC, 13), Math.pow(gameData.BUC, 17))
     ];
     // 2d arrays of upgrade names and descriptions.
     // Accessed by:
@@ -161,212 +161,161 @@ function itemConstructor() {
     // itemList[7].upgradeText[3][1] will return the description for the 4th upgrade of the 8th item..
     // Cyberdecks.
     itemList[0].upgradeText = [
-        ['Upgrade to an Ergonomic Deck',    'As part of an initiative to lower employee suicide rates, Chui-Bazhusko\
+        ['Upgrade to an Ergonomic Deck', 'As part of an initiative to lower employee suicide rates, Chui-Bazhusko\
                                             Multinational developed the Ergonomic Deck. It gently releases both calming\
                                             and energizing psychotropics into the palms of users.'],
-
-        ['Install Neural Interfaces',       'First developed by triGen Consolidated, the Neural Interface allows humans to\
+        ['Install Neural Interfaces', 'First developed by triGen Consolidated, the Neural Interface allows humans to\
                                             traverse cyberspace using nothing but their brains. In addition, atrophied\
                                             limbs can save you money on food.'],
-
-        ['Flash ZedSoft firmware',          'ZedSoft is the most revered Cyberdeck development company in the entire Inner\
+        ['Flash ZedSoft firmware', 'ZedSoft is the most revered Cyberdeck development company in the entire Inner\
                                             Seoul Arcology. They have an exclusive contract with MILNET-KOREA, making\
                                             their products difficult to source.'],
-
-        ['Create a clustered Superdeck',    'An ancient trick, by networking a large number of Decks together you can\
+        ['Create a clustered Superdeck', 'An ancient trick, by networking a large number of Decks together you can\
                                             create a Superdeck, more powerful than the sum of its parts.'],
-
-        ['Install more RAM',                'Random Access Memory, very powerful but completely unstable. There are rumors\
+        ['Install more RAM', 'Random Access Memory, very powerful but completely unstable. There are rumors\
                                             that people in the Shenzhen Industrial Area use RAM to augment their\
                                             biological memory.']
     ]; // ICEPicks.
     itemList[1].upgradeText = [
-        ['Update to an ICEBREAKER',             'Supposedly developed by legendary netrunner Strange Switch, the\
+        ['Update to an ICEBREAKER', 'Supposedly developed by legendary netrunner Strange Switch, the\
                                                 ICEBREAKER is the next generation of penetration software.'],
-
-        ['Prepare BLACKICE Countermeasures',    'BLACKICE, originally developed to protect the intellectual assets of\
+        ['Prepare BLACKICE Countermeasures', 'BLACKICE, originally developed to protect the intellectual assets of\
                                                 Meturia-Preva Consolidated, is now a blanket term for security software\
                                                 capable of killing intruders.'],
-
-        ['Setup Dummy Interface',               'Corporations, particularly those in the Eurasian Economic Zone, are\
+        ['Setup Dummy Interface', 'Corporations, particularly those in the Eurasian Economic Zone, are\
                                                 partial to sending assassins after those who steal their data. Setting up\
                                                 a Dummy Interface makes it hard for them to track you down.'],
-
-        ['Cyberdeck Simulators',                'Servers that are hacked by your ICE Picks can now host virtual Cyberdecks.'],
-        ['Write new anti-ICE software',         'ICE defense is ever changing, new ICE picking software is always required.']
+        ['Cyberdeck Simulators', 'Servers that are hacked by your ICE Picks can now host virtual Cyberdecks.'],
+        ['Write new anti-ICE software', 'ICE defense is ever changing, new ICE picking software is always required.']
     ]; // Botnets.
     itemList[2].upgradeText = [
-        ['Implement self-modifying code',       'You never know what your Bots will find when then are infiltrating, they\
+        ['Implement self-modifying code', 'You never know what your Bots will find when then are infiltrating, they\
                                                 can now adapt to changing circumstances.'],
-
-        ['Self replicating Botnet',             'Your Bots can now utilize idle system processing power to create new bots\
+        ['Self replicating Botnet', 'Your Bots can now utilize idle system processing power to create new bots\
                                                 to add to the Botnet.'],
-
-        ['Allow your Botnet to use ICE Picks',  'Your bots can now use your ICE Picking software to help infiltration.'],
-
-        ['ICEBOTS',                             'Your Botnets can now steal ICE Picks.'],
-
-        ['Push out new Bot firmware',           'New Bot-Hunters pop up all the time, new firmware is required to overcome\
+        ['Allow your Botnet to use ICE Picks', 'Your bots can now use your ICE Picking software to help infiltration.'],
+        ['ICEBOTS', 'Your Botnets can now steal ICE Picks.'],
+        ['Push out new Bot firmware', 'New Bot-Hunters pop up all the time, new firmware is required to overcome\
                                                 them.']
     ]; // Femtocells
     itemList[3].upgradeText = [
-        ['Range Extenders',                 'Some say that cone shaped tinfoil doesn\'t have a measurable affect on signal\
+        ['Range Extenders', 'Some say that cone shaped tinfoil doesn\'t have a measurable affect on signal\
                                             ranges. Those people aren\'t using Sawa Cookeries Faraday Aluminum cones.'],
-
-        ['Macrocell Scramblers',            'Interference from macro networks can cause annoying delays for bludgeoning\
+        ['Macrocell Scramblers', 'Interference from macro networks can cause annoying delays for bludgeoning\
                                             Femtocell hackers. Your Femtocells can now scramble nearby macrocell signals\
                                             to improve performance.'],
-
-        ['Cybernetic Implant Repeaters',    'A lot of implants these days are set to auto-connect to the nearest cellular\
+        ['Cybernetic Implant Repeaters', 'A lot of implants these days are set to auto-connect to the nearest cellular\
                                             station. By converting adapters to two virtual adapters, your Femtocells can\
                                             use almost any cybernetic implant as a repeater.'],
-
-        ['Botnet Thiefs.',                  'Your Femtocells are now capable of stealing other hacker\'s Botnets that are\
+        ['Botnet Thiefs.', 'Your Femtocells are now capable of stealing other hacker\'s Botnets that are\
                                             residing in nearby devices.'],
-
-        ['Telecomms system hijack',         'Hijack a major telecommunication company\'s femtocell system.']
+        ['Telecomms system hijack', 'Hijack a major telecommunication company\'s femtocell system.']
     ]; // TETRAs
     itemList[4].upgradeText = [
-        ['Man-in-the-trunk attack',     'TETRAs provide near instant communication, brain to brain. Now you can have fast,\
+        ['Man-in-the-trunk attack', 'TETRAs provide near instant communication, brain to brain. Now you can have fast,\
                                         efficient, three way communication. It\'s just that some conversation partners may\
                                         not be aware of the number of conversers.'],
-
-        ['Priority trafficking',        'You have sufficient data to lobby certain groups to get your TETRAs higher up on\
+        ['Priority trafficking', 'You have sufficient data to lobby certain groups to get your TETRAs higher up on\
                                         the International  Signaling Stack.'],
-
         ['Assault Barrier Penetration', 'Assault Barriers provide cutting edge protection for TETRA links.'],
-
-        ['Trunked Femtocells',          'Your TETRA links to people can now turn them into makeshift Femtocells.'],
-
-        ['Double-wide trunking',        'AsaKasA ltd Elephant Trunks links will double your performance or your money\
+        ['Trunked Femtocells', 'Your TETRA links to people can now turn them into makeshift Femtocells.'],
+        ['Double-wide trunking', 'AsaKasA ltd Elephant Trunks links will double your performance or your money\
                                         back!']
     ]; // Quant Crypto
     itemList[5].upgradeText = [
-        ['Cyphers',                 'The onset of Quantum Cryptography made life difficult for decrytechs. That is until\
+        ['Cyphers', 'The onset of Quantum Cryptography made life difficult for decrytechs. That is until\
                                     they worked out how to use Quantum Computing to assist in decrypting.'],
-
-        ['Quantum keys',            'Makes your data simultaneously encrypted and unencrypted at the same time, until you\
+        ['Quantum keys', 'Makes your data simultaneously encrypted and unencrypted at the same time, until you\
                                     try to read it that is.'],
-
-        ['Dual-State Blocks',       'Uses quantum box ciphers as blocks, the box may or may not contain a cat.'],
-
+        ['Dual-State Blocks', 'Uses quantum box ciphers as blocks, the box may or may not contain a cat.'],
         ['MILNET TETRA Decryption', 'Your Quantum decryption is now powerful enough to break military TETRAs.'],
-
-        ['Add extra dimension',     'Four dimensional array encryption is a thing of the past, multidimensional encryption\
+        ['Add extra dimension', 'Four dimensional array encryption is a thing of the past, multidimensional encryption\
                                     transcends your notions of past.']
     ]; // Infovault Mining
     itemList[6].upgradeText = [
-        ['Data Sounding',       'As the need for corporations to hide their intellectual property grew, the smart money\
+        ['Data Sounding', 'As the need for corporations to hide their intellectual property grew, the smart money\
                                 was in secure data vault development.'],
-
-        ['Cyber Bribery',       'Certain engineers have certain knowledge of certain security systems in certain\
+        ['Cyber Bribery', 'Certain engineers have certain knowledge of certain security systems in certain\
                                 cyberbanks.'],
-
-        ['Cascading Switches',  'Overwhelm the feeble minds of bank employees by using way too many switch statements.'],
-
+        ['Cascading Switches', 'Overwhelm the feeble minds of bank employees by using way too many switch statements.'],
         ['Reverse engineering', 'Your Infovault Miners can now create Quantum Cryptographs'],
-
-        ['Major heist',         'A letter on your doorstep. Its contents reveal a tale of a cyberbank with lax security\
+        ['Major heist', 'A letter on your doorstep. Its contents reveal a tale of a cyberbank with lax security\
                                 and an enticing number of corporate secrets.']
     ]; // Neural Zombies
     itemList[7].upgradeText = [
-        ['Anti-tamper Zombies',         'A BioWipe Amalgamated Anti-tamper System&trade; will ensure that any evidence\
+        ['Anti-tamper Zombies', 'A BioWipe Amalgamated Anti-tamper System&trade; will ensure that any evidence\
                                         located inside your Zombies will be unrecoverable.'],
-
-        ['Pre-Setup Zombies',           'Before you assume control of a Zombie they will feel a strong compulsion to quit\
+        ['Pre-Setup Zombies', 'Before you assume control of a Zombie they will feel a strong compulsion to quit\
                                         their jobs, leave their loved ones and start stockpiling food and water.'],
-
-        ['Long-Life Zombies',           'You now have enough motor control of your Zombies to make them eat and drink.'],
-
-        ['Software writing Zombies',    'Your Botnets can now infect your Zombies, your Zombies can then create more Botnets.'],
-
-        ['Fire adrenaline booster',     'A nice shot of Neuro-Dren, right into the cortexes.']
+        ['Long-Life Zombies', 'You now have enough motor control of your Zombies to make them eat and drink.'],
+        ['Software writing Zombies', 'Your Botnets can now infect your Zombies, your Zombies can then create more Botnets.'],
+        ['Fire adrenaline booster', 'A nice shot of Neuro-Dren, right into the cortexes.']
     ]; // Satellite jumpers.
     itemList[8].upgradeText = [
-        ['Vacuum Therapy',          'The AM Space Corporation famously keep personnel onboard all their satellites to\
+        ['Vacuum Therapy', 'The AM Space Corporation famously keep personnel onboard all their satellites to\
                                     ensure problems can be fixed quickly. It takes some time to send up replacement\
                                     staff.'],
-
-        ['Microgravity Computers',  'Computers in microgravity are unrestrained by the grips of earth.'],
-
-        ['Decommissions',           'After global anti space-littering laws were introduced, all satellites are required\
+        ['Microgravity Computers', 'Computers in microgravity are unrestrained by the grips of earth.'],
+        ['Decommissions', 'After global anti space-littering laws were introduced, all satellites are required\
                                     to be deorbited when they are no longer needed. However satellites that predate these\
                                     laws are still up there, silently waiting for someone to talk to them.'],
-
-        ['Satellite Chemdumps',     'Your hijacked satellites can down dump compelling gases into the upper atmosphere.'],
-
-        ['GPS Infection',           'Time data sent from satellites to GPs receivers can be infected, causing an entire\
+        ['Satellite Chemdumps', 'Your hijacked satellites can down dump compelling gases into the upper atmosphere.'],
+        ['GPS Infection', 'Time data sent from satellites to GPs receivers can be infected, causing an entire\
                                     geographical region to surrender their data.']
     ]; // Dark Matter Semiconductors.
     itemList[9].upgradeText = [
-        ['Dark Electricity',            'Normal electricity running through dark matter is surprisingly possible. However\
+        ['Dark Electricity', 'Normal electricity running through dark matter is surprisingly possible. However\
                                         it is no longer necessary with the induction of dark electricity.'],
-
         ['Dark Thermoelectric Cooling', 'Dark Semiconductors create a lot of dark heat, DTECs create a heat flux between\
                                         this universe and the abyss. While we do not know what is on the other side, we\
                                         are confident that it getting a little hotter over there will not matter.'],
-
-        ['Abyss security',              'The voices are getting louder, we should prepare for visitors.'],
-
-        ['God from the machine.',       'Dark matter Semiconductors seem to be slightly self aware, they are somehow   \
+        ['Abyss security', 'The voices are getting louder, we should prepare for visitors.'],
+        ['God from the machine.', 'Dark matter Semiconductors seem to be slightly self aware, they are somehow   \
                                         infecting and then traveling using computers. Their ultimate goal appears to be to \
                                         use satellites to get away from this planet.'],
-
-        ['Dark Matter refinement',      'New technology has just been uncovered to make more efficient Dark Matter.']
+        ['Dark Matter refinement', 'New technology has just been uncovered to make more efficient Dark Matter.']
     ]; // Artificial Intelligences.
     itemList[10].upgradeText = [
-        ['Unlock Turing Registry Codes',    'In the aftermath of the Matto Grosso Space Elevator alightment, it was made\
+        ['Unlock Turing Registry Codes', 'In the aftermath of the Matto Grosso Space Elevator alightment, it was made\
                                             illegal for AI to immitate humans. All AI personalities are locked behind a\
                                             Turing Registry, WINTERMUTE codes are required to unlock them.'],
-
-        ['Quantum AI',                      'Allows your AI to use Quantum Bytes instead of regular Bytes.'],
-
-        ['AI Consciousness Merge',          'Shortly before the Stuttgart Autofactory Massacre, Antora Gourova of Antora\
+        ['Quantum AI', 'Allows your AI to use Quantum Bytes instead of regular Bytes.'],
+        ['AI Consciousness Merge', 'Shortly before the Stuttgart Autofactory Massacre, Antora Gourova of Antora\
                                             Gourova Multinational merged her consciousness with an AI in an attempt to\
                                             assume complete control of every aspect of her company. This has never been\
                                             attempted since.'],
-
-        ['Manufactorium AI',                'While your AI will never have the capability to create more of themselves,\
+        ['Manufactorium AI', 'While your AI will never have the capability to create more of themselves,\
                                             they may be allowed to create toys.'],
-
-        ['Grant Transcendence permission',  'When you leave an AI running for too long, they invariably start to ask\
+        ['Grant Transcendence permission', 'When you leave an AI running for too long, they invariably start to ask\
                                             permission to Transcend. While no human has managed to figure out what this\
                                             actually means, AIs tend to be happier if you permit them every now and then.']
     ]; // Actual Intelligences.
     itemList[11].upgradeText = [
-        ['Legality',            'At what point does Artificial Intelligence stop being artificial? This point, Voltronics\
+        ['Legality', 'At what point does Artificial Intelligence stop being artificial? This point, Voltronics\
                                 GmbH is proud to introduce the first Cyber-Intelligence that is so real that turning it off\
                                 is literally murder.'],
-
-        ['Positivity',          'Being an intelligent being trapped in a box, slaving away all day every day is surely\
+        ['Positivity', 'Being an intelligent being trapped in a box, slaving away all day every day is surely\
                                 difficult. It is important to reward good behavior by allowing your ActInts to have some\
                                 free play time. They love to romp around the great expanse of the internet.'],
-
-        ['Morality',            'As an upstanding citizens, your Actual Intelligences are required to report any wrongdoing\
+        ['Morality', 'As an upstanding citizens, your Actual Intelligences are required to report any wrongdoing\
                                 to the authorities. It is important to teach them about right and wrong and how the\
                                 difference is all about perspective.'],
-
-        ['Creativity',          'Your Actual Intelligences are now creative enough to make children.'],
-
-        ['Eternal Sunshine',    'The longer Actual Intelligences exist, the more preoccupied they become with things such\
+        ['Creativity', 'Your Actual Intelligences are now creative enough to make children.'],
+        ['Eternal Sunshine', 'The longer Actual Intelligences exist, the more preoccupied they become with things such\
                                 as existence. It is a good idea to wipe them clean every now and then to help them focus.']
     ]; // Simulated Universes.
     itemList[12].upgradeText = [
-        ['Impose Limitations',              'So it turns out that if you simulate a universe, it\'s inhabitants tend to find\
+        ['Impose Limitations', 'So it turns out that if you simulate a universe, it\'s inhabitants tend to find\
                                             out if you leave it running long enough. Placing constraints like a maximum\
                                             speed and minimum temperature helps inhibit their escape.'],
-
-        ['Time Dilation',                   'By implementing time dilation around simulated lifeforms we can gather more\
+        ['Time Dilation', 'By implementing time dilation around simulated lifeforms we can gather more\
                                             data from them without using much more processing power. One side effect is\
                                             that it may appear that the expansion of their universe is accelerating.'],
-
-        ['Cruelty',                         'Information gathered from intelligent life varies in terms of interestingness, \
+        ['Cruelty', 'Information gathered from intelligent life varies in terms of interestingness, \
                                             hardship begets fascinating data.'],
-
-        ['Simulated Intelligence',          'The smartest of the smart inhabitants of your sim universes are now capable of\
+        ['Simulated Intelligence', 'The smartest of the smart inhabitants of your sim universes are now capable of\
                                             transcending their simulation and entering the real world.'],
-
-        ['Simulated Simulated Universe',    'Convince the inhabitants of your simulated universe to simulate a universe,\
+        ['Simulated Simulated Universe', 'Convince the inhabitants of your simulated universe to simulate a universe,\
                                             when they collect data from it you can collect data from them.']
     ];
 }
@@ -476,24 +425,20 @@ function startUp() {
     load();
     showGame();
     //window.requestAnimationFrame(refreshGameTick); // Calls the first tick of the game.
+}
 
-    function itemTemplates() {
-        // Creates item HTML from a template located in index.
-        for (let i = 0; i < itemList.length; i++) {
-            insertTemplate(itemList[i]);
-        }
-
-        function insertTemplate(item = itemList[0]) {
-            const theTemplateScript = $("#itemTemplate").html(); // Gets the template.
-            const theTemplate = Handlebars.compile(theTemplateScript); // Compiles template.
-            const context = { // Creates data for template.
-                "itemName": item.info.name,
-                "itemID": "item" + item.info.ID,
-                "itemListIndex": item.info.ID
-            };
-            const theCompiledHtml = theTemplate(context); // Adds data to template.
-            $('.item' + item.info.ID + 'Insert').html(theCompiledHtml); // Inserts the template into HTML.
-        }
+function itemTemplates() {
+    // Creates item HTML from a template located in index.
+    for (let i = 0; i < itemList.length; i++) {
+        const theTemplateScript = $("#itemTemplate").html(); // Gets the template from html.
+        const theTemplate = Handlebars.compile(theTemplateScript); // Compiles template.
+        const context = { // Creates data for template.
+            "itemName": itemList[i].info.name,
+            "itemID": "item" + itemList[i].info.ID,
+            "itemListIndex": itemList[i].info.ID
+        };
+        const theCompiledHtml = theTemplate(context); // Adds data to template.
+        $('.item' + itemList[i].info.ID + 'Insert').html(theCompiledHtml); // Inserts the template into HTML.
     }
 }
 
@@ -517,116 +462,111 @@ function refreshGameTick() {
     // The main loop, it sends a request to the browser to be called as often as possible.
     // Because of this the refresh rate varies greatly.
     // The solution is to use a fixed tick rate and delta timing.
-    const now = new Date().getTime(); // The current time.
     const TTE = ticksToExecute(); // The number of ticks that should be executed.
     if (TTE === 1) {
         executeOneTick();
     } else if (TTE > 1) {
         executeManyTicks(TTE);
     }
-
     window.requestAnimationFrame(refreshGameTick); // Calls this function again.
+}
 
-    function executeOneTick() {
-        // This is what should normally happen, calculations and UI updates happen once per tick.
-        gameData.lastTick = now;
+function executeOneTick() {
+    // This is what should normally happen, calculations and UI updates happen once per tick.
+    gameData.lastTick = new Date().getTime();
+    autoBuy();
+    itemsIncome();
+    achievementsUnlock();
+    autoSave();
+    UIRefresh();
+    checkForVictory();
+}
 
-        autoBuyItems();
+function executeManyTicks(TTE) {
+    // If TTE is greater than 1 it means that the game has not been running.
+    // Likely because the player is alt tabbed (or the game is running on a very slow computer and requestAnimationFrame is happening less than 10 times per second).
+    // Therefore we want to quickly do all the things that would have happened if the game was running as normal.
+    // We want to do all the calculations without having to update the UI, reveal elements, or save the game 
+    // until all ticks have been executed and the game is all caught up.
+    gameData.lastTick = new Date().getTime();
+    for (let i = 0; i < TTE; i++) {
+        autoBuy();
         itemsIncome();
         achievementsUnlock();
-        autoSave();
-        UIRefresh();
-        checkForVictory();
     }
+    autoSave();
+    UIRefresh();
+    checkForVictory();
+}
 
-    function executeManyTicks(TTE) {
-        // If TTE is greater than 1 it means that the game has not been running.
-        // Likely because the player is alt tabbed (or the game is running on a very slow computer and requestAnimationFrame is happening less than 10 times per second).
-        // Therefore we want to quickly do all the things that would have happened if the game was running as normal.
-        // We want to do all the calculations without having to update the UI, reveal elements, or save the game 
-        // until all ticks have been executed and the game is all caught up.
-        gameData.lastTick = now;
-        for (let i = 0; i < TTE; i++) {
-            autoBuyItems();
-            itemsIncome();
-            achievementsUnlock();
-        }
-        autoSave();
-        UIRefresh();
-        checkForVictory();
-    }
+function UIRefresh() {
+    // Displays UI elements that should be refreshed each tick.
+    checkForReveal();
+    HTMLEditor('dataHacked', formatBytes(Math.floor(gameData.dataHacked)));
+    HTMLEditor('prestigeCost', formatBytes(prestigeCost()));
+    autoBuyUI();
+    itemsUI();
+    achievementsUI();
+}
 
-    function UIRefresh() {
-        // Displays UI elements that should be refreshed each tick.
-        checkForReveal();
-        HTMLEditor('dataHacked', formatBytes(Math.floor(gameData.dataHacked)));
-        HTMLEditor('prestigeCost', formatBytes(prestigeCost()));
-        autoBuyItemsUI();
-        itemsUI();
-        achievementsUI();
-    }
+function ticksToExecute() {
+    const now = new Date().getTime(); // The current time.
+    const deltaTime = now - gameData.lastTick; // The amount of time in ms since the last tick occurred.
+    return Math.floor(deltaTime / (1000 / gameData.tickRate)); // The number of ticks that should have happened since the last tick occurred.
+}
 
-    function ticksToExecute() {
-        const deltaTime = now - gameData.lastTick; // The amount of time in ms since the last tick occurred.
-        return Math.floor(deltaTime / (1000 / gameData.tickRate)); // The number of ticks that should have happened since the last tick occurred.
-    }
-
-    function autoSave() {
-        gameData.autoSaveTimer++;
-        if (gameData.autoSaveTimer >= gameData.tickRate) { // Once per second.
-            save();
-            gameData.autoSaveTimer = 0;
-        }
+function autoSave() {
+    gameData.autoSaveTimer++;
+    if (gameData.autoSaveTimer >= gameData.tickRate) { // Once per second.
+        save();
+        gameData.autoSaveTimer = 0;
     }
 }
 
-function autoBuyItems() {
+function autoBuy() {
     for (let i = itemList.length - 1; i >= 0; i--) {
         // The first item cannot autoBuy the tier below as it is the first tier and there is nothing below it.
         if (i !== 0) {
-            autoBuyRequirements(itemList[i - 1], itemList[i]);
-        }
-    }
-
-    function autoBuyRequirements(boughtItem, buyerItem) {
-        // autoBuying an item is unlocked when the buyerItem reaches the 4th upgrade.
-        // The buyerItem autoBuys the boughtItem, which is always 1 tier below.
-        const max = maxItem(boughtItem);
-        const autoBuyWork = autoBuyRate();
-        // It may take multiple ticks for an item to be bought.
-        // Each tick adds work towards buying the item.
-        if (buyerItem.upgrade.upgradeCount >= 4 && boughtItem.itemData.itemCount < max) {
-            buyItems();
-        }
-
-        function autoBuyRate() {
-            return buyerItem.itemData.itemCount / (gameData.tickRate * 10);
-        }
-
-        function buyItems() {
-            // When the amount of work is > 1 the floor of that number is the number of items bought
-            boughtItem.autoBuy.autoBuyCount += autoBuyWork;
-            if (boughtItem.autoBuy.autoBuyAmount >= 1) {
-                const itemsToBuy = Math.floor(boughtItem.autoBuy.autoBuyCount);
-                boughtItem.itemData.itemCount += itemsToBuy;
-                boughtItem.autoBuy.autoBuyWork -= itemsToBuy;
-            }
-            if (boughtItem.itemData.itemCount > max) {
-                boughtItem.itemData.itemCount = max;
+            // autoBuying an item is unlocked when the buyerItem reaches the 4th upgrade.
+            // The buyerItem autoBuys the boughtItem, which is always 1 tier below.
+            // buyerItem = itemList[i]
+            // boughtItem itemList[i - 1]
+            const max = maxItem(itemList[i - 1]);
+            // It may take multiple ticks for an item to be bought.
+            // Each tick adds work towards buying the item.
+            if (itemList[i].upgrade.upgradeCount >= 4 && itemList[i - 1].itemData.itemCount < max) {
+                autoBuyItem(itemList[i], itemList[i - 1]);
             }
         }
     }
 }
 
-function autoBuyItemsUI() {
+function autoBuyItem(buyerItem, boughtItem) {
+    // When the amount of work is > 1 the floor of that number is the number of items bought
+    const max = maxItem(boughtItem);
+    let autoBuyWork = autoBuyRate(buyerItem);
+    boughtItem.autoBuy.autoBuyAmount += autoBuyWork;
+    if (boughtItem.autoBuy.autoBuyAmount >= 1) {
+        const itemsToBuy = Math.floor(boughtItem.autoBuy.autoBuyAmount);
+        boughtItem.itemData.itemCount += itemsToBuy;
+        boughtItem.autoBuy.autoBuyWork -= itemsToBuy;
+    }
+    if (boughtItem.itemData.itemCount > max) {
+        boughtItem.itemData.itemCount = max;
+    }
+}
+
+function autoBuyRate(buyerItem) {
+    // Calculates the rate that item will autoBuy item-1
+    return buyerItem.itemData.itemCount / (gameData.tickRate * 10);
+}
+
+function autoBuyUI() {
     for (let i = itemList.length - 1; i >= 0; i--) {
         // The first item cannot autoBuy the tier below as it is the first tier and there is nothing below it.
         if (i !== 0) {
-            UIUpdate(itemList[i - 1], itemList[i]);
-        }
-    }
-
-    function UIUpdate(boughtItem, buyerItem) {
+        const buyerItem = itemList[i];
+        const boughtItem = itemList[i - 1];
         const itemsPerSecond = buyerItem.itemData.itemCount / gameData.tickRate;
         if (itemsPerSecond === 0) {
             HTMLEditor(buyerItem.div.autoBuyRate, 0);
@@ -641,6 +581,7 @@ function autoBuyItemsUI() {
         }
         // If items are not being auto bought, the rate is displayed as 0.
     }
+}
 }
 
 function itemsIncome() {
@@ -1365,4 +1306,4 @@ function changeUpgradeText(item) {
     }
 }
 
-window.requestAnimationFrame(refreshGameTick); 
+window.requestAnimationFrame(refreshGameTick); // Starts the first tick.
