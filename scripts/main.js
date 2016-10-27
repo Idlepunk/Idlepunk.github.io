@@ -519,6 +519,7 @@ function ticksToExecute() {
 }
 
 function autoSave() {
+    // Saves the game after a number of ticks equal to the tickRate.
     gameData.autoSaveTimer++;
     if (gameData.autoSaveTimer >= gameData.tickRate) { // Once per second.
         save();
@@ -544,6 +545,7 @@ function autoBuy() {
 }
 
 function autoBuyEligible(buyerItem, boughtItem) {
+    // Checks if the player has the requisite upgrade for auto buying and has less than the max number of items.
     if (buyerItem.upgrade.upgradeCount >= 4 && boughtItem.itemData.itemCount < boughtItem.itemData.maxItems) {
         return true;
     }
@@ -551,7 +553,7 @@ function autoBuyEligible(buyerItem, boughtItem) {
 }
 
 function autoBuyItem(buyerItem, boughtItem) {
-    // When the amount of work is > 1 the floor of that number is the number of items bought
+    // When the amount of work is > 1 the floor of that number is the number of items bought.
     let autoBuyWork = autoBuyRate(buyerItem);
     boughtItem.autoBuy.autoBuyAmount += autoBuyWork;
     if (boughtItem.autoBuy.autoBuyAmount >= 1) {
@@ -570,6 +572,7 @@ function autoBuyRate(buyerItem) {
 }
 
 function autoBuyUI() {
+    // Updates autoBuyUI elements.
     for (let i = itemList.length - 1; i >= 0; i--) {
         // The first item cannot autoBuy the tier below as it is the first tier and there is nothing below it.
         if (i !== 0 && autoBuyEligible(itemList[i], itemList[i - 1])) {
@@ -599,11 +602,10 @@ function itemsIncome() {
         const income = calculateIncome(itemList[i]);
         addData(income);
     }
-
-
 }
 
 function calculateIncome(item) {
+    // Calculates how much income an item generates.
     let incomePerItemPerTick; // The amount that a single item will generate in 1 tick.
     let incomePerItemPerSecond; // The amount that a single item will generate in one second.
     let incomePerTypePerTick; // The amount that all items of a type will generate in a single tick.        
@@ -693,8 +695,6 @@ function achievementsUI() {
         }
     }
     flashAchTab();
-
-
 }
 
 function makeAchDisplay(achUnlockedCount, achLockedCount) {
@@ -789,6 +789,7 @@ function victory() {
 }
 
 function save() {
+    // Saves info to local storage.
     let savegame = makeSaveFile();
     savegame = obfuscateSave(savegame);
     saveToLocalStorage(savegame);
@@ -855,6 +856,7 @@ function save() {
 }
 
 function load() {
+    // Loads info from local storage.
     if (localStorage.getItem(gameData.saveName)) { // If save exists in local storage.
         const savegame = getSaveFromLocalStorage();
         loadDataFromSave(savegame);
@@ -909,8 +911,6 @@ function load() {
         }
     }
 }
-
-
 
 function addData(number) {
     gameData.dataHacked += number;
@@ -1053,6 +1053,7 @@ window.onclick = function(event) {
 };
 
 function colorDropDown() {
+    // Changes UI colors based on selection from color picker.
     document.getElementById("myDropdown").classList.toggle("show");
     document.getElementById('bodyColorPicker').jscolor.fromString(theme.colorTheme[theme.currentTheme].bodyColor);
     document.getElementById('clickColorPicker').jscolor.fromString(theme.colorTheme[theme.currentTheme].clickColor);
@@ -1060,6 +1061,7 @@ function colorDropDown() {
 }
 
 function buyPrestige() {
+    // Not currently in use.
     const cost = prestigeCost();
     if (gameData.dataHacked >= cost && sentencesRemain() && prestige.data.sentencesDisplayed < gameData.resetCount){
         gameData.dataHacked -= cost;
@@ -1090,6 +1092,7 @@ function prestigeCost() {
 }
 
 function displayCurrentSentence() {
+    // Not currently in use.
     prestige.data.rowsDisplayed = 0;
     const lastRowInSentence = prestige.display.message[prestige.data.sentencesDisplayed].length;
     for (let i = 0; i < lastRowInSentence; i++) {
@@ -1108,6 +1111,7 @@ function displayCurrentSentence() {
 }
 
 function showPrestigeTranscendence() {
+    // Not currently in use.
     document.getElementById("prestigeRequirements").style.display = "block";
 }
 
@@ -1135,6 +1139,7 @@ function newGame() {
 }
 
 function resetGame() {
+    // Not currently in use.
     // Does a soft reset of stuff.
     resetProgress();
     resetVisibility();
