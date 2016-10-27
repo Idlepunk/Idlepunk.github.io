@@ -72,13 +72,9 @@
             <p id="item12achOuter">(<span id="item12achDisplay"></span>)<span id="item12achName"></span></p>
             </div>
             <div class="tabContent" id="prestigeTab">
-                    <p class="clickable" onclick="buyPrestige();">Decode transmission from the satellite heart.</p>
-                    <p>Cost: <span class="important" id="prestigeCost">0</span></p>
-                <pre id="prestigeArt"></pre>
-                <div id="prestigeRequirements" style="display: none">
-                    <p> You are incapable of comprehending further messages. </p>
-                    <p class="clickable" onclick="resetGame();"> Leave this place </p>
-                </div>
+                <canvas id="hackGame" width="301" height="301">
+                    
+                </canvas>
             </div>
             <div id="menuBar">
                 <p></p>
@@ -95,6 +91,7 @@
         <script src="lib/handlebars/handlebars-v4.0.5.js" type="text/javascript"></script> 
         <script src="lib/jquery/jquery-3.1.1.min.js" type="text/javascript"></script> 
         <script src="scripts/main.js" type="text/javascript"></script> 
+        <script src="scripts/hackGame.js" type="text/javascript"></script> 
         <!-- Template -->
         <script id="itemTemplate" type="text/x-handlebars-template">
             <div class="flex-container" id="{{itemID}}Flex">
@@ -119,7 +116,7 @@
         </script> 
         <script>
             window.onload = startUp();
-            window.onload = changeTab("itemTab");
+            window.onload = changeTab("prestigeTab");
         </script> 
         <script>
             //Analytics

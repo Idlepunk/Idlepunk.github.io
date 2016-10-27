@@ -425,6 +425,7 @@ function startUp() {
     addData(gameData.BIC); // Adds data equal to the cost of the first item.
     load();
     showGame();
+    draw();
     //window.requestAnimationFrame(refreshGameTick); // Calls the first tick of the game.
 }
 
@@ -505,7 +506,7 @@ function UIRefresh() {
     // Displays UI elements that should be refreshed each tick.
     checkForReveal();
     HTMLEditor('dataHacked', formatBytes(Math.floor(gameData.dataHacked)));
-    HTMLEditor('prestigeCost', formatBytes(prestigeCost()));
+    //HTMLEditor('prestigeCost', formatBytes(prestigeCost()));
     autoBuyUI();
     itemsUI();
     achievementsUI();
@@ -693,26 +694,28 @@ function achievementsUI() {
     }
     flashAchTab();
 
-    function makeAchDisplay(achUnlockedCount, achLockedCount) {
-        const achUnlockedDisplay = '&Dagger;'.repeat(achUnlockedCount); // Creates a row of symbols to represent unlocked achievements.
-        const achLockedDisplay = '_'.repeat(achLockedCount); // Creates a row of symbols to represent locked achievements.
-        const achDisplay = achUnlockedDisplay + achLockedDisplay; // Will look like |||||----- changing based on unlock status.
-        return achDisplay;
-    }
 
-    function showAchievements(item, achDisplay, achName) {
-        HTMLEditor(item.div.achDisplay, achDisplay);
-        HTMLEditor(item.div.achName, achName);
-    }
+}
 
-    function allItemAchUnlocked(item) {
-        document.getElementById(item.div.achDisplay).style.color = theme.colorTheme[theme.currentTheme].importantColor;
-    }
+function makeAchDisplay(achUnlockedCount, achLockedCount) {
+    const achUnlockedDisplay = '&Dagger;'.repeat(achUnlockedCount); // Creates a row of symbols to represent unlocked achievements.
+    const achLockedDisplay = '_'.repeat(achLockedCount); // Creates a row of symbols to represent locked achievements.
+    const achDisplay = achUnlockedDisplay + achLockedDisplay; // Will look like |||||----- changing based on unlock status.
+    return achDisplay;
+}
 
-    function flashAchTab() {
-        if (gameData.flashAchTab === true && gameData.achievementTabSelected !== true) {
-            document.getElementById('achTab').style.color = theme.colorTheme[theme.currentTheme].importantColor;
-        }
+function showAchievements(item, achDisplay, achName) {
+    HTMLEditor(item.div.achDisplay, achDisplay);
+    HTMLEditor(item.div.achName, achName);
+}
+
+function allItemAchUnlocked(item) {
+    document.getElementById(item.div.achDisplay).style.color = theme.colorTheme[theme.currentTheme].importantColor;
+}
+
+function flashAchTab() {
+    if (gameData.flashAchTab === true && gameData.achievementTabSelected !== true) {
+        document.getElementById('achTab').style.color = theme.colorTheme[theme.currentTheme].importantColor;
     }
 }
 
@@ -722,34 +725,34 @@ function checkForReveal() {
         checkItemReveal(itemList[i]);
         checkUpgradeReveal(itemList[i]);
     }
+}
 
-    function checkItemReveal(item) {
-        // An Item is revealed when total data is greater than the cost of the item.
-        if (gameData.totalDataHacked >= item.itemData.baseCost) {
-            showItemTier(item);
-        }
-
-        function showItemTier(item) {
-            // Reveals the item, HR and achievement bar.
-            visibilityChange(item.div.itemMenu, true);
-            document.getElementById(item.div.itemFlex).style.display = 'flex';
-            visibilityChange(item.div.HR, true);
-            visibilityChange(item.div.achOuter, true);
-        }
+function checkItemReveal(item) {
+    // An Item is revealed when total data is greater than the cost of the item.
+    if (gameData.totalDataHacked >= item.itemData.baseCost) {
+        showItemTier(item);
     }
 
-    function checkUpgradeReveal(item) {
-        // An upgrade is revealed when total data is greater than the cost of the upgrade.
-        if (gameData.totalDataHacked >= item.upgrade.nextUpgradeCost) {
-            showUpgrade(item);
-        } else {
-            visibilityChange(item.div.upgradeMenu, false);
-        }
+    function showItemTier(item) {
+        // Reveals the item, HR and achievement bar.
+        visibilityChange(item.div.itemMenu, true);
+        document.getElementById(item.div.itemFlex).style.display = 'flex';
+        visibilityChange(item.div.HR, true);
+        visibilityChange(item.div.achOuter, true);
+    }
+}
 
-        function showUpgrade(item) {
-            visibilityChange(item.div.upgradeMenu, true);
-            changeUpgradeText(item);
-        }
+function checkUpgradeReveal(item) {
+    // An upgrade is revealed when total data is greater than the cost of the upgrade.
+    if (gameData.totalDataHacked >= item.upgrade.nextUpgradeCost) {
+        showUpgrade(item);
+    } else {
+        visibilityChange(item.div.upgradeMenu, false);
+    }
+
+    function showUpgrade(item) {
+        visibilityChange(item.div.upgradeMenu, true);
+        changeUpgradeText(item);
     }
 }
 
@@ -795,7 +798,7 @@ function save() {
         let savegame = {};
         savegame = saveMiscData(savegame);
         savegame = saveItemData(savegame);
-        savegame = savePrestige(savegame);
+        //savegame = savePrestige(savegame);
         return savegame;
 
         function saveMiscData(savegame) {
@@ -869,7 +872,7 @@ function load() {
     function loadDataFromSave(savegame) {
         loadMiscData(savegame);
         loadItemData(savegame);
-        loadPrestige(savegame);
+        //loadPrestige(savegame);
 
         function loadMiscData(savegame) {
             // Loads data not associated with itemList
