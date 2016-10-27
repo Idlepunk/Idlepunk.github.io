@@ -1,4 +1,4 @@
-# [Play it here.](https://idlepunk.github.io/)
+# [Play the latest stable release here.](https://idlepunk.github.io/)
 
 **Idlepunk** by **Asher** is licensed under **[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode)**
 
