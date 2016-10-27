@@ -1,3 +1,5 @@
+/* Idlepunk by Asher is licensed under CC BY-NC-SA 4.0 - https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode */
+
 @media(min-width:60em) {
     html {
         font-size: 100%;
@@ -31,6 +33,7 @@ body {
 .unsupportedBrowser {
     display: inline;
     color: orange;
+    font-family: Courier;
 }
 
 .clickable {
