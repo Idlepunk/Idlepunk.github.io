@@ -22,16 +22,25 @@ let grid = new function() {
         ];
         this.coordX = 0;
         this.coordY = 0;
+        this.pointerLoc = {
+            x: 5,
+            y: 5
+        }
     }
 }();
 
 function draw() {
     createGrid();
+    drawGrid();
+    /*
     fillCoord(3, 3, "red");
     hideCoord(4, 3);
     strokeCoord(5, 3, "blue");
     drawLine(0, 0, 0, 1);
     drawLine(0, 0, 1, 0);
+    */
+    drawLine(0,0, 0, 4);
+
 }
 
 function createGrid() {
@@ -44,12 +53,60 @@ function createGrid() {
             };
             grid.coordX++;
             grid.ctx.strokeStyle = grid.rectOutline;
-            grid.ctx.strokeRect(x, y, grid.rectWidth - grid.rectPadding, grid.rectHeight - grid.rectPadding);
+            //grid.ctx.strokeRect(x, y, grid.rectWidth - grid.rectPadding, grid.rectHeight - grid.rectPadding);
+            //`strokeCoord(x, y)
         }
         grid.coordY++;
         grid.coordX = 0;
     }
 }
+
+function drawGrid() {
+    for (let y = grid.coords.length - 1; y >= 0; y--) {
+        for (let x = grid.coords[y].length - 1; x >= 0; x--) {
+            strokeCoord(x, y)
+        }
+    }
+}
+
+document.onkeydown = function (e) {
+    e = e || window.event;
+    // use e.keyCode
+    grid.ctx.lineWidth = "1";
+    hideCoord(grid.pointerLoc.x, grid.pointerLoc.y)
+    strokeCoord(grid.pointerLoc.x, grid.pointerLoc.y);
+    if (e.key === "ArrowUp") { movePointerUp(); }
+    if (e.key === "ArrowDown") { movePointerDown(); }
+    if (e.key === "ArrowLeft") { movePointerLeft(); }
+    if (e.key === "ArrowRight") { movePointerRight(); }
+    if (e.key === "Space") { fillCoord(grid.pointerLoc.x, grid.pointerLoc.y) }
+    fillCoord(grid.pointerLoc.x, grid.pointerLoc.y, "blue");
+};
+
+function movePointerUp() {
+    if (grid.pointerLoc.y !== 0){
+        grid.pointerLoc.y --;
+    }
+}
+
+function movePointerDown() {
+    if (grid.pointerLoc.y !== grid.coords.length - 1) {
+        grid.pointerLoc.y ++;
+    }
+}
+function movePointerLeft() {
+    if (grid.pointerLoc.x !== 0) {
+        grid.pointerLoc.x --;
+    }
+}
+
+function movePointerRight() {
+    if (grid.pointerLoc.x !== grid.coords[0].length - 1) {
+        grid.pointerLoc.x ++;
+    }
+}
+
+
 
 function fillCoord(x, y, color = "orange") {
     grid.ctx.fillStyle = color;
