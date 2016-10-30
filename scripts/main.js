@@ -426,7 +426,7 @@ function startUp() {
     load();
     showGame();
     draw();
-    //window.requestAnimationFrame(refreshGameTick); // Calls the first tick of the game.
+    window.requestAnimationFrame(refreshGameTick); // Calls the first tick of the game.
 }
 
 function itemTemplates() {
@@ -1327,4 +1327,4 @@ function updateItemMax(item) {
     HTMLEditor(item.div.numberMax, item.itemData.maxItems);
 }
 
-window.requestAnimationFrame(refreshGameTick); // Starts the first tick.
+//window.requestAnimationFrame(refreshGameTick); // Starts the first tick.

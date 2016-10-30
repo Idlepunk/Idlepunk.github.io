@@ -2,6 +2,7 @@ let grid = new function() {
     const canvas = document.getElementById("hackGame");
     if (canvas.getContext) {
         this.ctx = canvas.getContext("2d");
+        this.ctx.lineWidth = "2"
         this.gridHeight = 301;
         this.gridWidth = 301;
         this.rectHeight = 30;
@@ -12,6 +13,7 @@ let grid = new function() {
         this.coordX = 0;
         this.coordY = 0;
         this.pointerLoc = {x: 5, y: 5 }
+
         
             // 0 = blank
             // 1 = start
@@ -28,9 +30,9 @@ let grid = new function() {
             [0, 0, 0, 4, 0, 0, 0, 3, 3, 3],
             [0, 0, 0, 0, 0, 0, 4, 3, 5, 5],
             [0, 0, 0, 0, 4, 0, 4, 3, 3, 3],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [3, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 4, 0, 0, 3, 3],
-            [0, 0, 0, 0, 0, 4, 0, 0, 3, 2]
+            [5, 0, 0, 0, 0, 4, 0, 0, 3, 2]
         ];
         // Where lines should appear running through the grid.
         this.lineMap = [
@@ -40,21 +42,21 @@ let grid = new function() {
             [1, 0, 1, 0, 0, 1, 0, 0, 0, 0],
             [1, 0, 1, 1, 0, 1, 0, 0, 0, 0],
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-            [0, 0, 0, 0, 1, 0, 1, 0, 1, 0],
-            [0, 0, 1, 1, 1, 1, 1, 0, 1, 0],
-            [0, 0, 1, 0, 0, 1, 0, 0, 1, 1],
-            [0, 1, 1, 0, 0, 1, 1, 1, 1, 1]
+            [1, 0, 0, 0, 1, 0, 1, 0, 1, 0],
+            [1, 0, 1, 1, 1, 1, 1, 0, 1, 0],
+            [1, 0, 1, 0, 0, 1, 0, 0, 1, 1],
+            [1, 1, 1, 0, 0, 1, 1, 1, 1, 1]
         ];
     }
 }();
 
 function draw() {
-    grid.ctx.lineWidth = "2";
     createGrid();
     baseGrid();
 }
 
 function baseGrid() {
+    grid.ctx.clearRect(0,0, grid.gridWidth, grid.gridHeight);
     drawLineObjects();
     drawGrid();
     drawObjects();
@@ -83,7 +85,7 @@ function drawGrid() {
     // Draws the grid based on coordiantes.
     for (let y = grid.coords.length - 1; y >= 0; y--) {
         for (let x = grid.coords[y].length - 1; x >= 0; x--) {
-            strokeCoord(x, y)
+            strokeCoord(x, y);
         }
     }
 }
@@ -97,16 +99,16 @@ function drawObjects() {
                     fillCoord(x, y, "Green");
                     break;
                 case 2:
-                    fillCoord(x, y, "White");
+                    fillCoord(x, y, "#283747");
                     break;
                 case 3:
                     fillCoord(x, y, "grey");
                     break;
                 case 4:
-                    fillCoord(x, y, "red");
+                    fillCoord(x, y, "#E74C3C");
                     break;
                 case 5:
-                    fillCoord(x, y, "purple")
+                    fillCoord(x, y, "#2980B9")
             }
         }
     }
@@ -156,10 +158,8 @@ function drawLineObjects() {
 document.onkeydown = function(e) {
     e = e || window.event;
     // use e.keyCode
-    grid.ctx.lineWidth = "2";
     hideCoord(grid.pointerLoc.x, grid.pointerLoc.y)
         //strokeCoord(grid.pointerLoc.x, grid.pointerLoc.y);
-    drawGrid();
     baseGrid();
     if (e.key === "ArrowUp") {
         movePointerUp();
@@ -173,12 +173,19 @@ document.onkeydown = function(e) {
     if (e.key === "ArrowRight") {
         movePointerRight();
     }
-    if (e.key === "Space") {
-        fillCoord(grid.pointerLoc.x, grid.pointerLoc.y)
+    if (e.key === " ") {
+        fillCoord(grid.pointerLoc.x, grid.pointerLoc.y, "blue");
     }
     //fillCoord(grid.pointerLoc.x, grid.pointerLoc.y, "white");
     strokeCoord(grid.pointerLoc.x, grid.pointerLoc.y, "white");
+    displayDetailText();
 };
+
+function displayDetailText() {
+    let text = ""
+
+    HTMLEditor("hackGameDetailText", text);
+}
 
 function movePointerUp() {
     if (grid.pointerLoc.y !== 0) {
@@ -206,6 +213,7 @@ function movePointerRight() {
 
 function fillCoord(x, y, color = "orange") {
     // Draws a full color square.
+    grid.ctx.lineWdith = "3";
     grid.ctx.fillStyle = color;
     let drawX = grid.coords[x][y].x - 1;
     let drawY = grid.coords[x][y].y - 1;
@@ -214,8 +222,9 @@ function fillCoord(x, y, color = "orange") {
     grid.ctx.fillRect(drawX, drawY, rectWidth, rectHeight);
 }
 
-function strokeCoord(x, y, color = "orange") {
+function strokeCoord(x, y, color = "#7D3C98") {
     // Draws the outline of a square.
+    grid.ctx.lineWdith = "3";
     grid.ctx.strokeStyle = color;
     let drawX = grid.coords[x][y].x;
     let drawY = grid.coords[x][y].y;
@@ -224,8 +233,9 @@ function strokeCoord(x, y, color = "orange") {
     grid.ctx.strokeRect(drawX, drawY, rectWidth, rectHeight);
 }
 
-function drawLine(startXC, startYC, endXC, endYC, color = "Yellow") {
+function drawLine(startXC, startYC, endXC, endYC, color = "#D35400") {
     // Draws a line between two points.
+    grid.ctx.lineWdith = "3";
     grid.ctx.strokeStyle = color;
     let Xoffset = (grid.rectWidth - grid.rectPadding) / 2;
     let Yoffset = (grid.rectHeight - grid.rectPadding) / 2;
@@ -236,8 +246,7 @@ function drawLine(startXC, startYC, endXC, endYC, color = "Yellow") {
     grid.ctx.beginPath();
     grid.ctx.moveTo(startX, startY);
     grid.ctx.lineTo(endX, endY);
-    grid.ctx.lineWidth = "2";
-    grid.ctx.lineCap = "square";
+    //grid.ctx.lineCap = "square";
     grid.ctx.stroke();
 }
 
