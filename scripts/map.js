@@ -1,33 +1,49 @@
+// Idlepunk by Asher is licensed under CC BY-NC-SA 4.0 - https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+/*jshint esversion: 6 */
+/*jshint eqeqeq: true */
+/*jshint supernew: true */
+/*jshint multistr: true */
 let grid = new function() {
     const canvas = document.getElementById("hackGame");
     if (canvas.getContext) {
         this.ctx = canvas.getContext("2d");
         // Base width of lines. 
-        this.ctx.lineWidth = "3"; 
+        this.ctx.lineWidth = "3";
         // Dimensions of the display area, change in HTML file as well.
-        this.gridHeight = 300; 
+        this.gridHeight = 300;
         this.gridWidth = 300;
         // Grid is made up of rectangles, these set their dimensions.
         this.rectHeight = 30;
         this.rectWidth = 30;
         this.rectPadding = 10;
         // Coordinates of rectangles in grid, will be set after number of rectangles is calculated.
-        this.coords = [[], [], [], [], [], [], [], [], [], []];
+        this.coords = [
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            []
+        ];
         this.coordX = 0;
         this.coordY = 0;
         // Starting position of the pointer.
         this.pointerLoc = {
-                x: 0,
-                y: 0
-            }
+            x: 5,
+            y: 0
+        };
         // Maps are made by drawing these 3 arrays.
-            // The number corresponds to what item will be in that array position.
-            // 0 = blank
-            // 1 = start
-            // 2 = end
-            // 3 = firewall
-            // 4 = ICE
-            // 5 = server
+        // The number corresponds to what item will be in that array position.
+        // 0 = blank
+        // 1 = start
+        // 2 = end
+        // 3 = firewall
+        // 4 = ICE
+        // 5 = server
         this.objectMap = [
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 4, 0, 0, 0, 0, 0, 0, 0],
@@ -73,17 +89,16 @@ let grid = new function() {
 let gridItem = function(name, description, fillColor) {
     this.name = name;
     this.description = description;
-    //this.accessed = false;
     this.fillColor = fillColor;
     this.drawGridItem = function(x, y) {
         if (this.fillColor) {
-            fillCoord(x, y, this.fillColor);
+            drawRectFill(x, y, this.fillColor);
         }
         if (grid.accessMap[y][x] === 1) {
-            strokeCoord(x, y, "#00ff00");
+            drawRectOutline(x, y, "#00ff00");
         }
-    }
-}
+    };
+};
 grid.gridItem = [
     new gridItem("Empty", "There is nothing here.", false),
     new gridItem("Entry Node", "Your attack starts here.", "#00ff00"),
@@ -91,153 +106,160 @@ grid.gridItem = [
     new gridItem("Firewall", "Prevents access.", "grey"),
     new gridItem("ICE", "Attacks Intruders.", "#E74C3C"),
     new gridItem("Server", "Contains information", "#2980B9"),
-    ]
+];
 
 function draw() {
-    createGrid();
-    baseGrid();
+    createGridCoordinates();
+    refresh();
 }
 
-function baseGrid() {
+function refresh() {
+    // Refreshes the UI.
     grid.ctx.clearRect(0, 0, grid.gridWidth, grid.gridHeight);
     drawLineObjects();
-    drawGrid();
-    drawObjects();
+    drawGridBase();
+    drawGridItems();
 }
 
-function createGrid() {
+function createGridCoordinates() {
     // Fills 2d array of coordinates for the grid.
     for (let y = 1; y < grid.gridHeight; y += grid.rectHeight) {
         for (let x = 1; x < grid.gridWidth; x += grid.rectWidth) {
-            //console.log(x, y)
             grid.coords[grid.coordX][grid.coordY] = {
                 x: x,
                 y: y
             };
             grid.coordX++;
-            //grid.ctx.strokeRect(x, y, grid.rectWidth - grid.rectPadding, grid.rectHeight - grid.rectPadding);
-            //`strokeCoord(x, y)
         }
         grid.coordY++;
         grid.coordX = 0;
     }
 }
 
-function drawGrid() {
+function drawGridBase() {
     // Draws the grid based on coordinates.
     for (let y = grid.coords.length - 1; y >= 0; y--) {
         for (let x = grid.coords[y].length - 1; x >= 0; x--) {
-            strokeCoord(x, y);
+            drawRectOutline(x, y);
         }
     }
 }
 
-function drawObjects() {
+function drawGridItems() {
     // Filles grid in with objects from the objectMap.
     for (let y = grid.coords.length - 1; y >= 0; y--) {
         for (let x = grid.coords[y].length - 1; x >= 0; x--) {
             const gridCoord = grid.objectMap[y][x];
-            grid.gridItem[gridCoord].drawGridItem(x, y)
+            grid.gridItem[gridCoord].drawGridItem(x, y);
         }
     }
 }
 
 function drawLineObjects() {
-    // Draws lines to grid.
+    // Draws between rectangles on grid.
+    // Lines are only drawn between two 1s that are touching on grid.lineMap.
     drawXLines();
     drawYLines();
 
     function drawXLines() {
+        // Draws horizontal lines.
         for (let y = grid.coords.length - 1; y >= 0; y--) {
             for (let x = grid.coords[y].length - 1; x >= 0; x--) {
                 if (checkForXLineNeighbour(x, y)) {
                     drawLine(x, y, x + 1, y);
-                    fillCoord(x, y, "black");
-                    fillCoord(x + 1, y, "black");
+                    drawRectFill(x, y, "black");
+                    drawRectFill(x + 1, y, "black");
                 }
             }
         }
     }
 
     function drawYLines() {
+        // Draws vertical lines
         for (let y = grid.coords.length - 1; y >= 0; y--) {
             for (let x = grid.coords[y].length - 1; x >= 0; x--) {
                 if (checkForYLineNeighbour(x, y)) {
                     drawLine(x, y, x, y + 1);
-                    fillCoord(x, y, "black");
-                    fillCoord(x, y + 1, "black");
+                    drawRectFill(x, y, "black");
+                    drawRectFill(x, y + 1, "black");
                 }
             }
         }
     }
 
     function checkForXLineNeighbour(x, y) {
+        // Checks if there is a 1 to the right of x.
         if (x === grid.lineMap[9].length - 1) return false;
         else if (grid.lineMap[y][x] === 1 && grid.lineMap[y][x + 1] === 1) return true;
         else return false;
     }
 
     function checkForYLineNeighbour(x, y) {
+        // Checks if there is a 1 below y.
         if (y === grid.lineMap.length - 1) return false;
         else if (grid.lineMap[y][x] === 1 && grid.lineMap[y + 1][x] === 1) return true;
         else return false;
     }
 }
 document.onkeydown = function(e) {
+    // Player inputs.
     e = e || window.event;
-    // use e.keyCode
-    hideCoord(grid.pointerLoc.x, grid.pointerLoc.y)
-        //strokeCoord(grid.pointerLoc.x, grid.pointerLoc.y);
-    baseGrid();
-    if (e.key === "ArrowUp") {
-        movePointerUp();
+    refresh();
+    switch (e.keyCode) {
+        case 37: // ArrowLeft
+            movePointerLeft();
+            break;
+        case 38: // ArrowUp
+            movePointerUp();
+            break;
+        case 39: // ArrowRight
+            movePointerRight();
+            break;
+        case 40: // ArrowDown
+            movePointerDown();
+            break;
+        case 32: // Spacebar
+            playerAction();
+            break;
     }
-    if (e.key === "ArrowDown") {
-        movePointerDown();
-    }
-    if (e.key === "ArrowLeft") {
-        movePointerLeft();
-    }
-    if (e.key === "ArrowRight") {
-        movePointerRight();
-    }
-    if (e.key === " ") {
-        playerAction();
-    }
-    //fillCoord(grid.pointerLoc.x, grid.pointerLoc.y, "white");
-    if (grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] === 1){
-    strokeCoord(grid.pointerLoc.x, grid.pointerLoc.y, "#B4FF96");
-    }
-    else strokeCoord(grid.pointerLoc.x, grid.pointerLoc.y, "white");
+    pointerOverAccess();
+};
+
+function pointerOverAccess() {
+    // If the pointer is over normal empties, display as white.
+    // If the pointer is over player owned empties, display as light green.
+    if (grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] === 1) {
+        drawRectOutline(grid.pointerLoc.x, grid.pointerLoc.y, "#B4FF96");
+    } else drawRectOutline(grid.pointerLoc.x, grid.pointerLoc.y, "white");
     displayDetailText();
 };
 
 function playerAction() {
     const pointerOver = grid.objectMap[grid.pointerLoc.y][grid.pointerLoc.x];
     if (pointerOver === 0) {
-        useEmpty();
+        actionOnEmpty();
     }
     if (pointerOver === 5) {
-        useServer();
+        actionOnServer();
     }
 }
 
-function useEmpty() {
-    if (grid.lineMap[grid.pointerLoc.y][grid.pointerLoc.x] === 1 && checkForAccessNeighbour(grid.pointerLoc.x, grid.pointerLoc.y) ) {
+function actionOnEmpty() {
+    if (grid.lineMap[grid.pointerLoc.y][grid.pointerLoc.x] === 1 && checkForAccessNeighbour(grid.pointerLoc.x, grid.pointerLoc.y)) {
         grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] = 1;
     }
 }
 
-function useServer() {
-    if (checkForAccessNeighbour(grid.pointerLoc.x, grid.pointerLoc.y)){
-    const gridCoord = grid.objectMap[grid.pointerLoc.y][grid.pointerLoc.x];
-    grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] = 1;
-    grid.gridItem[gridCoord].drawGridItem([grid.pointerLoc.y], [grid.pointerLoc.x]);
+function actionOnServer() {
+    if (checkForAccessNeighbour(grid.pointerLoc.x, grid.pointerLoc.y)) {
+        const gridCoord = grid.objectMap[grid.pointerLoc.y][grid.pointerLoc.x];
+        grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] = 1;
+        grid.gridItem[gridCoord].drawGridItem([grid.pointerLoc.y], [grid.pointerLoc.x]);
     }
 }
 
 function checkForLineNeighbour(x, y) {
-    return (checkLineAbove(x, y) || checkLineBelow(x, y) || checkLineLeft(x, y) || checkLineRight(x, y))
+    return (checkLineAbove(x, y) || checkLineBelow(x, y) || checkLineLeft(x, y) || checkLineRight(x, y));
 }
 
 function checkLineAbove(x, y) {
@@ -272,7 +294,7 @@ function checkLineLeft(x, y) {
 function checkLineRight(x, y) {
     if (x === grid.lineMap[y].length - 1) {
         return false;
-    } else if (grid.lineMap[y][x + 1]) {
+    } else if (grid.lineMap[y][x + 1] === 1) {
         return true;
     } else {
         return false;
@@ -280,7 +302,7 @@ function checkLineRight(x, y) {
 }
 
 function checkForAccessNeighbour(x, y) {
-    return (checkAccessAbove(x, y) || checkAccessBelow(x, y) || checkAccessLeft(x, y) || checkAccessRight(x, y))
+    return (checkAccessAbove(x, y) || checkAccessBelow(x, y) || checkAccessLeft(x, y) || checkAccessRight(x, y));
 }
 
 function checkAccessAbove(x, y) {
@@ -323,14 +345,13 @@ function checkAccessRight(x, y) {
 }
 
 function displayDetailText() {
-    let objectType = grid.objectMap[grid.pointerLoc.y][grid.pointerLoc.x]
+    let objectType = grid.objectMap[grid.pointerLoc.y][grid.pointerLoc.x];
     let displayText;
     let name = grid.gridItem[objectType].name;
     let desc = grid.gridItem[objectType].description;
     if (grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] === 1) {
         displayText = name + ": " + desc + "<br />" + "You have access to this.";
-    }
-    else displayText = name + ": " + desc; 
+    } else displayText = name + ": " + desc;
     HTMLEditor("hackGameDetailText", displayText);
 }
 
@@ -358,7 +379,7 @@ function movePointerRight() {
     }
 }
 
-function fillCoord(x, y, color = "orange") {
+function drawRectFill(x, y, color = "orange") {
     // Draws a full color square.
     grid.ctx.lineWidth = "3";
     grid.ctx.fillStyle = color;
@@ -369,7 +390,7 @@ function fillCoord(x, y, color = "orange") {
     grid.ctx.fillRect(drawX, drawY, rectWidth, rectHeight);
 }
 
-function strokeCoord(x, y, color = "#7D3C98") {
+function drawRectOutline(x, y, color = "#7D3C98") {
     // Draws the outline of a square.
     grid.ctx.lineWidth = "3";
     grid.ctx.strokeStyle = color;
@@ -397,7 +418,7 @@ function drawLine(startXC, startYC, endXC, endYC, color = "#D35400") {
     grid.ctx.stroke();
 }
 
-function hideCoord(x, y) {
+function drawRectClear(x, y) {
     // Hides a grid square.
     let hideX = grid.coords[x][y].x - 1;
     let hideY = grid.coords[x][y].y - 1;
@@ -407,5 +428,6 @@ function hideCoord(x, y) {
 }
 
 function showPointerLoc() {
-    console.log("x: " + grid.pointerLoc.x, "y: " + grid.pointerLoc.y)
+    // debug.
+    console.log("x: " + grid.pointerLoc.x, "y: " + grid.pointerLoc.y);
 }
