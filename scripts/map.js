@@ -9,37 +9,13 @@ let grid = new function() {
         this.rectWidth = 30;
         this.rectPadding = 10;
         this.rectOutline = "orange";
-        this.coords = [[],[],[],[],[],[],[],[],[],[]];
+        this.coords = [[], [], [], [], [], [], [], [], [], []];
         this.coordX = 0;
         this.coordY = 0;
-        this.pointerLoc = {x: 0, y: 0 }
-
-        this.objects = [
-            {name: "Empty"},
-
-            {name: "Entry node",
-            description: "Your attack starts here."},
-
-            {name: "Node Core",
-            description: "Contains large quantities of sensitive information."},
-
-            {name: "Firewall",
-            description: "stops access"},
-
-            {name: "ICE",
-            description: "Attacks intruders."},
-
-            {name: "Server",
-            description: "Contains information."},
-
-            {name: "Accessed Server",
-            description: "You have access this server already."},
-
-            {name: "Accessed Empty",
-            description: "You have control over this area."}
-        ]
-
-        
+        this.pointerLoc = {
+                x: 0,
+                y: 0
+            }
             // 0 = blank
             // 1 = start
             // 2 = end
@@ -48,7 +24,7 @@ let grid = new function() {
             // 5 = server
             // what things will be on the game's grid.
         this.objectMap = [
-            [1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 4, 0, 0, 0, 0, 0, 0, 0],
             [0, 3, 5, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -59,10 +35,10 @@ let grid = new function() {
             [0, 0, 0, 0, 0, 4, 0, 0, 3, 3],
             [5, 0, 0, 0, 0, 4, 0, 0, 3, 2]
         ];
-        this.objectMap = transposeArray(this.objectMap);
+        //this.objectMap = transposeArray(this.objectMap);
         // Where lines should appear running through the grid.
         this.lineMap = [
-            [1, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+            [1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
             [1, 0, 1, 0, 0, 1, 1, 1, 1, 1],
             [1, 1, 1, 0, 0, 1, 0, 0, 0, 0],
             [1, 0, 1, 0, 0, 1, 0, 0, 0, 0],
@@ -73,13 +49,44 @@ let grid = new function() {
             [1, 0, 1, 0, 0, 1, 0, 0, 1, 1],
             [1, 1, 1, 0, 0, 1, 1, 1, 1, 1]
         ];
-        this.lineMap = transposeArray(this.lineMap)
+        this.accessMap = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        ];
+        // Because of the nature of arrays, these array are accessed using arrayMap[y][x]
+        //this.lineMap = transposeArray(this.lineMap)
     }
 }();
-
-function transposeArray(a) {
-  return a[0].map(function (_, c) { return a.map(function (r) { return r[c]; }); });
+let gridItem = function(name, description, fillColor) {
+    this.name = name;
+    this.description = description;
+    //this.accessed = false;
+    this.fillColor = fillColor;
+    this.drawGridItem = function(x, y) {
+        if (this.fillColor) {
+            fillCoord(x, y, this.fillColor);
+        }
+        if (grid.accessMap[y][x] === 1) {
+            strokeCoord(x, y, "#00ff00");
+        }
+    }
 }
+grid.gridItem = [
+    new gridItem("Empty", "There is nothing here.", false),
+    new gridItem("Entry Node", "Your attack starts here.", "#00ff00"),
+    new gridItem("Node Core", "Contains large quantities of sensitive information.", "#283747"),
+    new gridItem("Firewall", "Prevents access.", "grey"),
+    new gridItem("ICE", "Attacks Intruders.", "#E74C3C"),
+    new gridItem("Server", "Contains information", "#2980B9"),
+    ]
 
 function draw() {
     createGrid();
@@ -87,7 +94,7 @@ function draw() {
 }
 
 function baseGrid() {
-    grid.ctx.clearRect(0,0, grid.gridWidth, grid.gridHeight);
+    grid.ctx.clearRect(0, 0, grid.gridWidth, grid.gridHeight);
     drawLineObjects();
     drawGrid();
     drawObjects();
@@ -125,30 +132,8 @@ function drawObjects() {
     // Filles grid in with objects from the objectMap.
     for (let y = grid.coords.length - 1; y >= 0; y--) {
         for (let x = grid.coords[y].length - 1; x >= 0; x--) {
-            switch (grid.objectMap[y][x]) {
-                case 1:
-                    fillCoord(x, y, "#00ff00");
-                    break;
-                case 2:
-                    fillCoord(x, y, "#283747");
-                    break;
-                case 3:
-                    fillCoord(x, y, "grey");
-                    break;
-                case 4:
-                    fillCoord(x, y, "#E74C3C");
-                    break;
-                case 5:
-                    fillCoord(x, y, "#2980B9");
-                    break;
-                case 6:
-                    fillCoord(x, y, "#2980B9");
-                    strokeCoord(x, y, "#00ff00");
-                    break;
-                case 7:
-                    strokeCoord(x, y, "#00ff00");
-                    break;
-            }
+            const gridCoord = grid.objectMap[y][x];
+            grid.gridItem[gridCoord].drawGridItem(x, y)
         }
     }
 }
@@ -222,88 +207,79 @@ document.onkeydown = function(e) {
 
 function playerAction() {
     const pointerOver = grid.objectMap[grid.pointerLoc.y][grid.pointerLoc.x];
-
     if (pointerOver === 0) {
         useEmpty();
     }
-
     if (pointerOver === 5) {
         useServer();
     }
-
 }
 
 function useEmpty() {
     if (grid.lineMap[grid.pointerLoc.y][grid.pointerLoc.x] === 1) {
-        grid.objectMap[grid.pointerLoc.y][grid.pointerLoc.x] = 7;
+        grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] = 1;
     }
 }
 
 function useServer() {
-    grid.objectMap[grid.pointerLoc.y][grid.pointerLoc.x] = 6;
+    const gridCoord = grid.objectMap[grid.pointerLoc.y][grid.pointerLoc.x];
+    grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] = 1;
+    grid.gridItem[gridCoord].drawGridItem([grid.pointerLoc.y], [grid.pointerLoc.x]);
 }
 
 function checkForNeighbour(x, y) {
-    checkAbove(x, y);
-    checkBelow(x, y);
-    checkLeft(x, y);
-    checkRight(x, y);
-
-
-
-        if (x === grid.lineMap[9].length - 1) return false;
-        else if (grid.lineMap[y][x] === 1 && grid.lineMap[y][x + 1] === 1) return true;
-        else return false;
-
-
-        if (y === grid.lineMap.length - 1) return false;
-        else if (grid.lineMap[y][x] === 1 && grid.lineMap[y + 1][x] === 1) return true;
-        else return false;
+    return (checkAbove(x, y) || checkBelow(x, y) || checkLeft(x, y) || checkRight(x, y))
 }
 
-    function checkAbove(x, y){
-        if (y === 0) {
-            return false;
-        }
-        else if (grid.lineMap[y+1][x] === 1) {
-            return true;
-        }
-        else {
-            return false;
-        }
-
-
+function checkAbove(x, y) {
+    if (y === 0) {
+        return false;
+    } else if (grid.lineMap[y - 1][x] === 1) {
+        return true;
+    } else {
+        return false;
     }
-    function checkBelow(x, y){
-        if (y === grid.lineMap.length - 1) {
-            return false;
-        }
-        else if (grid.lineMap[y-1][x] === 1)
-            return true;
-        else {
-            return false;
-        }
+}
 
+function checkBelow(x, y) {
+    if (y === grid.lineMap.length - 1) {
+        return false;
+    } else if (grid.lineMap[y + 1][x] === 1) return true;
+    else {
+        return false;
     }
-    function checkLeft(x, y){
+}
 
+function checkLeft(x, y) {
+    if (x === 0) {
+        return false;
+    } else if (grid.lineMap[y][x - 1] === 1) {
+        return true;
+    } else {
+        return false;
     }
-    function checkRight(x, y){
+}
 
+function checkRight(x, y) {
+    if (x === grid.lineMap[y].length - 1) {
+        return false;
+    } else if (grid.lineMap[y][x + 1]) {
+        return true;
+    } else {
+        return false;
     }
+}
 
 function displayDetailText() {
-
     let objectType = grid.objectMap[grid.pointerLoc.y][grid.pointerLoc.x]
-    let text = "Nothing";
-    if (grid.objects[objectType].description) {
-        text = grid.objects[objectType].name;
-        text += ": "
-        text += grid.objects[objectType].description;
+    let displayText;
+    let name = grid.gridItem[objectType].name;
+    let desc = grid.gridItem[objectType].description;
+    if (grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] === 1) {
+        displayText = name + ": " + desc + "<br />" + "You have access to this.";
     }
-    else text = "--"
-
-    HTMLEditor("hackGameDetailText", text);
+    else displayText = name + ": " + desc; 
+    HTMLEditor("hackGameDetailText", displayText);
 }
 
 function movePointerUp() {
