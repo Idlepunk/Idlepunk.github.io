@@ -12,7 +12,32 @@ let grid = new function() {
         this.coords = [[],[],[],[],[],[],[],[],[],[]];
         this.coordX = 0;
         this.coordY = 0;
-        this.pointerLoc = {x: 5, y: 5 }
+        this.pointerLoc = {x: 0, y: 0 }
+
+        this.objects = [
+            {name: "Empty"},
+
+            {name: "Entry node",
+            description: "Your attack starts here."},
+
+            {name: "Node Core",
+            description: "Contains large quantities of sensitive information."},
+
+            {name: "Firewall",
+            description: "stops access"},
+
+            {name: "ICE",
+            description: "Attacks intruders."},
+
+            {name: "Server",
+            description: "Contains information."},
+
+            {name: "Accessed Server",
+            description: "You have access this server already."},
+
+            {name: "Accessed Empty",
+            description: "You have control over this area."}
+        ]
 
         
             // 0 = blank
@@ -23,7 +48,7 @@ let grid = new function() {
             // 5 = server
             // what things will be on the game's grid.
         this.objectMap = [
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 4, 0, 0, 0, 0, 0, 0, 0],
             [0, 3, 5, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -34,9 +59,10 @@ let grid = new function() {
             [0, 0, 0, 0, 0, 4, 0, 0, 3, 3],
             [5, 0, 0, 0, 0, 4, 0, 0, 3, 2]
         ];
+        this.objectMap = transposeArray(this.objectMap);
         // Where lines should appear running through the grid.
         this.lineMap = [
-            [1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+            [1, 0, 1, 1, 1, 1, 0, 0, 0, 0],
             [1, 0, 1, 0, 0, 1, 1, 1, 1, 1],
             [1, 1, 1, 0, 0, 1, 0, 0, 0, 0],
             [1, 0, 1, 0, 0, 1, 0, 0, 0, 0],
@@ -47,8 +73,13 @@ let grid = new function() {
             [1, 0, 1, 0, 0, 1, 0, 0, 1, 1],
             [1, 1, 1, 0, 0, 1, 1, 1, 1, 1]
         ];
+        this.lineMap = transposeArray(this.lineMap)
     }
 }();
+
+function transposeArray(a) {
+  return a[0].map(function (_, c) { return a.map(function (r) { return r[c]; }); });
+}
 
 function draw() {
     createGrid();
@@ -63,7 +94,7 @@ function baseGrid() {
 }
 
 function createGrid() {
-    // Fills 2d array of coordiantes for the grid.
+    // Fills 2d array of coordinates for the grid.
     for (let y = 1; y < grid.gridHeight; y += grid.rectHeight) {
         for (let x = 1; x < grid.gridWidth; x += grid.rectWidth) {
             //console.log(x, y)
@@ -82,7 +113,7 @@ function createGrid() {
 }
 
 function drawGrid() {
-    // Draws the grid based on coordiantes.
+    // Draws the grid based on coordinates.
     for (let y = grid.coords.length - 1; y >= 0; y--) {
         for (let x = grid.coords[y].length - 1; x >= 0; x--) {
             strokeCoord(x, y);
@@ -96,7 +127,7 @@ function drawObjects() {
         for (let x = grid.coords[y].length - 1; x >= 0; x--) {
             switch (grid.objectMap[y][x]) {
                 case 1:
-                    fillCoord(x, y, "Green");
+                    fillCoord(x, y, "#00ff00");
                     break;
                 case 2:
                     fillCoord(x, y, "#283747");
@@ -108,7 +139,15 @@ function drawObjects() {
                     fillCoord(x, y, "#E74C3C");
                     break;
                 case 5:
-                    fillCoord(x, y, "#2980B9")
+                    fillCoord(x, y, "#2980B9");
+                    break;
+                case 6:
+                    fillCoord(x, y, "#2980B9");
+                    strokeCoord(x, y, "#00ff00");
+                    break;
+                case 7:
+                    strokeCoord(x, y, "#00ff00");
+                    break;
             }
         }
     }
@@ -122,7 +161,7 @@ function drawLineObjects() {
     function drawXLines() {
         for (let y = grid.coords.length - 1; y >= 0; y--) {
             for (let x = grid.coords[y].length - 1; x >= 0; x--) {
-                if (checkForXNeighbour(x, y)) {
+                if (checkForXLineNeighbour(x, y)) {
                     drawLine(x, y, x + 1, y);
                     fillCoord(x, y, "black");
                     fillCoord(x + 1, y, "black");
@@ -134,7 +173,7 @@ function drawLineObjects() {
     function drawYLines() {
         for (let y = grid.coords.length - 1; y >= 0; y--) {
             for (let x = grid.coords[y].length - 1; x >= 0; x--) {
-                if (checkForYNeighbour(x, y)) {
+                if (checkForYLineNeighbour(x, y)) {
                     drawLine(x, y, x, y + 1);
                     fillCoord(x, y, "black");
                     fillCoord(x, y + 1, "black");
@@ -143,13 +182,13 @@ function drawLineObjects() {
         }
     }
 
-    function checkForXNeighbour(x, y) {
+    function checkForXLineNeighbour(x, y) {
         if (x === grid.lineMap[9].length - 1) return false;
         else if (grid.lineMap[y][x] === 1 && grid.lineMap[y][x + 1] === 1) return true;
         else return false;
     }
 
-    function checkForYNeighbour(x, y) {
+    function checkForYLineNeighbour(x, y) {
         if (y === grid.lineMap.length - 1) return false;
         else if (grid.lineMap[y][x] === 1 && grid.lineMap[y + 1][x] === 1) return true;
         else return false;
@@ -174,15 +213,95 @@ document.onkeydown = function(e) {
         movePointerRight();
     }
     if (e.key === " ") {
-        fillCoord(grid.pointerLoc.x, grid.pointerLoc.y, "blue");
+        playerAction();
     }
     //fillCoord(grid.pointerLoc.x, grid.pointerLoc.y, "white");
     strokeCoord(grid.pointerLoc.x, grid.pointerLoc.y, "white");
     displayDetailText();
 };
 
+function playerAction() {
+    const pointerOver = grid.objectMap[grid.pointerLoc.y][grid.pointerLoc.x];
+
+    if (pointerOver === 0) {
+        useEmpty();
+    }
+
+    if (pointerOver === 5) {
+        useServer();
+    }
+
+}
+
+function useEmpty() {
+    if (grid.lineMap[grid.pointerLoc.y][grid.pointerLoc.x] === 1) {
+        grid.objectMap[grid.pointerLoc.y][grid.pointerLoc.x] = 7;
+    }
+}
+
+function useServer() {
+    grid.objectMap[grid.pointerLoc.y][grid.pointerLoc.x] = 6;
+}
+
+function checkForNeighbour(x, y) {
+    checkAbove(x, y);
+    checkBelow(x, y);
+    checkLeft(x, y);
+    checkRight(x, y);
+
+
+
+        if (x === grid.lineMap[9].length - 1) return false;
+        else if (grid.lineMap[y][x] === 1 && grid.lineMap[y][x + 1] === 1) return true;
+        else return false;
+
+
+        if (y === grid.lineMap.length - 1) return false;
+        else if (grid.lineMap[y][x] === 1 && grid.lineMap[y + 1][x] === 1) return true;
+        else return false;
+}
+
+    function checkAbove(x, y){
+        if (y === 0) {
+            return false;
+        }
+        else if (grid.lineMap[y+1][x] === 1) {
+            return true;
+        }
+        else {
+            return false;
+        }
+
+
+    }
+    function checkBelow(x, y){
+        if (y === grid.lineMap.length - 1) {
+            return false;
+        }
+        else if (grid.lineMap[y-1][x] === 1)
+            return true;
+        else {
+            return false;
+        }
+
+    }
+    function checkLeft(x, y){
+
+    }
+    function checkRight(x, y){
+
+    }
+
 function displayDetailText() {
-    let text = ""
+
+    let objectType = grid.objectMap[grid.pointerLoc.y][grid.pointerLoc.x]
+    let text = "Nothing";
+    if (grid.objects[objectType].description) {
+        text = grid.objects[objectType].name;
+        text += ": "
+        text += grid.objects[objectType].description;
+    }
+    else text = "--"
 
     HTMLEditor("hackGameDetailText", text);
 }
@@ -213,7 +332,7 @@ function movePointerRight() {
 
 function fillCoord(x, y, color = "orange") {
     // Draws a full color square.
-    grid.ctx.lineWdith = "3";
+    grid.ctx.lineWidth = "3";
     grid.ctx.fillStyle = color;
     let drawX = grid.coords[x][y].x - 1;
     let drawY = grid.coords[x][y].y - 1;
@@ -224,7 +343,7 @@ function fillCoord(x, y, color = "orange") {
 
 function strokeCoord(x, y, color = "#7D3C98") {
     // Draws the outline of a square.
-    grid.ctx.lineWdith = "3";
+    grid.ctx.lineWidth = "3";
     grid.ctx.strokeStyle = color;
     let drawX = grid.coords[x][y].x;
     let drawY = grid.coords[x][y].y;
@@ -235,7 +354,7 @@ function strokeCoord(x, y, color = "#7D3C98") {
 
 function drawLine(startXC, startYC, endXC, endYC, color = "#D35400") {
     // Draws a line between two points.
-    grid.ctx.lineWdith = "3";
+    grid.ctx.lineWidth = "3";
     grid.ctx.strokeStyle = color;
     let Xoffset = (grid.rectWidth - grid.rectPadding) / 2;
     let Yoffset = (grid.rectHeight - grid.rectPadding) / 2;
@@ -257,4 +376,8 @@ function hideCoord(x, y) {
     let rectWidth = grid.rectWidth;
     let rectHeight = grid.rectHeight;
     grid.ctx.clearRect(hideX, hideY, rectWidth, rectHeight);
+}
+
+function showPointerLoc() {
+    console.log("x: " + grid.pointerLoc.x, "y: " + grid.pointerLoc.y)
 }
