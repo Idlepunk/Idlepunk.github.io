@@ -546,10 +546,7 @@ function autoBuy() {
 
 function autoBuyEligible(buyerItem, boughtItem) {
     // Checks if the player has the requisite upgrade for auto buying and has less than the max number of items.
-    if (buyerItem.upgrade.upgradeCount >= 4 && boughtItem.itemData.itemCount < boughtItem.itemData.maxItems) {
-        return true;
-    }
-    else return false;
+    return (buyerItem.upgrade.upgradeCount >= 4 && boughtItem.itemData.itemCount < boughtItem.itemData.maxItems);
 }
 
 function autoBuyItem(buyerItem, boughtItem) {
@@ -1074,11 +1071,7 @@ function buyPrestige() {
 
     function sentencesRemain() {
         // If there are sentences left to display.
-        if (prestige.data.sentencesDisplayed < prestige.display.message.length) {
-            return true;
-        } else {
-            return false;
-        }
+        return (prestige.data.sentencesDisplayed < prestige.display.message.length);
     }
 }
 

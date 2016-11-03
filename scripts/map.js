@@ -17,26 +17,16 @@ let grid = new function() {
         this.rectWidth = 30;
         this.rectPadding = 10;
         // Coordinates of rectangles in grid, will be set after number of rectangles is calculated.
-        this.coords = [
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            []
-        ];
+        this.coords = [[],[],[],[],[],[],[],[],[],[]];
         this.coordX = 0;
         this.coordY = 0;
         // Starting position of the pointer.
         this.pointerLoc = {
-            x: 5,
+            x: 0,
             y: 0
         };
         // Maps are made by drawing these 3 arrays.
+        // Remember, these array are accessed using array[Y][X], NOT array[x][y]
         // The number corresponds to what item will be in that array position.
         // 0 = blank
         // 1 = start
@@ -83,11 +73,10 @@ let grid = new function() {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ];
-        // Remember, these array are accessed using array[y][x], NOT array[x][y]
         this.playerItems = {
             ICEPick: 2,
             dummyBarrier: 2,
-            virtualServer: 2
+            virtualServer: 20
         }
     }
 }();
@@ -141,6 +130,8 @@ grid.gridItem = [
 function draw() {
     createGridCoordinates();
     refresh();
+    displayDetailText();
+    displayPointer();
 }
 
 function refresh() {
@@ -253,10 +244,10 @@ document.onkeydown = function(e) {
             playerAction();
             break;
     }
-    pointerOverAccess();
+    displayPointer();
 };
 
-function pointerOverAccess() {
+function displayPointer() {
     // If the pointer is over normal empties, display as white.
     // If the pointer is over player owned empties, display as light green.
     if (grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] === 1) {
@@ -280,23 +271,38 @@ function actionOnEmpty() {
     // If the target is:
     // 1. On a line.
     // 2. Adjacent to an accessible location.
-    // 3. The player has an item to use here.
-    if (grid.lineMap[grid.pointerLoc.y][grid.pointerLoc.x] === 1 && checkForAccessNeighbour(grid.pointerLoc.x, grid.pointerLoc.y) && grid.playerItems.virtualServer >= 1) {
-        grid.playerItems.virtualServer -= 1;
+    // 3. Not already accessed.
+    // 4. The player has an item to use here.
+    if (pointerOnLine() && pointerNextToAccessArea() && !pointerOnAccessArea() && grid.playerItems.virtualServer >= 1) {
+        grid.playerItems.virtualServer --;
         grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] = 1;
     }
 }
 
 function actionOnServer() {
-    if (checkForAccessNeighbour(grid.pointerLoc.x, grid.pointerLoc.y)) {
+    if (pointerOnLine() && pointerNextToAccessArea() && !pointerOnAccessArea() && grid.playerItems.ICEPick >= 1 && grid.playerItems.dummyBarrier) {
+        grid.playerItems.ICEPick --;
+        grid.playerItems.dummyBarrier --;
         const gridCoord = grid.gridItemMap[grid.pointerLoc.y][grid.pointerLoc.x];
         grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] = 1;
         grid.gridItem[gridCoord].drawGridItem([grid.pointerLoc.y], [grid.pointerLoc.x]);
     }
 }
 
+function actionOnFirewall() {
+
+}
+
+function actionOnICE() {
+
+}
+
 function checkForLineNeighbour(x, y) {
     return (checkLineAbove(x, y) || checkLineBelow(x, y) || checkLineLeft(x, y) || checkLineRight(x, y));
+}
+
+function pointerOnLine() {
+    return grid.lineMap[grid.pointerLoc.y][grid.pointerLoc.x] === 1;
 }
 
 function checkLineAbove(x, y) {
@@ -338,7 +344,13 @@ function checkLineRight(x, y) {
     }
 }
 
-function checkForAccessNeighbour(x, y) {
+function pointerOnAccessArea() {
+    return (grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] === 1);
+}
+
+function pointerNextToAccessArea() {
+    const x = grid.pointerLoc.x;
+    const y = grid.pointerLoc.y;
     return (checkAccessAbove(x, y) || checkAccessBelow(x, y) || checkAccessLeft(x, y) || checkAccessRight(x, y));
 }
 
@@ -382,30 +394,40 @@ function checkAccessRight(x, y) {
 }
 
 function displayDetailText() {
+    // Shows text based on what the pointer is over.
     let objectType = grid.gridItemMap[grid.pointerLoc.y][grid.pointerLoc.x];
     let displayText;
-
-    //let name = grid.gridItem[objectType].name;
-    //let desc = grid.gridItem[objectType].description;
-    const name = name(grid.gridItem[objectType]);
-    const desc = desc(grid.gridItem[objectType]);
-    const req = req(grid.gridItem[objectType]);
-
-
-    if (grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] === 1) {
-        displayText = name + ": " + desc + "<br />" + "You have access to this.";
-    } else displayText = name + ": " + desc;
+    const displayName = getDisplayName(grid.gridItem[objectType]);
+    const displayDesc = getDisplayDesc(grid.gridItem[objectType]);
+    const displayReq = getDisplayReq(grid.gridItem[objectType]);
+    const displayAccess = "You have access to this.";
+    const br = "<br>";
+    // If pointer is on accessed location.
+    if (pointerOnAccessArea()) {
+        displayText = displayName + br + displayDesc + br + displayAccess
+    }
+    // If pointer is not on accessed location and location has requirements to access.
+    else if (displayReq) {
+        displayText = displayName + br + displayDesc + br + displayReq;
+    }
+    // If pointer is not on accessed location and location has no requirements to access.
+    else {
+        displayText = displayName + br + displayDesc;
+    }
+    // Display message.
     HTMLEditor("hackGameDetailText", displayText);
+}
 
-    function name(item){
-        if (item.name) return item.name;
-    }
-    function desc(item){
-        if (item.desc) return item.desc;
-    }
-    function req(item){
-        if (item.req) return item.req;
-    }
+function getDisplayName(item) {
+    if (item.name) return item.name;
+}
+
+function getDisplayDesc(item) {
+    if (item.description) return item.description;
+}
+
+function getDisplayReq(item) {
+    if (item.requirements) return item.requirements;
 }
 
 function movePointerUp() {
@@ -481,10 +503,10 @@ function drawRectClear(x, y) {
 }
 
 function updateItemUI() {
+    //Updates the displayed number of items.
     HTMLEditor("gridItemICEPick", grid.playerItems.ICEPick);
     HTMLEditor("gridItemDummyBarrier", grid.playerItems.dummyBarrier);
     HTMLEditor("gridItemVirtualServer", grid.playerItems.virtualServer);
-
 }
 
 function showPointerLoc() {
