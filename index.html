@@ -72,10 +72,17 @@
             <p id="item12achOuter">(<span id="item12achDisplay"></span>)<span id="item12achName"></span></p>
             </div>
             <div class="tabContent" id="prestigeTab">
-                <canvas id="hackGame" width="300" height="300">
-                    
-                </canvas>
-                <p id="hackGameDetailText">--</p>
+                <div class="flex-container" style="display: flex">
+                    <div class="flex-item">
+                        <canvas height="300" id="hackGame" width="300"></canvas>
+                        <p id="hackGameDetailText">--</p>
+                    </div>
+                    <div class="flex-item">
+                        <p>ICEPicks: <span id="gridItemICEPick">0</span></p>
+                        <p>Dummy Barriers: <span id="gridItemDummyBarrier">0</span></p>
+                        <p>Virtual Servers: <span id="gridItemVirtualServer">0</span></p>
+                    </div>
+                </div>
             </div>
             <div id="menuBar">
                 <p></p>

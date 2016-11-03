@@ -44,7 +44,7 @@ let grid = new function() {
         // 3 = firewall
         // 4 = ICE
         // 5 = server
-        this.objectMap = [
+        this.gridItemMap = [
             [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 4, 0, 0, 0, 0, 0, 0, 0],
             [0, 3, 5, 0, 0, 0, 0, 0, 0, 0],
@@ -84,11 +84,17 @@ let grid = new function() {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ];
         // Remember, these array are accessed using array[y][x], NOT array[x][y]
+        this.playerItems = {
+            ICEPick: 2,
+            dummyBarrier: 2,
+            virtualServer: 2
+        }
     }
 }();
-let gridItem = function(name, description, fillColor) {
+let gridItem = function(name, description, requirements, fillColor) {
     this.name = name;
     this.description = description;
+    this.requirements = requirements;
     this.fillColor = fillColor;
     this.drawGridItem = function(x, y) {
         if (this.fillColor) {
@@ -100,12 +106,36 @@ let gridItem = function(name, description, fillColor) {
     };
 };
 grid.gridItem = [
-    new gridItem("Empty", "There is nothing here.", false),
-    new gridItem("Entry Node", "Your attack starts here.", "#00ff00"),
-    new gridItem("Node Core", "Contains large quantities of sensitive information.", "#283747"),
-    new gridItem("Firewall", "Prevents access.", "grey"),
-    new gridItem("ICE", "Attacks Intruders.", "#E74C3C"),
-    new gridItem("Server", "Contains information", "#2980B9"),
+    new gridItem(
+        "Empty", 
+        "There is nothing here.", 
+        "Requires a Virtual Server to capture.",
+        false),
+    new gridItem(
+        "Entry Node", 
+        "Your attack starts here.", 
+        false,
+        "#00ff00"),
+    new gridItem(
+        "Node Core", 
+        "Contains large quantities of sensitive information.", 
+        "Requires an ICEPick, Dummy Barrier & Virtual Server to capture.",
+        "#283747"),
+    new gridItem(
+        "Firewall", 
+        "Prevents access.", 
+        "Requires a Dummy Barrier to capture.",
+        "grey"),
+    new gridItem(
+        "ICE", 
+        "Attacks Intruders.",
+        "Requires an ICE Pick to capture.",
+        "#E74C3C"),
+    new gridItem(
+        "Server", 
+        "Contains information",
+        "Requires an ICEPick & Dummy Barrier to capture", 
+        "#2980B9"),
 ];
 
 function draw() {
@@ -119,6 +149,7 @@ function refresh() {
     drawLineObjects();
     drawGridBase();
     drawGridItems();
+    updateItemUI();
 }
 
 function createGridCoordinates() {
@@ -146,10 +177,10 @@ function drawGridBase() {
 }
 
 function drawGridItems() {
-    // Filles grid in with objects from the objectMap.
+    // Filles grid in with objects from the gridItemMap.
     for (let y = grid.coords.length - 1; y >= 0; y--) {
         for (let x = grid.coords[y].length - 1; x >= 0; x--) {
-            const gridCoord = grid.objectMap[y][x];
+            const gridCoord = grid.gridItemMap[y][x];
             grid.gridItem[gridCoord].drawGridItem(x, y);
         }
     }
@@ -235,24 +266,30 @@ function pointerOverAccess() {
 };
 
 function playerAction() {
-    const pointerOver = grid.objectMap[grid.pointerLoc.y][grid.pointerLoc.x];
+    const pointerOver = grid.gridItemMap[grid.pointerLoc.y][grid.pointerLoc.x];
     if (pointerOver === 0) {
         actionOnEmpty();
     }
     if (pointerOver === 5) {
         actionOnServer();
     }
+    updateItemUI();
 }
 
 function actionOnEmpty() {
-    if (grid.lineMap[grid.pointerLoc.y][grid.pointerLoc.x] === 1 && checkForAccessNeighbour(grid.pointerLoc.x, grid.pointerLoc.y)) {
+    // If the target is:
+    // 1. On a line.
+    // 2. Adjacent to an accessible location.
+    // 3. The player has an item to use here.
+    if (grid.lineMap[grid.pointerLoc.y][grid.pointerLoc.x] === 1 && checkForAccessNeighbour(grid.pointerLoc.x, grid.pointerLoc.y) && grid.playerItems.virtualServer >= 1) {
+        grid.playerItems.virtualServer -= 1;
         grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] = 1;
     }
 }
 
 function actionOnServer() {
     if (checkForAccessNeighbour(grid.pointerLoc.x, grid.pointerLoc.y)) {
-        const gridCoord = grid.objectMap[grid.pointerLoc.y][grid.pointerLoc.x];
+        const gridCoord = grid.gridItemMap[grid.pointerLoc.y][grid.pointerLoc.x];
         grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] = 1;
         grid.gridItem[gridCoord].drawGridItem([grid.pointerLoc.y], [grid.pointerLoc.x]);
     }
@@ -345,14 +382,30 @@ function checkAccessRight(x, y) {
 }
 
 function displayDetailText() {
-    let objectType = grid.objectMap[grid.pointerLoc.y][grid.pointerLoc.x];
+    let objectType = grid.gridItemMap[grid.pointerLoc.y][grid.pointerLoc.x];
     let displayText;
-    let name = grid.gridItem[objectType].name;
-    let desc = grid.gridItem[objectType].description;
+
+    //let name = grid.gridItem[objectType].name;
+    //let desc = grid.gridItem[objectType].description;
+    const name = name(grid.gridItem[objectType]);
+    const desc = desc(grid.gridItem[objectType]);
+    const req = req(grid.gridItem[objectType]);
+
+
     if (grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] === 1) {
         displayText = name + ": " + desc + "<br />" + "You have access to this.";
     } else displayText = name + ": " + desc;
     HTMLEditor("hackGameDetailText", displayText);
+
+    function name(item){
+        if (item.name) return item.name;
+    }
+    function desc(item){
+        if (item.desc) return item.desc;
+    }
+    function req(item){
+        if (item.req) return item.req;
+    }
 }
 
 function movePointerUp() {
@@ -425,6 +478,13 @@ function drawRectClear(x, y) {
     let rectWidth = grid.rectWidth;
     let rectHeight = grid.rectHeight;
     grid.ctx.clearRect(hideX, hideY, rectWidth, rectHeight);
+}
+
+function updateItemUI() {
+    HTMLEditor("gridItemICEPick", grid.playerItems.ICEPick);
+    HTMLEditor("gridItemDummyBarrier", grid.playerItems.dummyBarrier);
+    HTMLEditor("gridItemVirtualServer", grid.playerItems.virtualServer);
+
 }
 
 function showPointerLoc() {
