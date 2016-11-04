@@ -168,7 +168,7 @@ function drawGridBase() {
 }
 
 function drawGridItems() {
-    // Filles grid in with objects from the gridItemMap.
+    // Fills grid in with objects from the gridItemMap.
     for (let y = grid.coords.length - 1; y >= 0; y--) {
         for (let x = grid.coords[y].length - 1; x >= 0; x--) {
             const gridCoord = grid.gridItemMap[y][x];
@@ -211,36 +211,52 @@ function drawLineObjects() {
 
     function checkForXLineNeighbour(x, y) {
         // Checks if there is a 1 to the right of x.
-        if (x === grid.lineMap[9].length - 1) return false;
-        else if (grid.lineMap[y][x] === 1 && grid.lineMap[y][x + 1] === 1) return true;
-        else return false;
+        if (x === grid.lineMap[9].length - 1) {
+            return false;
+        }
+        else {
+            return grid.lineMap[y][x] === 1 && grid.lineMap[y][x + 1] === 1;
+        }
     }
 
     function checkForYLineNeighbour(x, y) {
         // Checks if there is a 1 below y.
-        if (y === grid.lineMap.length - 1) return false;
-        else if (grid.lineMap[y][x] === 1 && grid.lineMap[y + 1][x] === 1) return true;
-        else return false;
+        if (y === grid.lineMap.length - 1) {
+            return false;
+        }
+        else {
+            return grid.lineMap[y][x] === 1 && grid.lineMap[y + 1][x] === 1;
+        }
     }
 }
 document.onkeydown = function(e) {
     // Player inputs.
     e = e || window.event;
+    console.log(e.keyCode);
     refresh();
     switch (e.keyCode) {
         case 37: // ArrowLeft
+        case 65: // A
             movePointerLeft();
             break;
+
         case 38: // ArrowUp
+        case 87: // W
             movePointerUp();
             break;
+
         case 39: // ArrowRight
+        case 68: // D
             movePointerRight();
             break;
+
         case 40: // ArrowDown
+        case 83: // S
             movePointerDown();
             break;
+
         case 32: // Spacebar
+        case 69: // E
             playerAction();
             break;
     }
@@ -257,12 +273,33 @@ function displayPointer() {
 };
 
 function playerAction() {
+    // The pointer is interacting with something on the grid.
     const pointerOver = grid.gridItemMap[grid.pointerLoc.y][grid.pointerLoc.x];
-    if (pointerOver === 0) {
-        actionOnEmpty();
-    }
-    if (pointerOver === 5) {
-        actionOnServer();
+    // 0 = blank
+    // 1 = start
+    // 2 = end
+    // 3 = firewall
+    // 4 = ICE
+    // 5 = server
+    switch (pointerOver) {
+        case 0: // Empty space.
+            actionOnEmpty();
+            break;
+
+        case 2: // End space.
+            break;
+
+        case 3: // Firewall.
+            actionOnFirewall();
+            break;
+
+        case 4: // ICE.
+            actionOnICE();
+            break;
+
+        case 5: // Server.
+            actionOnServer();
+            break;
     }
     updateItemUI();
 }
@@ -273,74 +310,85 @@ function actionOnEmpty() {
     // 2. Adjacent to an accessible location.
     // 3. Not already accessed.
     // 4. The player has an item to use here.
-    if (pointerOnLine() && pointerNextToAccessArea() && !pointerOnAccessArea() && grid.playerItems.virtualServer >= 1) {
+    if (pointerOverLine() && pointerNextToAccessArea() && !pointerOnAccessArea() && grid.playerItems.virtualServer >= 1) {
+        // Remove a virtual server.
         grid.playerItems.virtualServer --;
+        // Change this accessMap location from unaccessed to accessed.
         grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] = 1;
     }
 }
 
 function actionOnServer() {
-    if (pointerOnLine() && pointerNextToAccessArea() && !pointerOnAccessArea() && grid.playerItems.ICEPick >= 1 && grid.playerItems.dummyBarrier) {
+    if (pointerOverLine() && pointerNextToAccessArea() && !pointerOnAccessArea() && grid.playerItems.ICEPick >= 1 && grid.playerItems.dummyBarrier) {
+        // Removes items required to access a server.
         grid.playerItems.ICEPick --;
         grid.playerItems.dummyBarrier --;
-        const gridCoord = grid.gridItemMap[grid.pointerLoc.y][grid.pointerLoc.x];
+        // Mark location accessed.
         grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] = 1;
-        grid.gridItem[gridCoord].drawGridItem([grid.pointerLoc.y], [grid.pointerLoc.x]);
     }
 }
 
 function actionOnFirewall() {
-
+    if (pointerOverLine() && pointerNextToAccessArea() && !pointerOnAccessArea() && grid.playerItems.dummyBarrier >= 1) {
+        grid.playerItems.dummyBarrier --;
+        grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] = 1;
+    }
 }
 
 function actionOnICE() {
-
+    if (pointerOverLine() && pointerNextToAccessArea() && !pointerOnAccessArea() && grid.playerItems.ICEPick >= 1) {
+        grid.playerItems.ICEPick --;
+        grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] = 1;
+    }
 }
 
-function checkForLineNeighbour(x, y) {
-    return (checkLineAbove(x, y) || checkLineBelow(x, y) || checkLineLeft(x, y) || checkLineRight(x, y));
-}
-
-function pointerOnLine() {
+function pointerOverLine() {
+    // Checks if the pointer is over a line.
     return grid.lineMap[grid.pointerLoc.y][grid.pointerLoc.x] === 1;
 }
 
+function checkForLineNeighbour(x, y) {
+    // Checks if provided coordinates are next to a line.
+    return (checkLineAbove(x, y) || checkLineBelow(x, y) || checkLineLeft(x, y) || checkLineRight(x, y));
+}
+
 function checkLineAbove(x, y) {
-    if (y === 0) {
+    // If the provided coordinates have a line above them.
+    if (y === 0) { // If it is 0 then there is nothing above it.
         return false;
-    } else if (grid.lineMap[y - 1][x] === 1) {
-        return true;
-    } else {
-        return false;
+    }
+    else {
+        return grid.lineMap[y - 1][x] === 1;
     }
 }
 
 function checkLineBelow(x, y) {
+    // If the provided coordinates have a line below them.
     if (y === grid.lineMap.length - 1) {
         return false;
-    } else if (grid.lineMap[y + 1][x] === 1) return true;
+    }
     else {
-        return false;
+        return grid.lineMap[y + 1][x] === 1;
     }
 }
 
 function checkLineLeft(x, y) {
+    // If the provided coordinates have a line to the left of them.
     if (x === 0) {
         return false;
-    } else if (grid.lineMap[y][x - 1] === 1) {
-        return true;
-    } else {
-        return false;
+    }
+    else {
+        return grid.lineMap[y][x - 1] === 1;
     }
 }
 
 function checkLineRight(x, y) {
+    // If the provided coordinates have a line to the right of them. 
     if (x === grid.lineMap[y].length - 1) {
         return false;
-    } else if (grid.lineMap[y][x + 1] === 1) {
-        return true;
-    } else {
-        return false;
+    }
+    else {
+        return grid.lineMap[y][x + 1] === 1;
     }
 }
 
@@ -357,39 +405,36 @@ function pointerNextToAccessArea() {
 function checkAccessAbove(x, y) {
     if (y === 0) {
         return false;
-    } else if (grid.accessMap[y - 1][x] === 1) {
-        return true;
-    } else {
-        return false;
+    }
+    else {
+        return grid.accessMap[y - 1][x] === 1;
     }
 }
 
 function checkAccessBelow(x, y) {
     if (y === grid.accessMap.length - 1) {
         return false;
-    } else if (grid.accessMap[y + 1][x] === 1) return true;
+    }
     else {
-        return false;
+        return grid.accessMap[y + 1][x] === 1;
     }
 }
 
 function checkAccessLeft(x, y) {
     if (x === 0) {
         return false;
-    } else if (grid.accessMap[y][x - 1] === 1) {
-        return true;
-    } else {
-        return false;
+    }
+    else {
+        return grid.accessMap[y][x - 1] === 1;
     }
 }
 
 function checkAccessRight(x, y) {
     if (x === grid.accessMap[y].length - 1) {
         return false;
-    } else if (grid.accessMap[y][x + 1]) {
-        return true;
-    } else {
-        return false;
+    }
+    else {
+        return grid.accessMap[y][x + 1] === 1;
     }
 }
 
