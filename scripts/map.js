@@ -74,9 +74,9 @@ let grid = new function() {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         ];
         this.playerItems = {
-            ICEPick: 2,
-            dummyBarrier: 2,
-            virtualServer: 20
+            ICEPick: 30,
+            dummyBarrier: 30,
+            virtualServer: 30
         }
     }
 }();
@@ -229,10 +229,38 @@ function drawLineObjects() {
         }
     }
 }
+
 document.onkeydown = function(e) {
     // Player inputs.
+
+    // Gets input.
     e = e || window.event;
-    console.log(e.keyCode);
+    // Different keys call different functions.
+    const playerInput = ( {
+        37: () => movePointerLeft(), // Left Arrow
+        65: () => movePointerLeft(), // A
+
+        39: () => movePointerRight(), // Right Arrow
+        68: () => movePointerRight(), // D
+
+        40: () => movePointerDown(), // Down Arrow
+        83: () => movePointerDown(), // S
+
+        87: () => movePointerUp(), // Up arrow
+        38: () => movePointerUp(), // W
+
+        32: () => playerAction(), // Spacebar
+        69: () => playerAction() // E
+    } )[ e.keyCode ];
+
+    refresh();
+    // If an input isn't a key in playerInput
+    if (playerInput) {
+        playerInput();
+    }
+
+/*
+
     refresh();
     switch (e.keyCode) {
         case 37: // ArrowLeft
@@ -260,6 +288,7 @@ document.onkeydown = function(e) {
             playerAction();
             break;
     }
+    */
     displayPointer();
 };
 
@@ -287,6 +316,7 @@ function playerAction() {
             break;
 
         case 2: // End space.
+            actionOnNodeCore();
             break;
 
         case 3: // Firewall.
@@ -314,6 +344,16 @@ function actionOnEmpty() {
         // Remove a virtual server.
         grid.playerItems.virtualServer --;
         // Change this accessMap location from unaccessed to accessed.
+        grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] = 1;
+    }
+}
+
+function actionOnNodeCore() {
+    if (pointerOverLine() && pointerNextToAccessArea() && !pointerOnAccessArea() && grid.playerItems.ICEPick >= 1 && grid.playerItems.dummyBarrier >= 1 && grid.playerItems.virtualServer >= 1) {
+        grid.playerItems.ICEPick --;
+        grid.playerItems.dummyBarrier --;
+        grid.playerItems.virtualServer --;
+
         grid.accessMap[grid.pointerLoc.y][grid.pointerLoc.x] = 1;
     }
 }
