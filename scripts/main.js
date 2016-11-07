@@ -99,7 +99,7 @@ function itemConstructor() {
     let item = function(name, ID, baseCost, baseUpgradeCost) {
         this.info = {
             name: name, // The name of the item, not really used for anything except debugging.
-            ID: ID, // The identifier, usually prefixed to the name of the HTML Div.
+            ID: ID // The identifier, usually prefixed to the name of the HTML Div.
         };
         this.itemData = {
             itemCount: 0, // The amount you have of this item.
@@ -425,7 +425,7 @@ function startUp() {
     addData(gameData.BIC); // Adds data equal to the cost of the first item.
     load();
     showGame();
-    draw();
+    startHackGame();
     window.requestAnimationFrame(refreshGameTick); // Calls the first tick of the game.
 }
 
@@ -1066,7 +1066,7 @@ function buyPrestige() {
         prestige.data.sentencesDisplayed++;
     }
     else if (prestige.data.sentencesDisplayed >= gameData.resetCount) {
-        showPrestigeTranscendence()
+        showPrestigeTranscendence();
     }
 
     function sentencesRemain() {
