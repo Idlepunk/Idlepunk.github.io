@@ -42,6 +42,9 @@ function debugTools() {
                 prestigePrint();
             }
         };
+        this.showPointerLoc = function() {
+            console.log("x: " + grid.pointerLoc.x, "y: " + grid.pointerLoc.y);
+        }
     }();
 }
 
