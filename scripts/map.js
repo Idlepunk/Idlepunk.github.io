@@ -20,9 +20,9 @@ let grid = new function() {
         };
         this.coords = {
             // Coordinates of rectangles in grid, will be set after number of rectangles is calculated.
-            gridCoords: [[],[],[],[],[],[],[],[],[],[]],
-            coordX: 0,
-            coordY: 0,
+            cellCoords: [[],[],[],[],[],[],[],[],[],[]],
+            x: 0,
+            y: 0,
             // Starting position of the pointer.
             pointerLoc: {
                 x: 0,
@@ -86,7 +86,7 @@ let grid = new function() {
         };
     }
 }();
-let gridItem = function(name, description, requirements, fillColor) {
+const gridItem = function(name, description, requirements, fillColor) {
     this.name = name;
     this.description = description;
     this.requirements = requirements;
@@ -134,6 +134,7 @@ grid.gridItem = [
 ];
 
 function startHackGame() {
+    // First time run.
     createGridCoordinates();
     refresh();
     displayDetailText();
@@ -154,49 +155,49 @@ function createGridCoordinates() {
     // Coords are based off of how many rectangles can fit into the grid dimensions.
     for (let y = 1; y < grid.dimensions.gridHeight; y += grid.dimensions.cellHeight) {
         for (let x = 1; x < grid.dimensions.gridWidth; x += grid.dimensions.cellWidth) {
-            grid.coords.gridCoords[grid.coords.coordX][grid.coords.coordY] = {
+            grid.coords.cellCoords[grid.coords.x][grid.coords.y] = {
                 x: x,
                 y: y
             };
-            grid.coords.coordX++;
+            grid.coords.x++;
         }
-        grid.coords.coordY++;
-        grid.coords.coordX = 0;
+        grid.coords.y++;
+        grid.coords.x = 0;
     }
 }
 
-function drawRectFill(x, y, color = "orange") {
+function drawRectFill(x, y, color) {
     // Draws a full color square.
     grid.ctx.lineWidth = "3";
     grid.ctx.fillStyle = color;
-    let drawX = grid.coords.gridCoords[x][y].x - 1;
-    let drawY = grid.coords.gridCoords[x][y].y - 1;
-    let cellWidth = grid.dimensions.cellWidth - grid.dimensions.cellPadding + 2;
-    let cellHeight = grid.dimensions.cellHeight - grid.dimensions.cellPadding + 2;
+    const drawX = grid.coords.cellCoords[x][y].x - 1;
+    const drawY = grid.coords.cellCoords[x][y].y - 1;
+    const cellWidth = grid.dimensions.cellWidth - grid.dimensions.cellPadding + 2;
+    const cellHeight = grid.dimensions.cellHeight - grid.dimensions.cellPadding + 2;
     grid.ctx.fillRect(drawX, drawY, cellWidth, cellHeight);
 }
 
-function drawRectOutline(x, y, color = "#7D3C98") {
+function drawRectOutline(x, y, color) {
     // Draws the outline of a square.
     grid.ctx.lineWidth = "3";
     grid.ctx.strokeStyle = color;
-    let drawX = grid.coords.gridCoords[x][y].x;
-    let drawY = grid.coords.gridCoords[x][y].y;
-    let cellWidth = grid.dimensions.cellWidth - grid.dimensions.cellPadding;
-    let cellHeight = grid.dimensions.cellHeight - grid.dimensions.cellPadding;
+    const drawX = grid.coords.cellCoords[x][y].x;
+    const drawY = grid.coords.cellCoords[x][y].y;
+    const cellWidth = grid.dimensions.cellWidth - grid.dimensions.cellPadding;
+    const cellHeight = grid.dimensions.cellHeight - grid.dimensions.cellPadding;
     grid.ctx.strokeRect(drawX, drawY, cellWidth, cellHeight);
 }
 
-function drawLine(startXC, startYC, endXC, endYC, color = "#D35400") {
+function drawLine(startXC, startYC, endXC, endYC, color) {
     // Draws a line between two points.
     grid.ctx.lineWidth = "3";
     grid.ctx.strokeStyle = color;
-    let Xoffset = (grid.dimensions.cellWidth - grid.dimensions.cellPadding) / 2;
-    let Yoffset = (grid.dimensions.cellHeight - grid.dimensions.cellPadding) / 2;
-    let startX = grid.coords.gridCoords[startXC][startYC].x + Xoffset - 0;
-    let startY = grid.coords.gridCoords[startXC][startYC].y + Yoffset - 0;
-    let endX = grid.coords.gridCoords[endXC][endYC].x + Xoffset + 0;
-    let endY = grid.coords.gridCoords[endXC][endYC].y + Yoffset + 0;
+    const Xoffset = (grid.dimensions.cellWidth - grid.dimensions.cellPadding) / 2;
+    const Yoffset = (grid.dimensions.cellHeight - grid.dimensions.cellPadding) / 2;
+    const startX = grid.coords.cellCoords[startXC][startYC].x + Xoffset - 0;
+    const startY = grid.coords.cellCoords[startXC][startYC].y + Yoffset - 0;
+    const endX = grid.coords.cellCoords[endXC][endYC].x + Xoffset + 0;
+    const endY = grid.coords.cellCoords[endXC][endYC].y + Yoffset + 0;
     grid.ctx.beginPath();
     grid.ctx.moveTo(startX, startY);
     grid.ctx.lineTo(endX, endY);
@@ -206,10 +207,10 @@ function drawLine(startXC, startYC, endXC, endYC, color = "#D35400") {
 
 function drawRectClear(x, y) {
     // Hides a grid square.
-    let hideX = grid.coords.gridCoords[x][y].x - 1;
-    let hideY = grid.coords.gridCoords[x][y].y - 1;
-    let cellWidth = grid.dimensions.cellWidth;
-    let cellHeight = grid.dimensions.cellHeight;
+    const hideX = grid.coords.cellCoords[x][y].x - 1;
+    const hideY = grid.coords.cellCoords[x][y].y - 1;
+    const cellWidth = grid.dimensions.cellWidth;
+    const cellHeight = grid.dimensions.cellHeight;
     grid.ctx.clearRect(hideX, hideY, cellWidth, cellHeight);
 }
 
@@ -222,17 +223,17 @@ function updateItemUI() {
 
 function drawGridBase() {
     // Draws the grid based on coordinates.
-    for (let y = grid.coords.gridCoords.length - 1; y >= 0; y--) {
-        for (let x = grid.coords.gridCoords[y].length - 1; x >= 0; x--) {
-            drawRectOutline(x, y);
+    for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
+        for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
+            drawRectOutline(x, y, "#7D3C98");
         }
     }
 }
 
 function drawGridItems() {
     // Fills grid in with objects from the .maps.gridItemMap.
-    for (let y = grid.coords.gridCoords.length - 1; y >= 0; y--) {
-        for (let x = grid.coords.gridCoords[y].length - 1; x >= 0; x--) {
+    for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
+        for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
             const gridCoord = grid.maps.gridItemMap[y][x];
             grid.gridItem[gridCoord].drawGridItem(x, y);
         }
@@ -251,7 +252,7 @@ function displayPointer() {
 
 function displayDetailText() {
     // Shows text based on what the pointer is over.
-    let objectType = grid.maps.gridItemMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x];
+    const objectType = grid.maps.gridItemMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x];
 
     const displayName = grid.gridItem[objectType].name;
     const displayDesc = grid.gridItem[objectType].description;
@@ -282,10 +283,10 @@ function drawLineObjects() {
 
 function drawXLines() {
     // Draws horizontal lines from maps.lineMap.
-    for (let y = grid.coords.gridCoords.length - 1; y >= 0; y--) {
-        for (let x = grid.coords.gridCoords[y].length - 1; x >= 0; x--) {
+    for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
+        for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
             if (checkForXLineNeighbour(x, y)) {
-                drawLine(x, y, x + 1, y);
+                drawLine(x, y, x + 1, y, "#D35400");
                 drawRectFill(x, y, "black");
                 drawRectFill(x + 1, y, "black");
             }
@@ -295,10 +296,10 @@ function drawXLines() {
 
 function drawYLines() {
     // Draws vertical lines from maps.lineMap.
-    for (let y = grid.coords.gridCoords.length - 1; y >= 0; y--) {
-        for (let x = grid.coords.gridCoords[y].length - 1; x >= 0; x--) {
+    for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
+        for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
             if (checkForYLineNeighbour(x, y)) {
-                drawLine(x, y, x, y + 1);
+                drawLine(x, y, x, y + 1, "#D35400");
                 drawRectFill(x, y, "black");
                 drawRectFill(x, y + 1, "black");
             }
@@ -376,25 +377,29 @@ document.onkeydown = function(e) {
 };
 
 function movePointerUp() {
+    // If pointer is not at top, move pointer up.
     if (grid.coords.pointerLoc.y !== 0) {
         grid.coords.pointerLoc.y--;
     }
 }
 
 function movePointerDown() {
-    if (grid.coords.pointerLoc.y !== grid.coords.gridCoords.length - 1) {
+    // If pointer is not at bottom, move pointer down.
+    if (grid.coords.pointerLoc.y !== grid.coords.cellCoords.length - 1) {
         grid.coords.pointerLoc.y++;
     }
 }
 
 function movePointerLeft() {
+    // If pointer is not leftmost. move pointer left.
     if (grid.coords.pointerLoc.x !== 0) {
         grid.coords.pointerLoc.x--;
     }
 }
 
 function movePointerRight() {
-    if (grid.coords.pointerLoc.x !== grid.coords.gridCoords[0].length - 1) {
+    // If pointer is not rightmost, move pointer right.
+    if (grid.coords.pointerLoc.x !== grid.coords.cellCoords[0].length - 1) {
         grid.coords.pointerLoc.x++;
     }
 }
@@ -433,6 +438,8 @@ function actionOnEmpty() {
 }
 
 function actionOnNodeCore() {
+    // If the player attempts an action on the end goal.
+    // Should be a win condition.
     if (canEnableAccess() && grid.playerItems.ICEPick >= 1 && grid.playerItems.dummyBarrier >= 1 && grid.playerItems.virtualServer >= 1) {
         grid.playerItems.ICEPick--;
         grid.playerItems.dummyBarrier--;
@@ -442,6 +449,7 @@ function actionOnNodeCore() {
 }
 
 function actionOnServer() {
+    // Should give the player a reward.
     if (canEnableAccess() && grid.playerItems.ICEPick >= 1 && grid.playerItems.dummyBarrier) {
         // Removes items required to access a server.
         grid.playerItems.ICEPick--;
@@ -452,6 +460,7 @@ function actionOnServer() {
 }
 
 function actionOnFirewall() {
+    // Should block the player until they access it.
     if (canEnableAccess() && grid.playerItems.dummyBarrier >= 1) {
         grid.playerItems.dummyBarrier--;
         grid.maps.accessMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] = 1;
@@ -459,6 +468,7 @@ function actionOnFirewall() {
 }
 
 function actionOnICE() {
+    // Should attack the player until they access it.
     if (canEnableAccess() && grid.playerItems.ICEPick >= 1) {
         grid.playerItems.ICEPick--;
         grid.maps.accessMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] = 1;
@@ -466,6 +476,7 @@ function actionOnICE() {
 }
 
 function canEnableAccess() {
+    // If cell can be changed from unaccessed to accessed.
     return pointerOverLine() && pointerNextToAccessArea() && !pointerOnAccessArea();
 }
 
@@ -475,6 +486,7 @@ function pointerOverLine() {
 }
 
 function pointerOnAccessArea() {
+    // If the pointer is currently on an accessed area.
     return (grid.maps.accessMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] === 1);
 }
 
@@ -486,6 +498,7 @@ function pointerNextToAccessArea() {
 }
 
 function checkAccessAbove(x, y) {
+    // If the cell above is accessed.
     if (y === 0) {
         return false;
     } else {
@@ -494,6 +507,7 @@ function checkAccessAbove(x, y) {
 }
 
 function checkAccessBelow(x, y) {
+    // If the cell below is accessed.
     if (y === grid.maps.accessMap.length - 1) {
         return false;
     } else {
@@ -502,6 +516,7 @@ function checkAccessBelow(x, y) {
 }
 
 function checkAccessLeft(x, y) {
+    // If the cell to the left is accessed.
     if (x === 0) {
         return false;
     } else {
@@ -510,6 +525,7 @@ function checkAccessLeft(x, y) {
 }
 
 function checkAccessRight(x, y) {
+    // If the cell to the right is accessed.
     if (x === grid.maps.accessMap[y].length - 1) {
         return false;
     } else {
