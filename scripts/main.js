@@ -1198,6 +1198,7 @@ function applyColorTheme() {
             classes[i].style.color = color;
         }
     }
+    refresh();
 }
 
 function changeThemePreset() {

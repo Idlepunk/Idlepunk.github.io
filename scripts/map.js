@@ -170,10 +170,15 @@ function drawRectFill(x, y, color) {
     // Draws a full color square.
     grid.ctx.lineWidth = "3";
     grid.ctx.fillStyle = color;
-    const drawX = grid.coords.cellCoords[x][y].x - 1;
-    const drawY = grid.coords.cellCoords[x][y].y - 1;
-    const cellWidth = grid.dimensions.cellWidth - grid.dimensions.cellPadding + 2;
-    const cellHeight = grid.dimensions.cellHeight - grid.dimensions.cellPadding + 2;
+    // Because canvas straddles pixels, the size of filled cells should be increased by 2 pixels to stop blurry mixed colors.
+    // A better solution may be to clear this area before drawing to it, the problem is that the extra blurry parts would remain.
+    // Clearing an area larger than the rectangle would mean that lines between them would also be cleared.
+    // I could clear it then draw the lines then draw the rectangles.
+    const drawX = grid.coords.cellCoords[x][y].x - 2;
+    const drawY = grid.coords.cellCoords[x][y].y - 2;
+    const cellWidth = grid.dimensions.cellWidth - grid.dimensions.cellPadding + 4;
+    const cellHeight = grid.dimensions.cellHeight - grid.dimensions.cellPadding + 4;
+
     grid.ctx.fillRect(drawX, drawY, cellWidth, cellHeight);
 }
 
@@ -194,10 +199,10 @@ function drawLine(startXC, startYC, endXC, endYC, color) {
     grid.ctx.strokeStyle = color;
     const Xoffset = (grid.dimensions.cellWidth - grid.dimensions.cellPadding) / 2;
     const Yoffset = (grid.dimensions.cellHeight - grid.dimensions.cellPadding) / 2;
-    const startX = grid.coords.cellCoords[startXC][startYC].x + Xoffset - 0;
-    const startY = grid.coords.cellCoords[startXC][startYC].y + Yoffset - 0;
-    const endX = grid.coords.cellCoords[endXC][endYC].x + Xoffset + 0;
-    const endY = grid.coords.cellCoords[endXC][endYC].y + Yoffset + 0;
+    const startX = grid.coords.cellCoords[startXC][startYC].x + Xoffset;
+    const startY = grid.coords.cellCoords[startXC][startYC].y + Yoffset;
+    const endX = grid.coords.cellCoords[endXC][endYC].x + Xoffset;
+    const endY = grid.coords.cellCoords[endXC][endYC].y + Yoffset;
     grid.ctx.beginPath();
     grid.ctx.moveTo(startX, startY);
     grid.ctx.lineTo(endX, endY);
@@ -207,8 +212,8 @@ function drawLine(startXC, startYC, endXC, endYC, color) {
 
 function drawRectClear(x, y) {
     // Hides a grid square.
-    const hideX = grid.coords.cellCoords[x][y].x - 1;
-    const hideY = grid.coords.cellCoords[x][y].y - 1;
+    const hideX = grid.coords.cellCoords[x][y].x;
+    const hideY = grid.coords.cellCoords[x][y].y;
     const cellWidth = grid.dimensions.cellWidth;
     const cellHeight = grid.dimensions.cellHeight;
     grid.ctx.clearRect(hideX, hideY, cellWidth, cellHeight);
@@ -225,7 +230,7 @@ function drawGridBase() {
     // Draws the grid based on coordinates.
     for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
         for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
-            drawRectOutline(x, y, "#7D3C98");
+            drawRectOutline(x, y, theme.colorTheme[theme.currentTheme].bodyColor);
         }
     }
 }
@@ -286,7 +291,7 @@ function drawXLines() {
     for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
         for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
             if (checkForXLineNeighbour(x, y)) {
-                drawLine(x, y, x + 1, y, "#D35400");
+                drawLine(x, y, x + 1, y, theme.colorTheme[theme.currentTheme].importantColor);
                 drawRectFill(x, y, "black");
                 drawRectFill(x + 1, y, "black");
             }
@@ -299,7 +304,7 @@ function drawYLines() {
     for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
         for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
             if (checkForYLineNeighbour(x, y)) {
-                drawLine(x, y, x, y + 1, "#D35400");
+                drawLine(x, y, x, y + 1, theme.colorTheme[theme.currentTheme].importantColor);
                 drawRectFill(x, y, "black");
                 drawRectFill(x, y + 1, "black");
             }
@@ -365,7 +370,7 @@ document.onkeydown = function(e) {
         69:  () => playerAction(), // E
         13:  () => playerAction(), // Enter
         107: () => playerAction() // +
-    }[e.keyCode];
+    }[e.keyCode]; // Determines what function actionFromInput() should call.
     // If an input keyCode isn't a key in actionFromInput, it will be undefined.
     if (actionFromInput) {
         refresh();
