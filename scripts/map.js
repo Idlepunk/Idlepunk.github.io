@@ -246,11 +246,8 @@ function drawGridItems() {
 }
 
 function displayPointer() {
-    // If the pointer is over normal empties, display as white.
-    // If the pointer is over player owned empties, display as light green.
-    if (grid.maps.accessMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] === 1) {
-        drawRectOutline(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y, "#B4FF96");
-    } else drawRectOutline(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y, "white");
+    // Display white outline around cell where pointer is.
+    drawRectOutline(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y, "white");
     // Display tooltip of what the pointer is over.
     displayDetailText();
 }
@@ -291,7 +288,15 @@ function drawXLines() {
     for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
         for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
             if (checkForXLineNeighbour(x, y)) {
-                drawLine(x, y, x + 1, y, theme.colorTheme[theme.currentTheme].importantColor);
+                // Two adjacent cells that have access will have a green line between them.
+                if (checkAccessRight(x, y)) {
+                    drawLine(x, y, x + 1, y, "#00ff00");
+                }
+                // If one or both do not have access, the default color will be applied.
+                else {
+                    drawLine(x, y, x + 1, y, theme.colorTheme[theme.currentTheme].importantColor);
+                }
+                // Covers lines that overlap cells.
                 drawRectFill(x, y, "black");
                 drawRectFill(x + 1, y, "black");
             }
@@ -304,7 +309,16 @@ function drawYLines() {
     for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
         for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
             if (checkForYLineNeighbour(x, y)) {
-                drawLine(x, y, x, y + 1, theme.colorTheme[theme.currentTheme].importantColor);
+                // Two adjacent cells that have access will have a green line between them.
+                if (checkAccessBelow(x, y)){
+                    drawLine(x, y, x, y + 1, "#00ff00");
+                }
+                // If one or both do not have access, the default color will be applied.
+                else {
+                    drawLine(x, y, x, y + 1, theme.colorTheme[theme.currentTheme].importantColor);
+                }
+                // Covers lines that overlap cells.
+
                 drawRectFill(x, y, "black");
                 drawRectFill(x, y + 1, "black");
             }
