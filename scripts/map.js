@@ -130,7 +130,7 @@ grid.gridItem = [
         "Server.", 
         "Contains information.",
         "Requires an ICEPick & Dummy Barrier to capture.", 
-        "#2980B9"),
+        "#2980B9")
 ];
 
 function startHackGame() {
@@ -304,7 +304,8 @@ function detailTextAccessStatus() {
 }
 
 function detailTextServerReward(objectType) {
-    if (objectType === 5) {
+    // If pointer is over unaccessed server.
+    if (objectType === 5 && !pointerOnAccessArea()) {
         let amount = formatBytes(calculatePlayerDataReward());
         amount = "<span class='important'>" + amount + "</span>";
         return "Passive probing suggests server contains " + amount + " worth of data.";
@@ -468,8 +469,7 @@ function playerAction() {
             3: () => actionOnFirewall(),
             4: () => actionOnICE(),
             5: () => actionOnServer()
-        }
-        [pointerLocation];
+        }[pointerLocation];
     // If the pointer is over an interactable thing.
     if (itemInteractions) {
         itemInteractions();
@@ -520,11 +520,13 @@ function giveDataReward() {
 }
 
 function calculatePlayerDataReward(){
+    // At the moment servers reward data equal to the next upgrade cost of the best item the player owns.
     const item = itemList[bestUnlockedItem()];
     return item.upgrade.nextUpgradeCost;
 }
 
 function bestUnlockedItem() {
+    // Returns the highest tier item that the player has unlocked.
     for (var i = itemList.length - 1; i >= 0; i--) {
         if (itemList[i].itemData.itemCount !== 0) {
             return i;
