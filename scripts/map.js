@@ -102,8 +102,8 @@ const gridItem = function(name, description, requirements, fillColor) {
 };
 grid.gridItem = [
     new gridItem(
-        "Empty", 
-        "There is nothing here.", 
+        "Switch.", 
+        "There is nothing of import here.", 
         "Requires a Virtual Server to capture.",
         false),
     new gridItem(
@@ -112,24 +112,24 @@ grid.gridItem = [
         false,
         "#00ff00"),
     new gridItem(
-        "Node Core", 
+        "Node Core.", 
         "Contains large quantities of sensitive information.", 
         "Requires an ICEPick, Dummy Barrier & Virtual Server to capture.",
         "#283747"),
     new gridItem(
-        "Firewall", 
+        "Firewall.", 
         "Prevents access.", 
         "Requires a Dummy Barrier to capture.",
         "grey"),
     new gridItem(
-        "ICE", 
+        "ICE.", 
         "Attacks Intruders.",
         "Requires an ICE Pick to capture.",
         "#E74C3C"),
     new gridItem(
-        "Server", 
-        "Contains information",
-        "Requires an ICEPick & Dummy Barrier to capture", 
+        "Server.", 
+        "Contains information.",
+        "Requires an ICEPick & Dummy Barrier to capture.", 
         "#2980B9"),
 ];
 
@@ -254,26 +254,61 @@ function displayPointer() {
 
 function displayDetailText() {
     // Shows text based on what the pointer is over.
+
+    const displayText = getDetailText();
+
+    HTMLEditor("hackGameDetailText", "");
+    const displayTextLength = displayText.length;
+    for (var i = 0; i < displayTextLength; i++) {
+        document.getElementById("hackGameDetailText").innerHTML += displayText[i];
+        document.getElementById("hackGameDetailText").innerHTML += "<br>";
+    }
+}
+
+function getDetailText() {
     const objectType = grid.maps.gridItemMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x];
+    // Creates an array of strings.
+    // If a string does not apply to the specific object it will be undefined.
+    let displayText = [];
+    displayText.push(detailTextName(objectType));
+    displayText.push(detailTextDesc(objectType));
+    displayText.push(detailTextAccessStatus());
+    displayText.push(detailTextReq(objectType));
+    displayText.push(detailTextServerReward(objectType));
 
-    const displayName = grid.gridItem[objectType].name;
-    const displayDesc = grid.gridItem[objectType].description;
-    const displayReq = grid.gridItem[objectType].requirements;
-
-    const displayAccess = "You have access to this.";
-    const br = "<br>";
-    let displayText = displayName + br + displayDesc;
-
-    // If pointer is on accessed location.
-    if (pointerOnAccessArea()) {
-        displayText += br + displayAccess;
+    // Removes undefined(and other falsy) strings.
+    for (var i = displayText.length - 1; i >= 0; i--) {
+        if (!displayText[i]) {
+            displayText.splice(i, 1);
+        }
     }
-    // If pointer is not on accessed location and location has requirements to access.
-    else if (displayReq) {
-        displayText += br + displayReq;
+    return displayText;
+}
+
+function detailTextName(objectType){
+    return grid.gridItem[objectType].name;
+}
+
+function detailTextDesc(objectType){
+    return grid.gridItem[objectType].description;
+}
+
+function detailTextReq(objectType) {
+    if (!pointerOnAccessArea()) {
+        return grid.gridItem[objectType].requirements;
     }
-    // Display message.
-    HTMLEditor("hackGameDetailText", displayText);
+}
+
+function detailTextAccessStatus() {
+    return pointerOnAccessArea() ? "You have access to this." : "You do not have access to this.";
+}
+
+function detailTextServerReward(objectType) {
+    if (objectType === 5) {
+        let amount = formatBytes(calculatePlayerDataReward());
+        amount = "<span class='important'>" + amount + "</span>";
+        return "Passive probing suggests server contains " + amount + " worth of data.";
+    }
 }
 
 function drawLineObjects() {
@@ -475,7 +510,27 @@ function actionOnServer() {
         grid.playerItems.dummyBarrier--;
         // Mark location accessed.
         grid.maps.accessMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] = 1;
+        giveDataReward();
     }
+}
+
+function giveDataReward() {
+    const rewardAmount = calculatePlayerDataReward();
+    addData(rewardAmount);
+}
+
+function calculatePlayerDataReward(){
+    const item = itemList[bestUnlockedItem()];
+    return item.upgrade.nextUpgradeCost;
+}
+
+function bestUnlockedItem() {
+    for (var i = itemList.length - 1; i >= 0; i--) {
+        if (itemList[i].itemData.itemCount !== 0) {
+            return i;
+        }
+    }
+    return 0;
 }
 
 function actionOnFirewall() {
