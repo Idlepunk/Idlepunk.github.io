@@ -962,7 +962,7 @@ function formatBytes(bytes) {
         //num = num + ' ' + dataSizes[i]; 
     } 
     else if (bytes === Infinity) {
-        return "max";
+        return "Max";
     }
     else {
         // If it is larger than the largest data format (9999 Yottabytes), shows scientific notation of Bytes instead.

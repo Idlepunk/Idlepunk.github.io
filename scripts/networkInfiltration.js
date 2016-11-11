@@ -13,14 +13,24 @@ let grid = new function() {
             // Dimensions of the display area, change in HTML file as well.
             gridHeight: 300,
             gridWidth: 300,
-            // Grid is made up of rectangles, these set their dimensions.
-            cellHeight: 30,
-            cellWidth: 30,
+
+            // Number of cells you want on the grid.
+            // Note: Currently maps I made are for 10x10 grids, changing the number of cells will require new maps.
+            cellNumX: 10,
+            cellNumY: 10,
             cellPadding: 10
         };
+        // Sets the dimensions of cells
+        this.dimensions.cellWidth = this.dimensions.gridWidth / this.dimensions.cellNumX;
+        this.dimensions.cellHeight = this.dimensions.gridHeight / this.dimensions.cellNumY;
+
+        // Sets the dimensions in the canvas.
+        this.ctx.canvas.width = this.dimensions.gridWidth,
+        this.ctx.canvas.height = this.dimensions.gridHeight,
+
         this.coords = {
             // Coordinates of rectangles in grid, will be set after number of rectangles is calculated.
-            cellCoords: [[],[],[],[],[],[],[],[],[],[]],
+            cellCoords: [],
             x: 0,
             y: 0,
             // Starting position of the pointer.
@@ -151,18 +161,37 @@ function refresh() {
 }
 
 function createGridCoordinates() {
-    // Fills 2d array of coordinates for the grid.
-    // Coords are based off of how many rectangles can fit into the grid dimensions.
-    for (let y = 1; y < grid.dimensions.gridHeight; y += grid.dimensions.cellHeight) {
-        for (let x = 1; x < grid.dimensions.gridWidth; x += grid.dimensions.cellWidth) {
-            grid.coords.cellCoords[grid.coords.x][grid.coords.y] = {
-                x: x,
-                y: y
-            };
-            grid.coords.x++;
+    gridDimensions();
+    gridCellCoords();
+
+    function gridDimensions() {
+        // Creates empty 2d grid based on how many cells can fit inside.
+        //const cellNumX = grid.dimensions.gridWidth / grid.dimensions.cellWidth;
+        //const cellNumY = grid.dimensions.gridHeight / grid.dimensions.cellHeight;
+
+        const cellNumX = grid.dimensions.cellNumX;
+        const cellNumY = grid.dimensions.cellNumY;
+
+        grid.coords.cellCoords = new Array(cellNumY);
+        for (let i = 0; i < cellNumX; i++) {
+            grid.coords.cellCoords[i] = new Array();
         }
-        grid.coords.y++;
-        grid.coords.x = 0;
+    }
+
+    function gridCellCoords() {
+        // Creates coords for individual cells.
+        // Coords are based off of dimensions and padding of cells.
+        for (let y = 1; y < grid.dimensions.gridHeight; y += grid.dimensions.cellHeight) {
+            for (let x = 1; x < grid.dimensions.gridWidth; x += grid.dimensions.cellWidth) {
+                grid.coords.cellCoords[grid.coords.x][grid.coords.y] = {
+                    x: x,
+                    y: y
+                };
+                grid.coords.x++;
+            }
+            grid.coords.y++;
+            grid.coords.x = 0;
+        }
     }
 }
 
@@ -255,13 +284,19 @@ function displayPointer() {
 function displayDetailText() {
     // Shows text based on what the pointer is over.
 
+    // Array of messages to display. Each element should be displayed on its own line.
     const displayText = getDetailText();
 
+    // Clears text already present.
     HTMLEditor("hackGameDetailText", "");
     const displayTextLength = displayText.length;
     for (var i = 0; i < displayTextLength; i++) {
+        // HTMLEditor() does not support += strings.
         document.getElementById("hackGameDetailText").innerHTML += displayText[i];
-        document.getElementById("hackGameDetailText").innerHTML += "<br>";
+        // Inserts hr after every line except the last.
+        if (i !== displayTextLength - 1){
+        document.getElementById("hackGameDetailText").innerHTML += "<hr class='hr'>";
+        }
     }
 }
 
@@ -276,9 +311,9 @@ function getDetailText() {
     displayText.push(detailTextReq(objectType));
     displayText.push(detailTextServerReward(objectType));
 
-    // Removes undefined(and other falsy) strings.
+    // Removes undefined strings.
     for (var i = displayText.length - 1; i >= 0; i--) {
-        if (!displayText[i]) {
+        if (typeof displayText[i] === "undefined") {
             displayText.splice(i, 1);
         }
     }
