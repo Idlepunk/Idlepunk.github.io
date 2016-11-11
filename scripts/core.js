@@ -960,7 +960,11 @@ function formatBytes(bytes) {
         let num = parseFloat((bytes / Math.pow(1000, i)).toFixed(dp));
         return num.toFixed(dp) + ' ' + dataSizes[i];
         //num = num + ' ' + dataSizes[i]; 
-    } else {
+    } 
+    else if (bytes === Infinity) {
+        return "max";
+    }
+    else {
         // If it is larger than the largest data format (9999 Yottabytes), shows scientific notation of Bytes instead.
         bytes = bytes.toExponential(0);
         bytes += ' Bytes';
