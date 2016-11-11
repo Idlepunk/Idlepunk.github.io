@@ -41,9 +41,10 @@ let grid = new function() {
         };
 
         this.ICEAI = {
-            stepsTaken: 1,
-            path: [],
-            isHunting: true
+            stepsTaken: 0,
+            path: null,
+            isHunting: false,
+            playerActionTaken: false
         }
         this.maps = {
             // Maps are made by drawing these 3 arrays.
@@ -155,6 +156,7 @@ function startHackGame() {
     refresh();
     displayDetailText();
     displayPointer();
+    calculateICEHuntPath(); // Happens asynchronously.
 }
 
 function refresh() {
@@ -164,6 +166,7 @@ function refresh() {
     drawGridBase();
     drawGridItems();
     updateItemUI();
+    displayICEHuntPath();
 }
 
 function createGridCoordinates() {
@@ -516,6 +519,10 @@ function playerAction() {
         itemInteractions();
         updateItemUI();
     }
+    if (grid.ICEAI.playerActionTaken) {
+        grid.ICEAI.playerActionTaken = false;
+        ICEHunt();
+    }
 }
 
 function actionOnEmpty() {
@@ -529,6 +536,7 @@ function actionOnEmpty() {
         grid.playerItems.virtualServer--;
         // Change this maps.accessMap location from unaccessed to accessed.
         grid.maps.accessMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] = 1;
+        grid.ICEAI.playerActionTaken = true;
     }
 }
 
@@ -540,6 +548,7 @@ function actionOnNodeCore() {
         grid.playerItems.dummyBarrier--;
         grid.playerItems.virtualServer--;
         grid.maps.accessMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] = 1;
+        grid.ICEAI.playerActionTaken = true;
     }
 }
 
@@ -552,6 +561,7 @@ function actionOnServer() {
         // Mark location accessed.
         grid.maps.accessMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] = 1;
         giveDataReward();
+        grid.ICEAI.playerActionTaken = true;
     }
 }
 
@@ -581,6 +591,7 @@ function actionOnFirewall() {
     if (canEnableAccess() && grid.playerItems.dummyBarrier >= 1) {
         grid.playerItems.dummyBarrier--;
         grid.maps.accessMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] = 1;
+        grid.ICEAI.playerActionTaken = true;
     }
 }
 
@@ -589,6 +600,9 @@ function actionOnICE() {
     if (canEnableAccess() && grid.playerItems.ICEPick >= 1) {
         grid.playerItems.ICEPick--;
         grid.maps.accessMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] = 1;
+
+        grid.ICEAI.isHunting = true;
+        grid.ICEAI.playerActionTaken = true;
     }
 }
 
@@ -653,22 +667,20 @@ function checkAccessRight(x, y) {
 function ICEHunt(){
     if (grid.ICEAI.isHunting) {
         increaseICEHuntSteps();
+        calculateICEHuntPath();
         displayICEHuntPath();
     }
 }
 
-
 function calculateICEHuntPath() {
-    //console.log(grid.maps.lineMap)
-
     var es = new EasyStar.js();
+    es.setIterationsPerCalculation(1000);
     es.setGrid(grid.maps.lineMap);
     es.setAcceptableTiles([1]);
     es.findPath(9, 9, 0, 0, function(path) {
     if (path === null) {
         console.log("Path was not found.");
     } else {
-        //displayPath(path);
         grid.ICEAI.path = path;
     }
     });
@@ -676,18 +688,16 @@ function calculateICEHuntPath() {
 }
 
 function increaseICEHuntSteps(){
-        console.log(grid.ICEAI.stepsTaken)
-
     if (grid.ICEAI.stepsTaken <= grid.ICEAI.path.length -1) {
         grid.ICEAI.stepsTaken ++;
     }
-        console.log(grid.ICEAI.stepsTaken)
 }
 
 function displayICEHuntPath() {
-    for (var i = 0; i < grid.ICEAI.stepsTaken; i++) {
-        drawRectOutline(grid.ICEAI.path[i].x, grid.ICEAI.path[i].y, "red");
-
+    if (grid.ICEAI.path){ //Path will not be finished calculating when game is loaded.
+        for (var i = 0; i < grid.ICEAI.stepsTaken; i++) {
+            drawRectFill(grid.ICEAI.path[i].x, grid.ICEAI.path[i].y, "red");
+        }
     }
 }
 
