@@ -41,8 +41,8 @@ let grid = new function() {
         };
 
         this.ICEAI = {
-            stepsTaken: 0,
-            path: null,
+            //stepsTaken: 0,
+            //path: null,
             targets: null,
             isHunting: false,
             playerActionTaken: false
@@ -167,7 +167,7 @@ function refresh() {
     drawGridBase();
     drawGridItems();
     updateItemUI();
-    //displayICEHuntPath();
+    displayICEHuntPath();
 }
 
 function createGridCoordinates() {
@@ -672,7 +672,7 @@ function ICEHunt(){
 
     if (grid.ICEAI.isHunting) {
         increaseICEHuntSteps();
-        calculateICEHuntPath();
+        ICETargets();
         displayICEHuntPath();
     }
 }
@@ -698,7 +698,7 @@ function calculateICEHuntPath(i) {
 }
 
 function ICETargets() {
-    for (var i = grid.ICEAI.targets.length - 1; i >= 0; i--) {
+    for (let i = grid.ICEAI.targets.length - 1; i >= 0; i--) {
         calculateICEHuntPath(i);
     }
 }
@@ -722,19 +722,29 @@ function getListOfServers() {
 }
 
 function increaseICEHuntSteps(){
-    if (grid.ICEAI.stepsTaken <= grid.ICEAI.path.length -1) {
-        grid.ICEAI.stepsTaken ++;
+    for (let i = grid.ICEAI.targets.length - 1; i >= 0; i--) {
+        if (typeof grid.ICEAI.targets[i].stepsTaken === "undefined") {
+            grid.ICEAI.targets[i].stepsTaken = 0;
+        }
+        else if (grid.ICEAI.targets[i].stepsTaken < grid.ICEAI.targets[i].path.length) {
+            grid.ICEAI.targets[i].stepsTaken ++;
+        }
     }
+    //if (grid.ICEAI.stepsTaken <= grid.ICEAI.path.length -1) {
+        //grid.ICEAI.stepsTaken ++;
+    //}
 }
 
 function displayICEHuntPath() {
-    for (var i = grid.ICEAI.targets.length - 1; i >= 0; i--) {
-        if (grid.ICEAI.targets[i].path){
-            for (var i = 0; i < grid.ICEAI.stepsTaken; i++) {
-                drawRectOutline(grid.ICEAI.path[i].x, grid.ICEAI.path[i].y, "red");
+    if (grid.ICEAI.isHunting){
+    for (let tarI = grid.ICEAI.targets.length - 1; tarI >= 0; tarI--) {
+        if (grid.ICEAI.targets[tarI].path){
+            for (let stepI = 0; stepI < grid.ICEAI.targets[tarI].stepsTaken; stepI++) {
+                drawRectOutline(grid.ICEAI.targets[tarI].path[stepI].x, grid.ICEAI.targets[tarI].path[stepI].y, "red");
             }
         }
     }
+}
 }
 
 
