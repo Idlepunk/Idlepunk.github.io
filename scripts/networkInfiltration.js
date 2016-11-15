@@ -43,6 +43,7 @@ let grid = new function() {
         this.ICEAI = {
             stepsTaken: 0,
             path: null,
+            targets: null,
             isHunting: false,
             playerActionTaken: false
         }
@@ -156,7 +157,7 @@ function startHackGame() {
     refresh();
     displayDetailText();
     displayPointer();
-    calculateICEHuntPath(); // Happens asynchronously.
+    ICEHunt(); // Happens asynchronously.
 }
 
 function refresh() {
@@ -166,7 +167,7 @@ function refresh() {
     drawGridBase();
     drawGridItems();
     updateItemUI();
-    displayICEHuntPath();
+    //displayICEHuntPath();
 }
 
 function createGridCoordinates() {
@@ -665,6 +666,10 @@ function checkAccessRight(x, y) {
 }
 
 function ICEHunt(){
+    getListOfServers();
+    ICETargets();
+    //new EasyStar.js().calculate()
+
     if (grid.ICEAI.isHunting) {
         increaseICEHuntSteps();
         calculateICEHuntPath();
@@ -672,19 +677,48 @@ function ICEHunt(){
     }
 }
 
-function calculateICEHuntPath() {
-    var es = new EasyStar.js();
+function calculateICEHuntPath(i) {
+
+    const es = new EasyStar.js();
     es.setIterationsPerCalculation(1000);
     es.setGrid(grid.maps.lineMap);
     es.setAcceptableTiles([1]);
-    es.findPath(9, 9, 0, 0, function(path) {
-    if (path === null) {
-        console.log("Path was not found.");
-    } else {
-        grid.ICEAI.path = path;
-    }
+
+    es.findPath(9, 9, grid.ICEAI.targets[i].x, grid.ICEAI.targets[i].y, function(path) {
+        if (path === null) {
+            console.log("No possible path for ICE.");
+        } 
+        else {
+            //console.log(path);
+            //return path;
+            addPath(path, i);
+        }
     });
     es.calculate();
+}
+
+function ICETargets() {
+    for (var i = grid.ICEAI.targets.length - 1; i >= 0; i--) {
+        calculateICEHuntPath(i);
+    }
+}
+
+function addPath(path, i) {
+    grid.ICEAI.targets[i].path = path;
+}
+
+
+function getListOfServers() {
+    if (grid.ICEAI.targets === null){
+        grid.ICEAI.targets = [];
+        for (let y = 0; y < grid.maps.gridItemMap.length; y++) {
+            for (let x = 0; x < grid.maps.gridItemMap.length; x++) {
+                if (grid.maps.gridItemMap[y][x] === 5) {
+                    grid.ICEAI.targets.push({x:x, y:y});
+                }
+            }
+        }
+    }
 }
 
 function increaseICEHuntSteps(){
@@ -694,10 +728,18 @@ function increaseICEHuntSteps(){
 }
 
 function displayICEHuntPath() {
-    if (grid.ICEAI.path){ //Path will not be finished calculating when game is loaded.
-        for (var i = 0; i < grid.ICEAI.stepsTaken; i++) {
-            drawRectFill(grid.ICEAI.path[i].x, grid.ICEAI.path[i].y, "red");
+    for (var i = grid.ICEAI.targets.length - 1; i >= 0; i--) {
+        if (grid.ICEAI.targets[i].path){
+            for (var i = 0; i < grid.ICEAI.stepsTaken; i++) {
+                drawRectOutline(grid.ICEAI.path[i].x, grid.ICEAI.path[i].y, "red");
+            }
         }
     }
 }
+
+
+
+
+    
+
 
