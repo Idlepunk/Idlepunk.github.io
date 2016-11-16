@@ -11,8 +11,8 @@ let grid = new function() {
         this.ctx.lineWidth = "3";
         this.dimensions = {
             // Dimensions of the display area, change in HTML file as well.
-            gridHeight: 300,
-            gridWidth: 300,
+            gridHeight: 600,
+            gridWidth: 600,
 
             // Number of cells you want on the grid.
             // Note: Currently maps I made are for 10x10 grids, changing the number of cells will require new maps.
@@ -45,8 +45,20 @@ let grid = new function() {
             //path: null,
             targets: null,
             isHunting: false,
-            playerActionTaken: false
-        }
+            playerActionTaken: false,
+            ICELocationMap: [
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            ]
+        };
         this.maps = {
             // Maps are made by drawing these 3 arrays.
             // Remember, these array are accessed using array[Y][X], NOT array[x][y]
@@ -154,20 +166,23 @@ grid.gridItem = [
 function startHackGame() {
     // First time run.
     createGridCoordinates();
-    refresh();
+    refreshNetworkInfiltration();
     displayDetailText();
-    displayPointer();
+    //drawPointer();
     ICEHunt(); // Happens asynchronously.
 }
 
-function refresh() {
+function refreshNetworkInfiltration() {
     // Refreshes the UI.
+    updateItemUI();
+    displayDetailText();
+
     grid.ctx.clearRect(0, 0, grid.dimensions.gridWidth, grid.dimensions.gridHeight);
     drawLineObjects();
     drawGridBase();
     drawGridItems();
-    updateItemUI();
-    displayICEHuntPath();
+    drawICEHuntPath();
+    drawPointer();
 }
 
 function createGridCoordinates() {
@@ -284,7 +299,7 @@ function drawGridItems() {
     }
 }
 
-function displayPointer() {
+function drawPointer() {
     // Display white outline around cell where pointer is.
     drawRectOutline(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y, "white");
     // Display tooltip of what the pointer is over.
@@ -305,7 +320,8 @@ function displayDetailText() {
         document.getElementById("hackGameDetailText").innerHTML += displayText[i];
         // Inserts hr after every line except the last.
         if (i !== displayTextLength - 1){
-        document.getElementById("hackGameDetailText").innerHTML += "<hr class='hr'>";
+        //document.getElementById("hackGameDetailText").innerHTML += "<hr class='hr'>";
+        document.getElementById("hackGameDetailText").innerHTML += "<br>";
         }
     }
 }
@@ -318,6 +334,7 @@ function getDetailText() {
     displayText.push(detailTextName(objectType));
     displayText.push(detailTextDesc(objectType));
     displayText.push(detailTextAccessStatus());
+    displayText.push(detailTextICE());
     displayText.push(detailTextReq(objectType));
     displayText.push(detailTextServerReward(objectType));
 
@@ -331,7 +348,9 @@ function getDetailText() {
 }
 
 function detailTextName(objectType){
-    return grid.gridItem[objectType].name;
+    const text = "<span style=color:" + theme.colorTheme[theme.currentTheme].importantColor + ">" + grid.gridItem[objectType].name + "</span>";
+    return text;
+    //theme.colorTheme[theme.currentTheme].importantColor
 }
 
 function detailTextDesc(objectType){
@@ -345,7 +364,14 @@ function detailTextReq(objectType) {
 }
 
 function detailTextAccessStatus() {
-    return pointerOnAccessArea() ? "You have access to this" : "You do not have access to this";
+    return pointerOnAccessArea() ? "You have <span style='color:green'>access</span> to this" : "You do not have <span style='color:red'>access</span> to this";
+}
+
+function detailTextICE() {
+    const x = grid.coords.pointerLoc.x;
+    const y = grid.coords.pointerLoc.y;
+
+    return grid.ICEAI.ICELocationMap[y][x] === 1 ? "<span style='color:red'>ICE</span> is present here" : undefined;
 }
 
 function detailTextServerReward(objectType) {
@@ -468,9 +494,9 @@ document.onkeydown = function(e) {
     }[e.keyCode]; // Determines what function actionFromInput() should call.
     // If an input keyCode isn't a key in actionFromInput, it will be undefined.
     if (actionFromInput) {
-        refresh();
         actionFromInput();
-        displayPointer();
+        refreshNetworkInfiltration();
+        drawPointer();
     } else {
         console.log(e.key + " is not bound to anything.");
     }
@@ -673,7 +699,7 @@ function ICEHunt(){
     if (grid.ICEAI.isHunting) {
         increaseICEHuntSteps();
         ICETargets();
-        displayICEHuntPath();
+        refreshNetworkInfiltration();
     }
 }
 
@@ -730,16 +756,14 @@ function increaseICEHuntSteps(){
             grid.ICEAI.targets[i].stepsTaken ++;
         }
     }
-    //if (grid.ICEAI.stepsTaken <= grid.ICEAI.path.length -1) {
-        //grid.ICEAI.stepsTaken ++;
-    //}
 }
 
-function displayICEHuntPath() {
+function drawICEHuntPath() {
     if (grid.ICEAI.isHunting){
     for (let tarI = grid.ICEAI.targets.length - 1; tarI >= 0; tarI--) {
         if (grid.ICEAI.targets[tarI].path){
             for (let stepI = 0; stepI < grid.ICEAI.targets[tarI].stepsTaken; stepI++) {
+                grid.ICEAI.ICELocationMap[grid.ICEAI.targets[tarI].path[stepI].y][grid.ICEAI.targets[tarI].path[stepI].x] = 1;
                 drawRectOutline(grid.ICEAI.targets[tarI].path[stepI].x, grid.ICEAI.targets[tarI].path[stepI].y, "red");
             }
         }

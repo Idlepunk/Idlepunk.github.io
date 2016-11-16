@@ -513,6 +513,7 @@ function UIRefresh() {
     autoBuyUI();
     itemsUI();
     achievementsUI();
+    refreshNetworkInfiltration();
 }
 
 function ticksToExecute() {
@@ -1202,7 +1203,6 @@ function applyColorTheme() {
             classes[i].style.color = color;
         }
     }
-    refresh();
 }
 
 function changeThemePreset() {
