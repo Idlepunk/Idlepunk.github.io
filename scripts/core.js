@@ -745,11 +745,7 @@ function checkItemReveal(item) {
 
 function checkUpgradeReveal(item) {
     // An upgrade is revealed when total data is greater than the cost of the upgrade.
-    if (gameData.totalDataHacked >= item.upgrade.nextUpgradeCost) {
-        showUpgrade(item);
-    } else {
-        visibilityChange(item.div.upgradeMenu, false);
-    }
+    gameData.totalDataHacked >= item.upgrade.nextUpgradeCost ? showUpgrade(item) : visibilityChange(item.div.upgradeMenu, false);
 
     function showUpgrade(item) {
         visibilityChange(item.div.upgradeMenu, true);

@@ -13,7 +13,6 @@ let grid = new function() {
             // Dimensions of the display area, change in HTML file as well.
             gridHeight: 600,
             gridWidth: 600,
-
             // Number of cells you want on the grid.
             // Note: Currently maps I made are for 10x10 grids, changing the number of cells will require new maps.
             cellNumX: 10,
@@ -23,11 +22,9 @@ let grid = new function() {
         // Sets the dimensions of cells
         this.dimensions.cellWidth = this.dimensions.gridWidth / this.dimensions.cellNumX;
         this.dimensions.cellHeight = this.dimensions.gridHeight / this.dimensions.cellNumY;
-
         // Sets the dimensions in the canvas.
         this.ctx.canvas.width = this.dimensions.gridWidth,
         this.ctx.canvas.height = this.dimensions.gridHeight,
-
         this.coords = {
             // Coordinates of rectangles in grid, will be set after number of rectangles is calculated.
             cellCoords: [],
@@ -39,7 +36,6 @@ let grid = new function() {
                 y: 0
             }
         };
-
         this.ICEAI = {
             //stepsTaken: 0,
             //path: null,
@@ -176,7 +172,6 @@ function refreshNetworkInfiltration() {
     // Refreshes the UI.
     updateItemUI();
     displayDetailText();
-
     grid.ctx.clearRect(0, 0, grid.dimensions.gridWidth, grid.dimensions.gridHeight);
     drawLineObjects();
     drawGridBase();
@@ -193,10 +188,8 @@ function createGridCoordinates() {
         // Creates empty 2d grid based on how many cells can fit inside.
         //const cellNumX = grid.dimensions.gridWidth / grid.dimensions.cellWidth;
         //const cellNumY = grid.dimensions.gridHeight / grid.dimensions.cellHeight;
-
         const cellNumX = grid.dimensions.cellNumX;
         const cellNumY = grid.dimensions.cellNumY;
-
         grid.coords.cellCoords = new Array(cellNumY);
         for (let i = 0; i < cellNumX; i++) {
             grid.coords.cellCoords[i] = new Array();
@@ -232,7 +225,6 @@ function drawRectFill(x, y, color) {
     const drawY = grid.coords.cellCoords[x][y].y - 2;
     const cellWidth = grid.dimensions.cellWidth - grid.dimensions.cellPadding + 4;
     const cellHeight = grid.dimensions.cellHeight - grid.dimensions.cellPadding + 4;
-
     grid.ctx.fillRect(drawX, drawY, cellWidth, cellHeight);
 }
 
@@ -308,10 +300,8 @@ function drawPointer() {
 
 function displayDetailText() {
     // Shows text based on what the pointer is over.
-
     // Array of messages to display. Each element should be displayed on its own line.
     const displayText = getDetailText();
-
     // Clears text already present.
     HTMLEditor("hackGameDetailText", "");
     const displayTextLength = displayText.length;
@@ -319,9 +309,9 @@ function displayDetailText() {
         // HTMLEditor() does not support += strings.
         document.getElementById("hackGameDetailText").innerHTML += displayText[i];
         // Inserts hr after every line except the last.
-        if (i !== displayTextLength - 1){
-        //document.getElementById("hackGameDetailText").innerHTML += "<hr class='hr'>";
-        document.getElementById("hackGameDetailText").innerHTML += "<br>";
+        if (i !== displayTextLength - 1) {
+            //document.getElementById("hackGameDetailText").innerHTML += "<hr class='hr'>";
+            document.getElementById("hackGameDetailText").innerHTML += "<br>";
         }
     }
 }
@@ -337,7 +327,6 @@ function getDetailText() {
     displayText.push(detailTextICE());
     displayText.push(detailTextReq(objectType));
     displayText.push(detailTextServerReward(objectType));
-
     // Removes undefined strings.
     for (var i = displayText.length - 1; i >= 0; i--) {
         if (typeof displayText[i] === "undefined") {
@@ -347,13 +336,13 @@ function getDetailText() {
     return displayText;
 }
 
-function detailTextName(objectType){
+function detailTextName(objectType) {
     const text = "<span style=color:" + theme.colorTheme[theme.currentTheme].importantColor + ">" + grid.gridItem[objectType].name + "</span>";
     return text;
     //theme.colorTheme[theme.currentTheme].importantColor
 }
 
-function detailTextDesc(objectType){
+function detailTextDesc(objectType) {
     return grid.gridItem[objectType].description;
 }
 
@@ -370,7 +359,6 @@ function detailTextAccessStatus() {
 function detailTextICE() {
     const x = grid.coords.pointerLoc.x;
     const y = grid.coords.pointerLoc.y;
-
     return grid.ICEAI.ICELocationMap[y][x] === 1 ? "<span style='color:red'>ICE</span> is present here" : undefined;
 }
 
@@ -417,7 +405,7 @@ function drawYLines() {
         for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
             if (checkForYLineNeighbour(x, y)) {
                 // Two adjacent cells that have access will have a green line between them.
-                if (checkAccessBelow(x, y)){
+                if (checkAccessBelow(x, y)) {
                     drawLine(x, y, x, y + 1, "#00ff00");
                 }
                 // If one or both do not have access, the default color will be applied.
@@ -425,7 +413,6 @@ function drawYLines() {
                     drawLine(x, y, x, y + 1, theme.colorTheme[theme.currentTheme].importantColor);
                 }
                 // Covers lines that overlap cells.
-
                 drawRectFill(x, y, "black");
                 drawRectFill(x, y + 1, "black");
             }
@@ -434,23 +421,15 @@ function drawYLines() {
 }
 
 function checkForXLineNeighbour(x, y) {
-    // Checks if there is a 1 to the right of x.
-    if (x === grid.maps.lineMap[9].length - 1) {
-        return false;
-    } else {
-        return grid.maps.lineMap[y][x] === 1 && grid.maps.lineMap[y][x + 1] === 1;
-    }
+    // CHecks if there is a 1 to the right of x on the lineMap.
+    // If x is on a rightmost cell, nothing can be to the right of it so return false.
+    return x === grid.maps.lineMap[y].length - 1 ? false : grid.maps.lineMap[y][x] === 1 && grid.maps.lineMap[y][x + 1] === 1;
 }
 
 function checkForYLineNeighbour(x, y) {
-    // Checks if there is a 1 below y.
-    if (y === grid.maps.lineMap.length - 1) {
-        return false;
-    } else {
-        return grid.maps.lineMap[y][x] === 1 && grid.maps.lineMap[y + 1][x] === 1;
-    }
+    // Checks if there is a 1 below y in the lineMap.
+    return y === grid.maps.lineMap[x].length - 1 ? false : grid.maps.lineMap[y][x] === 1 && grid.maps.lineMap[y + 1][x] === 1;
 }
-
 document.onkeydown = function(e) {
     // Player inputs.
     // Gets input.
@@ -529,18 +508,19 @@ function movePointerRight() {
         grid.coords.pointerLoc.x++;
     }
 }
+
 function playerAction() {
     // The pointer is interacting with something on the grid.
     const pointerLocation = grid.maps.gridItemMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x];
     // Things that the player can interact with.
     const itemInteractions = {
-            0: () => actionOnEmpty(),
-            1: () => undefined,
-            2: () => actionOnNodeCore(),
-            3: () => actionOnFirewall(),
-            4: () => actionOnICE(),
-            5: () => actionOnServer()
-        }[pointerLocation];
+        0: () => actionOnEmpty(),
+        1: () => undefined,
+        2: () => actionOnNodeCore(),
+        3: () => actionOnFirewall(),
+        4: () => actionOnICE(),
+        5: () => actionOnServer()
+    }[pointerLocation];
     // If the pointer is over an interactable thing.
     if (itemInteractions) {
         itemInteractions();
@@ -597,7 +577,7 @@ function giveDataReward() {
     addData(rewardAmount);
 }
 
-function calculatePlayerDataReward(){
+function calculatePlayerDataReward() {
     // At the moment servers reward data equal to the next upgrade cost of the best item the player owns.
     const item = itemList[bestUnlockedItem()];
     return item.upgrade.nextUpgradeCost;
@@ -627,7 +607,6 @@ function actionOnICE() {
     if (canEnableAccess() && grid.playerItems.ICEPick >= 1) {
         grid.playerItems.ICEPick--;
         grid.maps.accessMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] = 1;
-
         grid.ICEAI.isHunting = true;
         grid.ICEAI.playerActionTaken = true;
     }
@@ -656,46 +635,27 @@ function pointerNextToAccessArea() {
 }
 
 function checkAccessAbove(x, y) {
-    // If the cell above is accessed.
-    if (y === 0) {
-        return false;
-    } else {
-        return grid.maps.accessMap[y - 1][x] === 1;
-    }
+    // If y is 0 then the cell is at the top of the grid so nothing can be above it.
+    // Else check if the cell above (y-1) has a value of 1 (not truthy, but specifically 1).
+    return y === 0 ? false : grid.maps.accessMap[y - 1][x] === 1;
 }
 
 function checkAccessBelow(x, y) {
-    // If the cell below is accessed.
-    if (y === grid.maps.accessMap.length - 1) {
-        return false;
-    } else {
-        return grid.maps.accessMap[y + 1][x] === 1;
-    }
+    return y === grid.maps.accessMap.length - 1 ? false : grid.maps.accessMap[y + 1][x] === 1;
 }
 
 function checkAccessLeft(x, y) {
-    // If the cell to the left is accessed.
-    if (x === 0) {
-        return false;
-    } else {
-        return grid.maps.accessMap[y][x - 1] === 1;
-    }
+    return x === 0 ? false : grid.maps.accessMap[y][x - 1] === 1;
 }
 
 function checkAccessRight(x, y) {
-    // If the cell to the right is accessed.
-    if (x === grid.maps.accessMap[y].length - 1) {
-        return false;
-    } else {
-        return grid.maps.accessMap[y][x + 1] === 1;
-    }
+    return x === grid.maps.accessMap[y].length - 1 ? false : grid.maps.accessMap[y][x + 1] === 1;
 }
 
-function ICEHunt(){
+function ICEHunt() {
     getListOfServers();
     ICETargets();
     //new EasyStar.js().calculate()
-
     if (grid.ICEAI.isHunting) {
         increaseICEHuntSteps();
         ICETargets();
@@ -704,17 +664,14 @@ function ICEHunt(){
 }
 
 function calculateICEHuntPath(i) {
-
     const es = new EasyStar.js();
     es.setIterationsPerCalculation(1000);
     es.setGrid(grid.maps.lineMap);
     es.setAcceptableTiles([1]);
-
     es.findPath(9, 9, grid.ICEAI.targets[i].x, grid.ICEAI.targets[i].y, function(path) {
         if (path === null) {
             console.log("No possible path for ICE.");
-        } 
-        else {
+        } else {
             //console.log(path);
             //return path;
             addPath(path, i);
@@ -733,47 +690,48 @@ function addPath(path, i) {
     grid.ICEAI.targets[i].path = path;
 }
 
-
 function getListOfServers() {
-    if (grid.ICEAI.targets === null){
+    // Populates an array of coordinates where servers exist.
+    // If the array already exists, nothing will happen.
+    if (grid.ICEAI.targets === null) {
+        loopThroughtItemMap();
+    }
+
+    function loopThroughtItemMap() {
         grid.ICEAI.targets = [];
         for (let y = 0; y < grid.maps.gridItemMap.length; y++) {
             for (let x = 0; x < grid.maps.gridItemMap.length; x++) {
-                if (grid.maps.gridItemMap[y][x] === 5) {
-                    grid.ICEAI.targets.push({x:x, y:y});
-                }
+                detectServer(x, y);
             }
+        }
+    }
+
+    function detectServer(x, y) {
+        if (grid.maps.gridItemMap[y][x] === 5) {
+            grid.ICEAI.targets.push({x: x, y: y});
         }
     }
 }
 
-function increaseICEHuntSteps(){
+function increaseICEHuntSteps() {
     for (let i = grid.ICEAI.targets.length - 1; i >= 0; i--) {
         if (typeof grid.ICEAI.targets[i].stepsTaken === "undefined") {
             grid.ICEAI.targets[i].stepsTaken = 0;
-        }
-        else if (grid.ICEAI.targets[i].stepsTaken < grid.ICEAI.targets[i].path.length) {
-            grid.ICEAI.targets[i].stepsTaken ++;
+        } else if (grid.ICEAI.targets[i].stepsTaken < grid.ICEAI.targets[i].path.length) {
+            grid.ICEAI.targets[i].stepsTaken++;
         }
     }
 }
 
 function drawICEHuntPath() {
-    if (grid.ICEAI.isHunting){
-    for (let tarI = grid.ICEAI.targets.length - 1; tarI >= 0; tarI--) {
-        if (grid.ICEAI.targets[tarI].path){
-            for (let stepI = 0; stepI < grid.ICEAI.targets[tarI].stepsTaken; stepI++) {
-                grid.ICEAI.ICELocationMap[grid.ICEAI.targets[tarI].path[stepI].y][grid.ICEAI.targets[tarI].path[stepI].x] = 1;
-                drawRectOutline(grid.ICEAI.targets[tarI].path[stepI].x, grid.ICEAI.targets[tarI].path[stepI].y, "red");
+    if (grid.ICEAI.isHunting) {
+        for (let tarI = grid.ICEAI.targets.length - 1; tarI >= 0; tarI--) {
+            if (grid.ICEAI.targets[tarI].path) {
+                for (let stepI = 0; stepI < grid.ICEAI.targets[tarI].stepsTaken; stepI++) {
+                    grid.ICEAI.ICELocationMap[grid.ICEAI.targets[tarI].path[stepI].y][grid.ICEAI.targets[tarI].path[stepI].x] = 1;
+                    drawRectOutline(grid.ICEAI.targets[tarI].path[stepI].x, grid.ICEAI.targets[tarI].path[stepI].y, "red");
+                }
             }
         }
     }
 }
-}
-
-
-
-
-    
-
-
