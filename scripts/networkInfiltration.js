@@ -3,12 +3,12 @@
 /*jshint eqeqeq: true */
 /*jshint supernew: true */
 /*jshint multistr: true */
-let grid = new function() {
+const grid = new function() {
     const canvas = document.getElementById("hackGame");
     if (canvas.getContext) {
-        this.ctx = canvas.getContext("2d");
+        this.ctx = canvas.getContext("2d"),
         // Base width of lines. 
-        this.ctx.lineWidth = "3";
+        this.ctx.lineWidth = "3",
         this.dimensions = {
             // Dimensions of the display area, change in HTML file as well.
             gridHeight: 600,
@@ -18,10 +18,10 @@ let grid = new function() {
             cellNumX: 10,
             cellNumY: 10,
             cellPadding: 10
-        };
+        },
         // Sets the dimensions of cells
-        this.dimensions.cellWidth = this.dimensions.gridWidth / this.dimensions.cellNumX;
-        this.dimensions.cellHeight = this.dimensions.gridHeight / this.dimensions.cellNumY;
+        this.dimensions.cellWidth = this.dimensions.gridWidth / this.dimensions.cellNumX,
+        this.dimensions.cellHeight = this.dimensions.gridHeight / this.dimensions.cellNumY,
         // Sets the dimensions in the canvas.
         this.ctx.canvas.width = this.dimensions.gridWidth,
         this.ctx.canvas.height = this.dimensions.gridHeight,
@@ -35,7 +35,7 @@ let grid = new function() {
                 x: 0,
                 y: 0
             }
-        };
+        },
         this.ICEAI = {
             //stepsTaken: 0,
             //path: null,
@@ -54,7 +54,7 @@ let grid = new function() {
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             ]
-        };
+        },
         this.maps = {
             // Maps are made by drawing these 3 arrays.
             // Remember, these array are accessed using array[Y][X], NOT array[x][y]
@@ -104,14 +104,14 @@ let grid = new function() {
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             ]
-        };
+        },
         this.playerItems = {
             ICEPick: 30,
             dummyBarrier: 30,
             virtualServer: 30
         };
     }
-}();
+};
 const gridItem = function(name, description, requirements, fillColor) {
     this.name = name;
     this.description = description;
@@ -192,7 +192,7 @@ function createGridCoordinates() {
         const cellNumY = grid.dimensions.cellNumY;
         grid.coords.cellCoords = new Array(cellNumY);
         for (let i = 0; i < cellNumX; i++) {
-            grid.coords.cellCoords[i] = new Array();
+            grid.coords.cellCoords[i] = [];
         }
     }
 
@@ -305,7 +305,7 @@ function displayDetailText() {
     // Clears text already present.
     HTMLEditor("hackGameDetailText", "");
     const displayTextLength = displayText.length;
-    for (var i = 0; i < displayTextLength; i++) {
+    for (let i = 0; i < displayTextLength; i++) {
         // HTMLEditor() does not support += strings.
         document.getElementById("hackGameDetailText").innerHTML += displayText[i];
         // Inserts hr after every line except the last.
@@ -328,7 +328,7 @@ function getDetailText() {
     displayText.push(detailTextReq(objectType));
     displayText.push(detailTextServerReward(objectType));
     // Removes undefined strings.
-    for (var i = displayText.length - 1; i >= 0; i--) {
+    for (let i = displayText.length - 1; i >= 0; i--) {
         if (typeof displayText[i] === "undefined") {
             displayText.splice(i, 1);
         }
@@ -585,7 +585,7 @@ function calculatePlayerDataReward() {
 
 function bestUnlockedItem() {
     // Returns the highest tier item that the player has unlocked.
-    for (var i = itemList.length - 1; i >= 0; i--) {
+    for (let i = itemList.length - 1; i >= 0; i--) {
         if (itemList[i].itemData.itemCount !== 0) {
             return i;
         }
