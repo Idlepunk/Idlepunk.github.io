@@ -124,6 +124,9 @@ const gridItem = function(name, description, requirements, fillColor) {
         if (grid.maps.accessMap[y][x] === 1) {
             drawRectOutline(x, y, "#00ff00");
         }
+        if (grid.ICEAI.ICELocationMap[y][x] === 1){
+            drawRectOutline(x, y, 'red');
+        }
     };
 };
 grid.gridItem = [
@@ -176,7 +179,7 @@ function refreshNetworkInfiltration() {
     drawLineObjects();
     drawGridBase();
     drawGridItems();
-    drawICEHuntPath();
+    updateICEHunt();
     drawPointer();
 }
 
@@ -723,15 +726,20 @@ function increaseICEHuntSteps() {
     }
 }
 
-function drawICEHuntPath() {
+function updateICEHunt() {
     if (grid.ICEAI.isHunting) {
         for (let tarI = grid.ICEAI.targets.length - 1; tarI >= 0; tarI--) {
             if (grid.ICEAI.targets[tarI].path) {
                 for (let stepI = 0; stepI < grid.ICEAI.targets[tarI].stepsTaken; stepI++) {
-                    grid.ICEAI.ICELocationMap[grid.ICEAI.targets[tarI].path[stepI].y][grid.ICEAI.targets[tarI].path[stepI].x] = 1;
-                    drawRectOutline(grid.ICEAI.targets[tarI].path[stepI].x, grid.ICEAI.targets[tarI].path[stepI].y, "red");
+                    setICEAILocation(tarI, stepI);
                 }
             }
         }
     }
+}
+
+function setICEAILocation(target, step){
+    grid.ICEAI.ICELocationMap
+    [grid.ICEAI.targets[target].path[step].y]
+    [grid.ICEAI.targets[target].path[step].x] = 1;
 }
