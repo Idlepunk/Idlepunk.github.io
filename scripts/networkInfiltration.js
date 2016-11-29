@@ -118,6 +118,7 @@ const gridItem = function(name, description, requirements, fillColor) {
     this.requirements = requirements;
     this.fillColor = fillColor;
     this.drawGridItem = function(x, y) {
+        // TOO MANY IFS!
         if (this.fillColor) {
             drawRectFill(x, y, this.fillColor);
         }
@@ -125,7 +126,7 @@ const gridItem = function(name, description, requirements, fillColor) {
             drawRectOutline(x, y, "#00ff00");
         }
         if (grid.ICEAI.ICELocationMap[y][x] === 1){
-            drawRectOutline(x, y, 'red');
+            drawRectInline(x, y, 'red');
         }
     };
 };
@@ -239,6 +240,18 @@ function drawRectOutline(x, y, color) {
     const drawY = grid.coords.cellCoords[x][y].y;
     const cellWidth = grid.dimensions.cellWidth - grid.dimensions.cellPadding;
     const cellHeight = grid.dimensions.cellHeight - grid.dimensions.cellPadding;
+    grid.ctx.strokeRect(drawX, drawY, cellWidth, cellHeight);
+}
+
+function drawRectInline(x, y, color) {
+    // Draws the outline of a square with somne negative padding.
+    const bonusPad = 3;
+    grid.ctx.lineWidth = "3";
+    grid.ctx.strokeStyle = color;
+    const drawX = grid.coords.cellCoords[x][y].x + bonusPad;
+    const drawY = grid.coords.cellCoords[x][y].y + bonusPad;
+    const cellWidth = grid.dimensions.cellWidth - grid.dimensions.cellPadding - (bonusPad*2);
+    const cellHeight = grid.dimensions.cellHeight - grid.dimensions.cellPadding - (bonusPad*2);
     grid.ctx.strokeRect(drawX, drawY, cellWidth, cellHeight);
 }
 
