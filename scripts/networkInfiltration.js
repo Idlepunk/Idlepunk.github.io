@@ -7,109 +7,110 @@ const grid = new function() {
     const canvas = document.getElementById("hackGame");
     if (canvas.getContext) {
         this.ctx = canvas.getContext("2d"),
-        // Base width of lines. 
-        this.ctx.lineWidth = "3",
-        this.dimensions = {
-            // Dimensions of the display area, change in HTML file as well.
-            gridHeight: 600,
-            gridWidth: 600,
-            // Number of cells you want on the grid.
-            // Note: Currently maps I made are for 10x10 grids, changing the number of cells will require new maps.
-            cellNumX: 10,
-            cellNumY: 10,
-            cellPadding: 10
-        },
-        // Sets the dimensions of cells
-        this.dimensions.cellWidth = this.dimensions.gridWidth / this.dimensions.cellNumX,
-        this.dimensions.cellHeight = this.dimensions.gridHeight / this.dimensions.cellNumY,
-        // Sets the dimensions in the canvas.
-        this.ctx.canvas.width = this.dimensions.gridWidth,
-        this.ctx.canvas.height = this.dimensions.gridHeight,
-        this.coords = {
-            // Coordinates of rectangles in grid, will be set after number of rectangles is calculated.
-            cellCoords: [],
-            x: 0,
-            y: 0,
-            // Starting position of the pointer.
-            pointerLoc: {
+            // Base width of lines. 
+            this.ctx.lineWidth = "3",
+            this.dimensions = {
+                // Dimensions of the display area, change in HTML file as well.
+                gridHeight: 600,
+                gridWidth: 600,
+                // Number of cells you want on the grid.
+                // Note: Currently maps I made are for 10x10 grids, changing the number of cells will require new maps.
+                cellNumX: 10,
+                cellNumY: 10,
+                cellPadding: 10
+            },
+            // Sets the dimensions of cells
+            this.dimensions.cellWidth = this.dimensions.gridWidth / this.dimensions.cellNumX,
+            this.dimensions.cellHeight = this.dimensions.gridHeight / this.dimensions.cellNumY,
+            // Sets the dimensions in the canvas.
+            this.ctx.canvas.width = this.dimensions.gridWidth,
+            this.ctx.canvas.height = this.dimensions.gridHeight,
+            this.coords = {
+                // Coordinates of rectangles in grid, will be set after number of rectangles is calculated.
+                cellCoords: [],
                 x: 0,
-                y: 0
-            }
-        },
-        this.ICEAI = {
-            //stepsTaken: 0,
-            //path: null,
-            targets: null,
-            isHunting: false,
-            playerActionTaken: false,
-            ICELocationMap: [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            ]
-        },
-        this.maps = {
-            // Maps are made by drawing these 3 arrays.
-            // Remember, these array are accessed using array[Y][X], NOT array[x][y]
-            // The number corresponds to what item will be in that array position.
-            // 0 = blank
-            // 1 = start
-            // 2 = end
-            // 3 = firewall
-            // 4 = ICE
-            // 5 = server
-            gridItemMap: [
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 4, 0, 0, 0, 0, 0, 0, 0],
-                [0, 3, 5, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 4, 0, 0, 0, 3, 3, 3],
-                [0, 0, 0, 0, 0, 0, 4, 3, 5, 5],
-                [0, 0, 0, 0, 4, 0, 4, 3, 3, 3],
-                [3, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 4, 0, 0, 3, 3],
-                [5, 0, 0, 0, 0, 4, 0, 0, 3, 2]
-            ],
-            // Where lines should appear running through the grid.
-            // two 1s must be touching to draw a line between those rectangles.
-            lineMap: [
-                [1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
-                [1, 0, 1, 0, 0, 1, 1, 1, 1, 1],
-                [1, 1, 1, 0, 0, 1, 0, 0, 0, 0],
-                [1, 0, 1, 0, 0, 1, 0, 0, 0, 0],
-                [1, 0, 1, 1, 0, 1, 0, 0, 0, 0],
-                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                [1, 0, 0, 0, 1, 0, 1, 0, 1, 0],
-                [1, 0, 1, 1, 1, 1, 1, 0, 1, 0],
-                [1, 0, 1, 0, 0, 1, 0, 0, 1, 1],
-                [1, 1, 1, 0, 0, 1, 1, 1, 1, 1]
-            ],
-            // Where the player has access to.
-            accessMap: [
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-            ]
-        },
-        this.playerItems = {
-            ICEPick: 30,
-            dummyBarrier: 30,
-            virtualServer: 30
-        };
+                y: 0,
+                // Starting position of the pointer.
+                pointerLoc: {
+                    x: 0,
+                    y: 0
+                }
+            },
+            this.ICEAI = {
+                //stepsTaken: 0,
+                //path: null,
+                targets: null,
+                isHunting: false,
+                playerActionTaken: false
+            },
+            this.maps = {
+                // Maps are made by drawing these 3 arrays.
+                // Remember, these array are accessed using array[Y][X], NOT array[x][y]
+                // The number corresponds to what item will be in that array position.
+                // 0 = blank
+                // 1 = start
+                // 2 = end
+                // 3 = firewall
+                // 4 = ICE
+                // 5 = server
+                gridItemMap: [
+                    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 4, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 3, 5, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 4, 0, 0, 0, 3, 3, 3],
+                    [0, 0, 0, 0, 0, 0, 4, 3, 5, 5],
+                    [0, 0, 0, 0, 4, 0, 4, 3, 3, 3],
+                    [3, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 4, 0, 0, 3, 3],
+                    [5, 0, 0, 0, 0, 4, 0, 0, 3, 2]
+                ],
+                // Where lines should appear running through the grid.
+                // two 1s must be touching to draw a line between those rectangles.
+                lineMap: [
+                    [1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+                    [1, 0, 1, 0, 0, 1, 1, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 1, 0, 0, 0, 0],
+                    [1, 0, 1, 0, 0, 1, 0, 0, 0, 0],
+                    [1, 0, 1, 1, 0, 1, 0, 0, 0, 0],
+                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                    [1, 0, 0, 0, 1, 0, 1, 0, 1, 0],
+                    [1, 0, 1, 1, 1, 1, 1, 0, 1, 0],
+                    [1, 0, 1, 0, 0, 1, 0, 0, 1, 1],
+                    [1, 1, 1, 0, 0, 1, 1, 1, 1, 1]
+                ],
+                // Where the player has access to.
+                accessMap: [
+                    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                ],
+                // Where ICE is currently located.
+                ICELocationMap: [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                ]
+            },
+            this.playerItems = {
+                ICEPick: 30,
+                dummyBarrier: 30,
+                virtualServer: 30
+            };
     }
 };
 const gridItem = function(name, description, requirements, fillColor) {
@@ -125,41 +126,41 @@ const gridItem = function(name, description, requirements, fillColor) {
         if (grid.maps.accessMap[y][x] === 1) {
             drawRectOutline(x, y, "#00ff00");
         }
-        if (grid.ICEAI.ICELocationMap[y][x] === 1){
+        if (grid.maps.ICELocationMap[y][x] === 1) {
             drawRectInline(x, y, 'red');
         }
     };
 };
 grid.gridItem = [
     new gridItem(
-        "Switch", 
-        "There is nothing of import here", 
+        "Switch",
+        "There is nothing of import here",
         "Requires a Virtual Server to capture",
         false),
     new gridItem(
-        "Entry Node", 
-        "Your attack starts here", 
+        "Entry Node",
+        "Your attack starts here",
         false,
         "#00ff00"),
     new gridItem(
-        "Node Core", 
-        "Contains large quantities of sensitive information", 
+        "Node Core",
+        "Contains large quantities of sensitive information",
         "Requires an ICEPick, Dummy Barrier & Virtual Server to capture",
         "#283747"),
     new gridItem(
-        "Firewall", 
-        "Prevents access", 
+        "Firewall",
+        "Prevents access",
         "Requires a Dummy Barrier to capture",
         "grey"),
     new gridItem(
-        "ICE", 
+        "ICE",
         "Attacks Intruders",
         "Requires an ICE Pick to capture",
         "#E74C3C"),
     new gridItem(
-        "Server", 
+        "Server",
         "Contains information",
-        "Requires an ICEPick & Dummy Barrier to capture", 
+        "Requires an ICEPick & Dummy Barrier to capture",
         "#2980B9")
 ];
 
@@ -245,13 +246,13 @@ function drawRectOutline(x, y, color) {
 
 function drawRectInline(x, y, color) {
     // Draws the outline of a square with somne negative padding.
-    const bonusPad = 3;
+    const bonusPad = 3; // px
     grid.ctx.lineWidth = "3";
     grid.ctx.strokeStyle = color;
     const drawX = grid.coords.cellCoords[x][y].x + bonusPad;
     const drawY = grid.coords.cellCoords[x][y].y + bonusPad;
-    const cellWidth = grid.dimensions.cellWidth - grid.dimensions.cellPadding - (bonusPad*2);
-    const cellHeight = grid.dimensions.cellHeight - grid.dimensions.cellPadding - (bonusPad*2);
+    const cellWidth = grid.dimensions.cellWidth - grid.dimensions.cellPadding - (bonusPad * 2);
+    const cellHeight = grid.dimensions.cellHeight - grid.dimensions.cellPadding - (bonusPad * 2);
     grid.ctx.strokeRect(drawX, drawY, cellWidth, cellHeight);
 }
 
@@ -375,7 +376,7 @@ function detailTextAccessStatus() {
 function detailTextICE() {
     const x = grid.coords.pointerLoc.x;
     const y = grid.coords.pointerLoc.y;
-    return grid.ICEAI.ICELocationMap[y][x] === 1 ? "<span style='color:red'>ICE</span> is present here" : undefined;
+    return grid.maps.ICELocationMap[y][x] === 1 ? "<span style='color:red'>ICE</span> is present here" : undefined;
 }
 
 function detailTextServerReward(objectType) {
@@ -398,19 +399,7 @@ function drawXLines() {
     // Draws horizontal lines from maps.lineMap.
     for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
         for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
-            if (checkForXLineNeighbour(x, y)) {
-                // Two adjacent cells that have access will have a green line between them.
-                if (checkAccessRight(x, y)) {
-                    drawLine(x, y, x + 1, y, "#00ff00");
-                }
-                // If one or both do not have access, the default color will be applied.
-                else {
-                    drawLine(x, y, x + 1, y, theme.colorTheme[theme.currentTheme].importantColor);
-                }
-                // Covers lines that overlap cells.
-                drawRectFill(x, y, "black");
-                drawRectFill(x + 1, y, "black");
-            }
+            drawLineToRight(x, y);
         }
     }
 }
@@ -419,25 +408,45 @@ function drawYLines() {
     // Draws vertical lines from maps.lineMap.
     for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
         for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
-            if (checkForYLineNeighbour(x, y)) {
-                // Two adjacent cells that have access will have a green line between them.
-                if (checkAccessBelow(x, y)) {
-                    drawLine(x, y, x, y + 1, "#00ff00");
-                }
-                // If one or both do not have access, the default color will be applied.
-                else {
-                    drawLine(x, y, x, y + 1, theme.colorTheme[theme.currentTheme].importantColor);
-                }
-                // Covers lines that overlap cells.
-                drawRectFill(x, y, "black");
-                drawRectFill(x, y + 1, "black");
-            }
+            drawLineAbove(x, y);
         }
     }
 }
 
+function drawLineToRight(x, y) {
+    if (checkForXLineNeighbour(x, y)) {
+        // Two adjacent cells that have access will have a green line between them.
+        if (checkAccessRight(x, y)) {
+            drawLine(x, y, x + 1, y, "#00ff00");
+        }
+        // If one or both do not have access, the default color will be applied.
+        else {
+            drawLine(x, y, x + 1, y, theme.colorTheme[theme.currentTheme].importantColor);
+        }
+        // Covers lines that overlap cells.
+        drawRectFill(x, y, "black");
+        drawRectFill(x + 1, y, "black");
+    }
+}
+
+function drawLineAbove(x, y) {
+    if (checkForYLineNeighbour(x, y)) {
+        // Two adjacent cells that have access will have a green line between them.
+        if (checkAccessBelow(x, y)) {
+            drawLine(x, y, x, y + 1, "#00ff00");
+        }
+        // If one or both do not have access, the default color will be applied.
+        else {
+            drawLine(x, y, x, y + 1, theme.colorTheme[theme.currentTheme].importantColor);
+        }
+        // Covers lines that overlap cells.
+        drawRectFill(x, y, "black");
+        drawRectFill(x, y + 1, "black");
+    }
+}
+
 function checkForXLineNeighbour(x, y) {
-    // CHecks if there is a 1 to the right of x on the lineMap.
+    // Checks if there is a 1 to the right of x on the lineMap.
     // If x is on a rightmost cell, nothing can be to the right of it so return false.
     return x === grid.maps.lineMap[y].length - 1 ? false : grid.maps.lineMap[y][x] === 1 && grid.maps.lineMap[y][x + 1] === 1;
 }
@@ -454,37 +463,61 @@ document.onkeydown = function(e) {
     // foo = {bar: () => baz()} will not call baz() when foo is initialized, baz can be called through foo().
     const actionFromInput = {
         // Move Left.
-        37:  () => movePointerLeft(), // Left Arrow
-        65:  () => movePointerLeft(), // A
+        37: () => movePointerLeft(), // Left Arrow
+        65: () => movePointerLeft(), // A
         100: () => movePointerLeft(), // Numpad 4
         // MoveRight.
-        39:  () => movePointerRight(), // Right Arrow
-        68:  () => movePointerRight(), // D
+        39: () => movePointerRight(), // Right Arrow
+        68: () => movePointerRight(), // D
         102: () => movePointerRight(), // Numpad 6
         // Move Down.
-        40:  () => movePointerDown(), // Down Arrow
-        83:  () => movePointerDown(), // S
-        98:  () => movePointerDown(), // Numpad 2
+        40: () => movePointerDown(), // Down Arrow
+        83: () => movePointerDown(), // S
+        98: () => movePointerDown(), // Numpad 2
         // Move Up.
-        87:  () => movePointerUp(), // Up arrow
-        38:  () => movePointerUp(), // W
+        87: () => movePointerUp(), // Up arrow
+        38: () => movePointerUp(), // W
         104: () => movePointerUp(), // Numpad 8
         // Move diagonally left/up.
-        36:  () => {movePointerLeft(); movePointerUp();}, // Home
-        103: () => {movePointerLeft(); movePointerUp();}, // Numpad 7
+        36: () => {
+            movePointerLeft();
+            movePointerUp();
+        }, // Home
+        103: () => {
+            movePointerLeft();
+            movePointerUp();
+        }, // Numpad 7
         // Move diagonally right/up.
-        33:  () => {movePointerRight(); movePointerUp();}, // Page Up
-        105: () => {movePointerRight(); movePointerUp();}, // Numpad 9
+        33: () => {
+            movePointerRight();
+            movePointerUp();
+        }, // Page Up
+        105: () => {
+            movePointerRight();
+            movePointerUp();
+        }, // Numpad 9
         // Move diagonally left/down.
-        35:  () => {movePointerLeft(); movePointerDown();}, // End
-        97:  () => {movePointerLeft(); movePointerDown();}, // Numpad 1
+        35: () => {
+            movePointerLeft();
+            movePointerDown();
+        }, // End
+        97: () => {
+            movePointerLeft();
+            movePointerDown();
+        }, // Numpad 1
         // Move diagonally right/down.
-        34:  () => {movePointerRight(); movePointerDown();}, // Page Down
-        99:  () => {movePointerRight(); movePointerDown();}, // Numpad 3
+        34: () => {
+            movePointerRight();
+            movePointerDown();
+        }, // Page Down
+        99: () => {
+            movePointerRight();
+            movePointerDown();
+        }, // Numpad 3
         // Action.
-        32:  () => playerAction(), // Space bar
-        69:  () => playerAction(), // E
-        13:  () => playerAction(), // Enter
+        32: () => playerAction(), // Space bar
+        69: () => playerAction(), // E
+        13: () => playerAction(), // Enter
         107: () => playerAction() // +
     }[e.keyCode]; // Determines what function actionFromInput() should call.
     // If an input keyCode isn't a key in actionFromInput, it will be undefined.
@@ -492,7 +525,8 @@ document.onkeydown = function(e) {
         actionFromInput();
         refreshNetworkInfiltration();
         drawPointer();
-    } else {
+    }
+    else {
         console.log(e.key + " is not bound to anything.");
     }
 };
@@ -687,7 +721,8 @@ function calculateICEHuntPath(i) {
     es.findPath(9, 9, grid.ICEAI.targets[i].x, grid.ICEAI.targets[i].y, function(path) {
         if (path === null) {
             console.log("No possible path for ICE.");
-        } else {
+        }
+        else {
             //console.log(path);
             //return path;
             addPath(path, i);
@@ -724,7 +759,10 @@ function getListOfServers() {
 
     function detectServer(x, y) {
         if (grid.maps.gridItemMap[y][x] === 5) {
-            grid.ICEAI.targets.push({x: x, y: y});
+            grid.ICEAI.targets.push({
+                x: x,
+                y: y
+            });
         }
     }
 }
@@ -733,26 +771,26 @@ function increaseICEHuntSteps() {
     for (let i = grid.ICEAI.targets.length - 1; i >= 0; i--) {
         if (typeof grid.ICEAI.targets[i].stepsTaken === "undefined") {
             grid.ICEAI.targets[i].stepsTaken = 0;
-        } else if (grid.ICEAI.targets[i].stepsTaken < grid.ICEAI.targets[i].path.length) {
+        }
+        else if (grid.ICEAI.targets[i].stepsTaken < grid.ICEAI.targets[i].path.length) {
             grid.ICEAI.targets[i].stepsTaken++;
         }
     }
 }
 
 function updateICEHunt() {
-    if (grid.ICEAI.isHunting) {
-        for (let tarI = grid.ICEAI.targets.length - 1; tarI >= 0; tarI--) {
-            if (grid.ICEAI.targets[tarI].path) {
-                for (let stepI = 0; stepI < grid.ICEAI.targets[tarI].stepsTaken; stepI++) {
-                    setICEAILocation(tarI, stepI);
+    if (grid.ICEAI.isHunting) { // If ICE has been triggered.
+        for (let tarI = grid.ICEAI.targets.length - 1; tarI >= 0; tarI--) { // Loop through ICE targets.
+            if (grid.ICEAI.targets[tarI].path) { // If a path has been found for the target.
+                for (let stepI = 0; stepI < grid.ICEAI.targets[tarI].stepsTaken; stepI++) { // Loop through the steps in the path.
+                    setICEAILocation(tarI, stepI); // Update grid with the current locations of ICE.
                 }
             }
         }
     }
 }
 
-function setICEAILocation(target, step){
-    grid.ICEAI.ICELocationMap
-    [grid.ICEAI.targets[target].path[step].y]
-    [grid.ICEAI.targets[target].path[step].x] = 1;
+function setICEAILocation(target, step) {
+    grid.maps.ICELocationMap[grid.ICEAI.targets[target].path[step].y]
+        [grid.ICEAI.targets[target].path[step].x] = 1;
 }
