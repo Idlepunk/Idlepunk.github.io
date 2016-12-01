@@ -178,7 +178,7 @@ function refreshNetworkInfiltration() {
     updateItemUI();
     displayDetailText();
     grid.ctx.clearRect(0, 0, grid.dimensions.gridWidth, grid.dimensions.gridHeight);
-    drawLineObjects();
+    drawLinesBetweenCells();
     drawGridBase();
     drawGridItems();
     updateICEHunt();
@@ -388,26 +388,11 @@ function detailTextServerReward(objectType) {
     }
 }
 
-function drawLineObjects() {
-    // Draws between rectangles on grid.
-    // Lines are only drawn between two 1s that are touching on grid.maps.lineMap.
-    drawXLines();
-    drawYLines();
-}
-
-function drawXLines() {
+function drawLinesBetweenCells() {
     // Draws horizontal lines from maps.lineMap.
     for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
         for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
             drawLineToRight(x, y);
-        }
-    }
-}
-
-function drawYLines() {
-    // Draws vertical lines from maps.lineMap.
-    for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
-        for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
             drawLineAbove(x, y);
         }
     }
