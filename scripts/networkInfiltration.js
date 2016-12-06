@@ -17,7 +17,7 @@ const grid = new function() {
                 // Note: Currently maps I made are for 10x10 grids, changing the number of cells will require new maps.
                 cellNumX: 10,
                 cellNumY: 10,
-                cellPadding: 10
+                cellPadding: 30
             },
             // Sets the dimensions of cells
             this.dimensions.cellWidth = this.dimensions.gridWidth / this.dimensions.cellNumX,
@@ -41,7 +41,11 @@ const grid = new function() {
                 //path: null,
                 targets: null,
                 isHunting: false,
-                playerActionTaken: false
+                playerActionTaken: false,
+                flash: {
+                    ticksToFlash: 20,
+                    ticksSinceLastFlash: 0
+                }
             },
             this.maps = {
                 // Maps are made by drawing these 3 arrays.
@@ -118,19 +122,25 @@ const gridItem = function(name, description, requirements, fillColor) {
     this.description = description;
     this.requirements = requirements;
     this.fillColor = fillColor;
-    this.drawGridItem = function(x, y) {
-        // TOO MANY IFS!
-        if (this.fillColor) {
-            drawRectFill(x, y, this.fillColor);
-        }
-        if (grid.maps.accessMap[y][x] === 1) {
-            drawRectOutline(x, y, "#00ff00");
-        }
-        if (grid.maps.ICELocationMap[y][x] === 1) {
-            drawRectInline(x, y, 'red');
-        }
-    };
 };
+
+gridItem.prototype.renderCell = function(x, y) {
+    this.drawGridItem(x, y);
+}
+
+gridItem.prototype.drawGridItem = function(x, y) {
+     // TOO MANY IFS!
+    if (this.fillColor) {
+        renderCellFill(x, y, this.fillColor);
+    }
+    if (checkCellIsAccessed(x, y)) {
+        renderCellOutline(x, y, "#00ff00");
+    }
+    if (grid.maps.ICELocationMap[y][x] === 1 && grid.ICEAI.flash.ticksSinceLastFlash >= (grid.ICEAI.flash.ticksToFlash / 2)) {
+        renderCellInternalOutline(x, y, 'red');
+    }   
+}
+
 grid.gridItem = [
     new gridItem(
         "Switch",
@@ -168,21 +178,27 @@ function startHackGame() {
     // First time run.
     createGridCoordinates();
     refreshNetworkInfiltration();
-    displayDetailText();
-    //drawPointer();
+    displayPointerText();
+    //drawPointerOnCell();
     ICEHunt(); // Happens asynchronously.
 }
 
 function refreshNetworkInfiltration() {
     // Refreshes the UI.
-    updateItemUI();
-    displayDetailText();
+    updateItemCountDisplay();
+    displayPointerText();
     grid.ctx.clearRect(0, 0, grid.dimensions.gridWidth, grid.dimensions.gridHeight);
     drawLinesBetweenCells();
-    drawGridBase();
-    drawGridItems();
+    drawCellBase();
+    drawCellItems();
     updateICEHunt();
-    drawPointer();
+    drawPointerOnCell();
+    if (grid.ICEAI.flash.ticksSinceLastFlash >= grid.ICEAI.flash.ticksToFlash){
+        grid.ICEAI.flash.ticksSinceLastFlash = 0;
+    }
+    else {
+        grid.ICEAI.flash.ticksSinceLastFlash ++;
+    }
 }
 
 function createGridCoordinates() {
@@ -218,7 +234,7 @@ function createGridCoordinates() {
     }
 }
 
-function drawRectFill(x, y, color) {
+function renderCellFill(x, y, color) {
     // Draws a full color square.
     grid.ctx.lineWidth = "3";
     grid.ctx.fillStyle = color;
@@ -233,7 +249,7 @@ function drawRectFill(x, y, color) {
     grid.ctx.fillRect(drawX, drawY, cellWidth, cellHeight);
 }
 
-function drawRectOutline(x, y, color) {
+function renderCellOutline(x, y, color) {
     // Draws the outline of a square.
     grid.ctx.lineWidth = "3";
     grid.ctx.strokeStyle = color;
@@ -244,7 +260,7 @@ function drawRectOutline(x, y, color) {
     grid.ctx.strokeRect(drawX, drawY, cellWidth, cellHeight);
 }
 
-function drawRectInline(x, y, color) {
+function renderCellInternalOutline(x, y, color) {
     // Draws the outline of a square with somne negative padding.
     const bonusPad = 3; // px
     grid.ctx.lineWidth = "3";
@@ -256,7 +272,7 @@ function drawRectInline(x, y, color) {
     grid.ctx.strokeRect(drawX, drawY, cellWidth, cellHeight);
 }
 
-function drawLine(startXC, startYC, endXC, endYC, color) {
+function renderLineBetweenCells(startXC, startYC, endXC, endYC, color) {
     // Draws a line between two points.
     grid.ctx.lineWidth = "3";
     grid.ctx.strokeStyle = color;
@@ -273,7 +289,7 @@ function drawLine(startXC, startYC, endXC, endYC, color) {
     grid.ctx.stroke();
 }
 
-function drawRectClear(x, y) {
+function clearCellRendering(x, y) {
     // Hides a grid square.
     const hideX = grid.coords.cellCoords[x][y].x;
     const hideY = grid.coords.cellCoords[x][y].y;
@@ -282,43 +298,43 @@ function drawRectClear(x, y) {
     grid.ctx.clearRect(hideX, hideY, cellWidth, cellHeight);
 }
 
-function updateItemUI() {
+function updateItemCountDisplay() {
     //Updates the displayed number of items.
     HTMLEditor("gridItemICEPick", grid.playerItems.ICEPick);
     HTMLEditor("gridItemDummyBarrier", grid.playerItems.dummyBarrier);
     HTMLEditor("gridItemVirtualServer", grid.playerItems.virtualServer);
 }
 
-function drawGridBase() {
+function drawCellBase() {
     // Draws the grid based on coordinates.
     for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
         for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
-            drawRectOutline(x, y, theme.colorTheme[theme.currentTheme].bodyColor);
+            renderCellOutline(x, y, theme.colorTheme[theme.currentTheme].bodyColor);
         }
     }
 }
 
-function drawGridItems() {
+function drawCellItems() {
     // Fills grid in with objects from the .maps.gridItemMap.
     for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
         for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
             const gridCoord = grid.maps.gridItemMap[y][x];
-            grid.gridItem[gridCoord].drawGridItem(x, y);
+            grid.gridItem[gridCoord].renderCell(x, y);
         }
     }
 }
 
-function drawPointer() {
+function drawPointerOnCell() {
     // Display white outline around cell where pointer is.
-    drawRectOutline(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y, "white");
+    renderCellOutline(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y, "white");
     // Display tooltip of what the pointer is over.
-    displayDetailText();
+    displayPointerText();
 }
 
-function displayDetailText() {
+function displayPointerText() {
     // Shows text based on what the pointer is over.
     // Array of messages to display. Each element should be displayed on its own line.
-    const displayText = getDetailText();
+    const displayText = getPointerText();
     // Clears text already present.
     HTMLEditor("hackGameDetailText", "");
     const displayTextLength = displayText.length;
@@ -333,17 +349,17 @@ function displayDetailText() {
     }
 }
 
-function getDetailText() {
+function getPointerText() {
     const objectType = grid.maps.gridItemMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x];
     // Creates an array of strings.
     // If a string does not apply to the specific object it will be undefined.
     let displayText = [];
-    displayText.push(detailTextName(objectType));
-    displayText.push(detailTextDesc(objectType));
-    displayText.push(detailTextAccessStatus());
-    displayText.push(detailTextICE());
-    displayText.push(detailTextReq(objectType));
-    displayText.push(detailTextServerReward(objectType));
+    displayText.push(getPointerTextName(objectType));
+    displayText.push(getPointerTextDesc(objectType));
+    displayText.push(getPointerTextAccess());
+    displayText.push(getPointerTextICE());
+    displayText.push(getPointerTextRequirements(objectType));
+    displayText.push(getPointerTextServerReward(objectType));
     // Removes undefined strings.
     for (let i = displayText.length - 1; i >= 0; i--) {
         if (typeof displayText[i] === "undefined") {
@@ -353,36 +369,36 @@ function getDetailText() {
     return displayText;
 }
 
-function detailTextName(objectType) {
+function getPointerTextName(objectType) {
     const text = "<span style=color:" + theme.colorTheme[theme.currentTheme].importantColor + ">" + grid.gridItem[objectType].name + "</span>";
     return text;
     //theme.colorTheme[theme.currentTheme].importantColor
 }
 
-function detailTextDesc(objectType) {
+function getPointerTextDesc(objectType) {
     return grid.gridItem[objectType].description;
 }
 
-function detailTextReq(objectType) {
-    if (!pointerOnAccessArea()) {
+function getPointerTextRequirements(objectType) {
+    if (!checkPointerOverAccessedCell()) {
         return grid.gridItem[objectType].requirements;
     }
 }
 
-function detailTextAccessStatus() {
-    return pointerOnAccessArea() ? "You have <span style='color:green'>access</span> to this" : "You do not have <span style='color:red'>access</span> to this";
+function getPointerTextAccess() {
+    return checkPointerOverAccessedCell() ? "You have <span style='color:green'>access</span> to this" : "You do not have <span style='color:red'>access</span> to this";
 }
 
-function detailTextICE() {
+function getPointerTextICE() {
     const x = grid.coords.pointerLoc.x;
     const y = grid.coords.pointerLoc.y;
     return grid.maps.ICELocationMap[y][x] === 1 ? "<span style='color:red'>ICE</span> is present here" : undefined;
 }
 
-function detailTextServerReward(objectType) {
+function getPointerTextServerReward(objectType) {
     // If pointer is over unaccessed server.
-    if (objectType === 5 && !pointerOnAccessArea()) {
-        let amount = formatBytes(calculatePlayerDataReward());
+    if (objectType === 5 && !checkPointerOverAccessedCell()) {
+        let amount = formatBytes(calculateDataReward());
         amount = "<span class='important'>" + amount + "</span>";
         return "Passive probing suggests server contains " + amount + " worth of data";
     }
@@ -392,41 +408,41 @@ function drawLinesBetweenCells() {
     // Draws horizontal lines from maps.lineMap.
     for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
         for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
-            drawLineToRight(x, y);
-            drawLineAbove(x, y);
+            drawHorizontalLines(x, y);
+            drawVerticalLines(x, y);
         }
     }
 }
 
-function drawLineToRight(x, y) {
+function drawHorizontalLines(x, y) {
     if (checkForXLineNeighbour(x, y)) {
         // Two adjacent cells that have access will have a green line between them.
-        if (checkAccessRight(x, y)) {
-            drawLine(x, y, x + 1, y, "#00ff00");
+        if (checkCellIsAccessed(x, y) && checkAccessRight(x, y)) {
+            renderLineBetweenCells(x, y, x + 1, y, "#00ff00");
         }
         // If one or both do not have access, the default color will be applied.
         else {
-            drawLine(x, y, x + 1, y, theme.colorTheme[theme.currentTheme].importantColor);
+            renderLineBetweenCells(x, y, x + 1, y, theme.colorTheme[theme.currentTheme].importantColor);
         }
         // Covers lines that overlap cells.
-        drawRectFill(x, y, "black");
-        drawRectFill(x + 1, y, "black");
+        renderCellFill(x, y, "black");
+        renderCellFill(x + 1, y, "black");
     }
 }
 
-function drawLineAbove(x, y) {
+function drawVerticalLines(x, y) {
     if (checkForYLineNeighbour(x, y)) {
         // Two adjacent cells that have access will have a green line between them.
-        if (checkAccessBelow(x, y)) {
-            drawLine(x, y, x, y + 1, "#00ff00");
+        if (checkCellIsAccessed(x, y) && checkAccessBelow(x, y)) {
+            renderLineBetweenCells(x, y, x, y + 1, "#00ff00");
         }
         // If one or both do not have access, the default color will be applied.
         else {
-            drawLine(x, y, x, y + 1, theme.colorTheme[theme.currentTheme].importantColor);
+            renderLineBetweenCells(x, y, x, y + 1, theme.colorTheme[theme.currentTheme].importantColor);
         }
         // Covers lines that overlap cells.
-        drawRectFill(x, y, "black");
-        drawRectFill(x, y + 1, "black");
+        renderCellFill(x, y, "black");
+        renderCellFill(x, y + 1, "black");
     }
 }
 
@@ -509,7 +525,7 @@ document.onkeydown = function(e) {
     if (actionFromInput) {
         actionFromInput();
         refreshNetworkInfiltration();
-        drawPointer();
+        drawPointerOnCell();
     }
     else {
         console.log(e.key + " is not bound to anything.");
@@ -559,7 +575,7 @@ function playerAction() {
     // If the pointer is over an interactable thing.
     if (itemInteractions) {
         itemInteractions();
-        updateItemUI();
+        updateItemCountDisplay();
     }
     if (grid.ICEAI.playerActionTaken) {
         grid.ICEAI.playerActionTaken = false;
@@ -573,11 +589,11 @@ function actionOnEmpty() {
     // 2. Adjacent to an accessible location.
     // 3. Not already accessed.
     // 4. The player has an item to use here.
-    if (canEnableAccess() && grid.playerItems.virtualServer >= 1) {
+    if (checkCanEnableAccessOnCell() && grid.playerItems.virtualServer >= 1) {
         // Remove a virtual server.
         grid.playerItems.virtualServer--;
         // Change this maps.accessMap location from unaccessed to accessed.
-        grid.maps.accessMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] = 1;
+        enableAccessOnCell(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y)
         grid.ICEAI.playerActionTaken = true;
     }
 }
@@ -585,40 +601,40 @@ function actionOnEmpty() {
 function actionOnNodeCore() {
     // If the player attempts an action on the end goal.
     // Should be a win condition.
-    if (canEnableAccess() && grid.playerItems.ICEPick >= 1 && grid.playerItems.dummyBarrier >= 1 && grid.playerItems.virtualServer >= 1) {
+    if (checkCanEnableAccessOnCell() && grid.playerItems.ICEPick >= 1 && grid.playerItems.dummyBarrier >= 1 && grid.playerItems.virtualServer >= 1) {
         grid.playerItems.ICEPick--;
         grid.playerItems.dummyBarrier--;
         grid.playerItems.virtualServer--;
-        grid.maps.accessMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] = 1;
+        enableAccessOnCell(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y)
         grid.ICEAI.playerActionTaken = true;
     }
 }
 
 function actionOnServer() {
     // Should give the player a reward.
-    if (canEnableAccess() && grid.playerItems.ICEPick >= 1 && grid.playerItems.dummyBarrier) {
+    if (checkCanEnableAccessOnCell() && grid.playerItems.ICEPick >= 1 && grid.playerItems.dummyBarrier) {
         // Removes items required to access a server.
         grid.playerItems.ICEPick--;
         grid.playerItems.dummyBarrier--;
         // Mark location accessed.
-        grid.maps.accessMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] = 1;
+        enableAccessOnCell(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y)
         giveDataReward();
         grid.ICEAI.playerActionTaken = true;
     }
 }
 
 function giveDataReward() {
-    const rewardAmount = calculatePlayerDataReward();
+    const rewardAmount = calculateDataReward();
     addData(rewardAmount);
 }
 
-function calculatePlayerDataReward() {
+function calculateDataReward() {
     // At the moment servers reward data equal to the next upgrade cost of the best item the player owns.
-    const item = itemList[bestUnlockedItem()];
+    const item = itemList[getBestUnlockedItem()];
     return item.upgrade.nextUpgradeCost;
 }
 
-function bestUnlockedItem() {
+function getBestUnlockedItem() {
     // Returns the highest tier item that the player has unlocked.
     for (let i = itemList.length - 1; i >= 0; i--) {
         if (itemList[i].itemData.itemCount !== 0) {
@@ -630,39 +646,51 @@ function bestUnlockedItem() {
 
 function actionOnFirewall() {
     // Should block the player until they access it.
-    if (canEnableAccess() && grid.playerItems.dummyBarrier >= 1) {
+    if (checkCanEnableAccessOnCell() && grid.playerItems.dummyBarrier >= 1) {
         grid.playerItems.dummyBarrier--;
-        grid.maps.accessMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] = 1;
+        enableAccessOnCell(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y)
         grid.ICEAI.playerActionTaken = true;
     }
 }
 
 function actionOnICE() {
     // Should attack the player until they access it.
-    if (canEnableAccess() && grid.playerItems.ICEPick >= 1) {
+    if (checkCanEnableAccessOnCell() && grid.playerItems.ICEPick >= 1) {
         grid.playerItems.ICEPick--;
-        grid.maps.accessMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] = 1;
+        enableAccessOnCell(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y);
         grid.ICEAI.isHunting = true;
         grid.ICEAI.playerActionTaken = true;
     }
 }
 
-function canEnableAccess() {
-    // If cell can be changed from unaccessed to accessed.
-    return pointerOverLine() && pointerNextToAccessArea() && !pointerOnAccessArea();
+function checkCellIsOnALine() {
+
 }
 
-function pointerOverLine() {
+function checkPointerOverLine() {
     // Checks if the pointer is over a line.
     return grid.maps.lineMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] === 1;
 }
 
-function pointerOnAccessArea() {
+function checkPointerOverAccessedCell() {
     // If the pointer is currently on an accessed area.
-    return (grid.maps.accessMap[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x] === 1);
+    return checkCellIsAccessed(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y);
 }
 
-function pointerNextToAccessArea() {
+function checkCanEnableAccessOnCell() {
+    // If cell can be changed from unaccessed to accessed.
+    return checkPointerOverLine() && checkPointerNextToAccessArea() && !checkPointerOverAccessedCell();
+}
+
+function enableAccessOnCell(x, y) {
+    grid.maps.accessMap[y][x] = 1;
+}
+
+function checkCellIsAccessed(x, y) {
+    return grid.maps.accessMap[y][x] === 1;
+}
+
+function checkPointerNextToAccessArea() {
     // Checks if pointer is next to an area that is accessed.
     const x = grid.coords.pointerLoc.x;
     const y = grid.coords.pointerLoc.y;
@@ -672,28 +700,28 @@ function pointerNextToAccessArea() {
 function checkAccessAbove(x, y) {
     // If y is 0 then the cell is at the top of the grid so nothing can be above it.
     // Else check if the cell above (y-1) has a value of 1 (not truthy, but specifically 1).
-    return y === 0 ? false : grid.maps.accessMap[y - 1][x] === 1;
+    return y === 0 ? false : checkCellIsAccessed(x, y-1);
 }
 
 function checkAccessBelow(x, y) {
-    return y === grid.maps.accessMap.length - 1 ? false : grid.maps.accessMap[y + 1][x] === 1;
+    return y === grid.maps.accessMap.length - 1 ? false : checkCellIsAccessed(x, y+1)
 }
 
 function checkAccessLeft(x, y) {
-    return x === 0 ? false : grid.maps.accessMap[y][x - 1] === 1;
+    return x === 0 ? false : checkCellIsAccessed(x-1, y);
 }
 
 function checkAccessRight(x, y) {
-    return x === grid.maps.accessMap[y].length - 1 ? false : grid.maps.accessMap[y][x + 1] === 1;
+    return x === grid.maps.accessMap[y].length - 1 ? false : checkCellIsAccessed(x+1, y);
 }
 
 function ICEHunt() {
     getListOfServers();
-    ICETargets();
+    getPathsForICETargets();
     //new EasyStar.js().calculate()
     if (grid.ICEAI.isHunting) {
         increaseICEHuntSteps();
-        ICETargets();
+        getPathsForICETargets();
         refreshNetworkInfiltration();
     }
 }
@@ -710,19 +738,19 @@ function calculateICEHuntPath(i) {
         else {
             //console.log(path);
             //return path;
-            addPath(path, i);
+            addICEHuntPath(path, i);
         }
     });
     es.calculate();
 }
 
-function ICETargets() {
+function getPathsForICETargets() {
     for (let i = grid.ICEAI.targets.length - 1; i >= 0; i--) {
         calculateICEHuntPath(i);
     }
 }
 
-function addPath(path, i) {
+function addICEHuntPath(path, i) {
     grid.ICEAI.targets[i].path = path;
 }
 
@@ -764,6 +792,7 @@ function increaseICEHuntSteps() {
 }
 
 function updateICEHunt() {
+    // This is a clusterfuck
     if (grid.ICEAI.isHunting) { // If ICE has been triggered.
         for (let tarI = grid.ICEAI.targets.length - 1; tarI >= 0; tarI--) { // Loop through ICE targets.
             if (grid.ICEAI.targets[tarI].path) { // If a path has been found for the target.
@@ -776,6 +805,5 @@ function updateICEHunt() {
 }
 
 function setICEAILocation(target, step) {
-    grid.maps.ICELocationMap[grid.ICEAI.targets[target].path[step].y]
-        [grid.ICEAI.targets[target].path[step].x] = 1;
+    grid.maps.ICELocationMap[grid.ICEAI.targets[target].path[step].y][grid.ICEAI.targets[target].path[step].x] = 1;
 }

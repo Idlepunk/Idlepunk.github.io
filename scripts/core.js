@@ -434,7 +434,7 @@ function startUp() {
 
 function itemTemplates() {
     // Creates item HTML from a template located in index.
-    for (let i = 0; i < itemList.length; i++) {
+    for (var i = itemList.length - 1; i >= 0; i--) {
         const theTemplateScript = $("#itemTemplate").html(); // Gets the template from html.
         const theTemplate = Handlebars.compile(theTemplateScript); // Compiles template.
         const context = { // Creates data for template.
