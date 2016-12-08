@@ -419,6 +419,7 @@ function runConstructors() {
     themeConstructor();
     prestigeConstructor();
     debugTools();
+    netWorkInfiltrationConstructor();
 }
 
 function startUp() {

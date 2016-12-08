@@ -3,7 +3,8 @@
 /*jshint eqeqeq: true */
 /*jshint supernew: true */
 /*jshint multistr: true */
-const grid = new function() {
+function netWorkInfiltrationConstructor() {
+window.grid = new function() {
     const canvas = document.getElementById("hackGame");
     if (canvas.getContext) {
         this.ctx = canvas.getContext("2d"),
@@ -43,8 +44,9 @@ const grid = new function() {
                 isHunting: false,
                 playerActionTaken: false,
                 flash: {
-                    ticksToFlash: 20,
-                    ticksSinceLastFlash: 0
+                    ticksInAnimation: 50,
+                    ticksSpentVisibile: 5,
+                    ticksSinceAnimationStart: 0
                 }
             },
             this.maps = {
@@ -97,7 +99,8 @@ const grid = new function() {
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                 ],
                 // Where ICE is currently located.
-                ICELocationMap: [
+                ICELocationMap: []
+                /*ICELocationMap: [
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -109,6 +112,8 @@ const grid = new function() {
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                 ]
+                */
+
             },
             this.playerItems = {
                 ICEPick: 30,
@@ -117,6 +122,8 @@ const grid = new function() {
             };
     }
 };
+createGridCoordinates();
+
 const gridItem = function(name, description, requirements, fillColor) {
     this.name = name;
     this.description = description;
@@ -126,7 +133,7 @@ const gridItem = function(name, description, requirements, fillColor) {
 
 gridItem.prototype.renderCell = function(x, y) {
     this.drawGridItem(x, y);
-}
+};
 
 gridItem.prototype.drawGridItem = function(x, y) {
      // TOO MANY IFS!
@@ -136,9 +143,20 @@ gridItem.prototype.drawGridItem = function(x, y) {
     if (checkCellIsAccessed(x, y)) {
         renderCellOutline(x, y, "#00ff00");
     }
-    if (grid.maps.ICELocationMap[y][x] === 1 && grid.ICEAI.flash.ticksSinceLastFlash >= (grid.ICEAI.flash.ticksToFlash / 2)) {
+    //if (grid.maps.ICELocationMap[y][x].hasICE && grid.ICEAI.flash.ticksSinceAnimationStart <= (grid.ICEAI.flash.ticksSpentVisibile + grid.maps.ICELocationMap[y][x].offsetAnimation)) {
+    if (grid.maps.ICELocationMap[y][x].hasICE && shouldAnimationPlay(x, y)) {
         renderCellInternalOutline(x, y, 'red');
     }   
+};
+
+function shouldAnimationPlay(x, y){
+    const startAt = grid.maps.ICELocationMap[y][x].step;
+    const endAt = grid.maps.ICELocationMap[y][x].step + grid.ICEAI.flash.ticksSpentVisibile;
+    const tickCount = grid.ICEAI.flash.ticksSinceAnimationStart;
+
+    return tickCount !== startAt;
+
+    return tickCount >= startAt && tickCount <= endAt;
 }
 
 grid.gridItem = [
@@ -173,10 +191,10 @@ grid.gridItem = [
         "Requires an ICEPick & Dummy Barrier to capture",
         "#2980B9")
 ];
+}
 
 function startHackGame() {
     // First time run.
-    createGridCoordinates();
     refreshNetworkInfiltration();
     displayPointerText();
     //drawPointerOnCell();
@@ -193,27 +211,30 @@ function refreshNetworkInfiltration() {
     drawCellItems();
     updateICEHunt();
     drawPointerOnCell();
-    if (grid.ICEAI.flash.ticksSinceLastFlash >= grid.ICEAI.flash.ticksToFlash){
-        grid.ICEAI.flash.ticksSinceLastFlash = 0;
+    if (grid.ICEAI.flash.ticksSinceAnimationStart >= grid.ICEAI.flash.ticksInAnimation){
+        grid.ICEAI.flash.ticksSinceAnimationStart = 0;
     }
     else {
-        grid.ICEAI.flash.ticksSinceLastFlash ++;
+        grid.ICEAI.flash.ticksSinceAnimationStart ++;
     }
 }
 
 function createGridCoordinates() {
     gridDimensions();
     gridCellCoords();
-
     function gridDimensions() {
         // Creates empty 2d grid based on how many cells can fit inside.
         //const cellNumX = grid.dimensions.gridWidth / grid.dimensions.cellWidth;
         //const cellNumY = grid.dimensions.gridHeight / grid.dimensions.cellHeight;
         const cellNumX = grid.dimensions.cellNumX;
         const cellNumY = grid.dimensions.cellNumY;
+
         grid.coords.cellCoords = new Array(cellNumY);
+        grid.maps.ICELocationMap = new Array(cellNumY);
+
         for (let i = 0; i < cellNumX; i++) {
             grid.coords.cellCoords[i] = [];
+            grid.maps.ICELocationMap[i] = [];
         }
     }
 
@@ -224,8 +245,12 @@ function createGridCoordinates() {
             for (let x = 1; x < grid.dimensions.gridWidth; x += grid.dimensions.cellWidth) {
                 grid.coords.cellCoords[grid.coords.x][grid.coords.y] = {
                     x: x,
-                    y: y
+                    y: y,
                 };
+                grid.maps.ICELocationMap[grid.coords.x][grid.coords.y] = {
+                    hasICE: false,
+                    offsetAnimation: (10 - grid.coords.x) + (10 - grid.coords.y)
+                }
                 grid.coords.x++;
             }
             grid.coords.y++;
@@ -392,7 +417,7 @@ function getPointerTextAccess() {
 function getPointerTextICE() {
     const x = grid.coords.pointerLoc.x;
     const y = grid.coords.pointerLoc.y;
-    return grid.maps.ICELocationMap[y][x] === 1 ? "<span style='color:red'>ICE</span> is present here" : undefined;
+    return grid.maps.ICELocationMap[y][x].hasICE ? "<span style='color:red'>ICE</span> is present here" : undefined;
 }
 
 function getPointerTextServerReward(objectType) {
@@ -480,41 +505,17 @@ document.onkeydown = function(e) {
         38: () => movePointerUp(), // W
         104: () => movePointerUp(), // Numpad 8
         // Move diagonally left/up.
-        36: () => {
-            movePointerLeft();
-            movePointerUp();
-        }, // Home
-        103: () => {
-            movePointerLeft();
-            movePointerUp();
-        }, // Numpad 7
+        36: () => {movePointerLeft(); movePointerUp();}, // Home
+        103: () => {movePointerLeft();movePointerUp();}, // Numpad 7
         // Move diagonally right/up.
-        33: () => {
-            movePointerRight();
-            movePointerUp();
-        }, // Page Up
-        105: () => {
-            movePointerRight();
-            movePointerUp();
-        }, // Numpad 9
+        33: () => {movePointerRight();movePointerUp();}, // Page Up
+        105: () => { movePointerRight(); movePointerUp();}, // Numpad 9
         // Move diagonally left/down.
-        35: () => {
-            movePointerLeft();
-            movePointerDown();
-        }, // End
-        97: () => {
-            movePointerLeft();
-            movePointerDown();
-        }, // Numpad 1
+        35: () => {movePointerLeft();movePointerDown();}, // End
+        97: () => {movePointerLeft();movePointerDown();}, // Numpad 1
         // Move diagonally right/down.
-        34: () => {
-            movePointerRight();
-            movePointerDown();
-        }, // Page Down
-        99: () => {
-            movePointerRight();
-            movePointerDown();
-        }, // Numpad 3
+        34: () => {movePointerRight();movePointerDown();}, // Page Down
+        99: () => {movePointerRight();movePointerDown();}, // Numpad 3
         // Action.
         32: () => playerAction(), // Space bar
         69: () => playerAction(), // E
@@ -593,7 +594,7 @@ function actionOnEmpty() {
         // Remove a virtual server.
         grid.playerItems.virtualServer--;
         // Change this maps.accessMap location from unaccessed to accessed.
-        enableAccessOnCell(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y)
+        enableAccessOnCell(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y);
         grid.ICEAI.playerActionTaken = true;
     }
 }
@@ -605,7 +606,7 @@ function actionOnNodeCore() {
         grid.playerItems.ICEPick--;
         grid.playerItems.dummyBarrier--;
         grid.playerItems.virtualServer--;
-        enableAccessOnCell(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y)
+        enableAccessOnCell(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y);
         grid.ICEAI.playerActionTaken = true;
     }
 }
@@ -617,7 +618,7 @@ function actionOnServer() {
         grid.playerItems.ICEPick--;
         grid.playerItems.dummyBarrier--;
         // Mark location accessed.
-        enableAccessOnCell(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y)
+        enableAccessOnCell(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y);
         giveDataReward();
         grid.ICEAI.playerActionTaken = true;
     }
@@ -648,7 +649,7 @@ function actionOnFirewall() {
     // Should block the player until they access it.
     if (checkCanEnableAccessOnCell() && grid.playerItems.dummyBarrier >= 1) {
         grid.playerItems.dummyBarrier--;
-        enableAccessOnCell(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y)
+        enableAccessOnCell(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y);
         grid.ICEAI.playerActionTaken = true;
     }
 }
@@ -704,7 +705,7 @@ function checkAccessAbove(x, y) {
 }
 
 function checkAccessBelow(x, y) {
-    return y === grid.maps.accessMap.length - 1 ? false : checkCellIsAccessed(x, y+1)
+    return y === grid.maps.accessMap.length - 1 ? false : checkCellIsAccessed(x, y+1);
 }
 
 function checkAccessLeft(x, y) {
@@ -805,5 +806,6 @@ function updateICEHunt() {
 }
 
 function setICEAILocation(target, step) {
-    grid.maps.ICELocationMap[grid.ICEAI.targets[target].path[step].y][grid.ICEAI.targets[target].path[step].x] = 1;
+    grid.maps.ICELocationMap[grid.ICEAI.targets[target].path[step].y][grid.ICEAI.targets[target].path[step].x].hasICE = true;
+    grid.maps.ICELocationMap[grid.ICEAI.targets[target].path[step].y][grid.ICEAI.targets[target].path[step].x].step = step;
 }
