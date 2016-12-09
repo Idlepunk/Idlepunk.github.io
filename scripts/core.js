@@ -51,13 +51,13 @@ function debugTools() {
         this.hasICE = function() {
             const x = grid.coords.pointerLoc.x;
             const y = grid.coords.pointerLoc.y;
-            console.log(grid.maps.ICEPresence[y][x].hasICE)
-        }
+            console.log(grid.maps.ICEPresence[y][x].hasICE);
+        };
         this.hasAccess = function() {
             const x = grid.coords.pointerLoc.x;
             const y = grid.coords.pointerLoc.y;
-            console.log(grid.maps.playerAccess[y][x])
-        }
+            console.log(grid.maps.playerAccess[y][x]);
+        };
     }();
 }
 
@@ -95,7 +95,7 @@ function themeConstructor() {
             new colorPreset('#27E700', '#0B8C0F', '#B1FFB3'), // Green.
             new colorPreset('#FDFEFE', '#85929E', '#ABEBC6') // White.
         ]
-    }
+    };
     colorPreset.prototype.changePresetColors = function() {
         // Changes the UI color theme.
         // Gets an array of elements of a class.
@@ -112,7 +112,7 @@ function themeConstructor() {
                 classes[i].style.color = color;
             }
         }
-    }
+    };
 }
 
 function itemConstructor() {

@@ -23,7 +23,7 @@ function netWorkInfiltrationConstructor() {
                 playerAccess: '#00ff00',
                 ICE: 'red',
                 pointer: 'white'
-            }
+            },
             // Sets the dimensions of cells
             this.dimensions.cellWidth = this.dimensions.gridWidth / this.dimensions.cellNumX,
             this.dimensions.cellHeight = this.dimensions.gridHeight / this.dimensions.cellNumY,
@@ -114,7 +114,7 @@ function netWorkInfiltrationConstructor() {
         this.description = description;
         this.requirements = requirements;
         this.fillColor = fillColor;
-    };
+    }
 
     gridItem.prototype.renderCell = function(x, y) {
         this.drawItem(x, y);
@@ -144,12 +144,12 @@ function netWorkInfiltrationConstructor() {
                 renderCellInternalOutline(x, y, '#FF5900');
             }
         }
-    }
+    };
 
     function shouldICERender(x, y) {
 
         if ((grid.ICEAI.animation.tickCount - grid.maps.ICEPresence[y][x].steps) % grid.ICEAI.animation.startEvery === 0) {
-            return false
+            return false;
         }
         else {
             return true;
@@ -262,7 +262,7 @@ function insertICEStatus(x, y, gridX, gridY) {
     grid.maps.ICEPresence[gridY][gridX] = {
         hasICE: false,
         offsetAnimation: (10 - gridX) + (10 - gridY)
-    }
+    };
 }
 
 function renderCellFill(x, y, color) {
@@ -811,7 +811,7 @@ function setICEAILocation(target, step) {
         const x = grid.ICEAI.targets[target].path[step].x;
         const y = grid.ICEAI.targets[target].path[step].y;
 
-        updateCellSteps(x, y, step)
+        updateCellSteps(x, y, step);
 
         if (grid.maps.playerAccess[y][x] === 0) {
             // If the player has not accessed this area, ICE may move here.
@@ -821,7 +821,7 @@ function setICEAILocation(target, step) {
             // If the player has accessed this area, ICE may not move here.
             grid.maps.ICEPresence[y][x].hasICE = false;
             // Remove all steps after this one since ICE cannot progress further.
-            grid.ICEAI.targets[target].path.splice(step, Infinity)
+            grid.ICEAI.targets[target].path.splice(step, Infinity);
         }
     }
 }
