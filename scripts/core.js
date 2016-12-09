@@ -81,32 +81,38 @@ function gameDataConstructor() {
 
 // Color themes.
 function themeConstructor() {
+    function colorPreset(body, click, important) {
+        this.bodyColor = body;
+        this.clickColor = click;
+        this.importantColor = important;
+    }
     window.theme = {
-        currentTheme: 0, // The current theme, the index of colorTheme[].
-        colorTheme: [ // An array of objects, each object is a theme. Each theme can be edited by players.
-            {
-                bodyColor: '#ffa500', // Orange.
-                clickColor: '#FF0000',
-                importantColor: '#FFFF00'
-            }, {
-                bodyColor: '#FF5733', // Burgundy.
-                clickColor: '#C70039',
-                importantColor: '#CC7320'
-            }, {
-                bodyColor: '#8E44AD', // Purple.
-                clickColor: '#BB0E96',
-                importantColor: '#D2B4DE'
-            }, {
-                bodyColor: '#27E700', // Green.
-                clickColor: '#0B8C0F',
-                importantColor: '#B1FFB3'
-            }, {
-                bodyColor: '#FDFEFE', // White.
-                clickColor: '#85929E',
-                importantColor: '#ABEBC6'
-            }
+        currentTheme: 0,
+        colorTheme: [
+            new colorPreset('#ffa500', '#FF0000', '#FFFF00'), // Orange.
+            new colorPreset('#FF5733', '#C70039', '#CC7320'), // Burgandy.
+            new colorPreset('#8E44AD', '#BB0E96', '#D2B4DE'), // Purple.
+            new colorPreset('#27E700', '#0B8C0F', '#B1FFB3'), // Green.
+            new colorPreset('#FDFEFE', '#85929E', '#ABEBC6') // White.
         ]
-    };
+    }
+    colorPreset.prototype.changePresetColors = function() {
+        // Changes the UI color theme.
+        // Gets an array of elements of a class.
+        changeClassColor(document.getElementsByClassName('bodyAll'), theme.colorTheme[theme.currentTheme].bodyColor);
+        changeClassColor(document.getElementsByClassName('clickable'), theme.colorTheme[theme.currentTheme].clickColor);
+        changeClassColor(document.getElementsByClassName('important'), theme.colorTheme[theme.currentTheme].importantColor);
+        changeClassColor(document.getElementsByClassName('dropbtn'), theme.colorTheme[theme.currentTheme].clickColor);
+        changeClassColor(document.getElementsByClassName('hr'), theme.colorTheme[theme.currentTheme].bodyColor);
+        document.getElementById('menuHR').style.color = theme.colorTheme[theme.currentTheme].importantColor;
+
+        function changeClassColor(classes, color) {
+            // Sets an array of elements to a given color.
+            for (let i = classes.length - 1; i >= 0; i--) {
+                classes[i].style.color = color;
+            }
+        }
+    }
 }
 
 function itemConstructor() {
@@ -136,39 +142,39 @@ function itemConstructor() {
         };
         // These are the names of the divs associated with this item in the DOM.
         this.div = {
-            cost: 'item' + ID + 'Cost',
-            itemCount: 'item' + ID + 'Number',
-            itemRate: 'item' + ID + 'Rate',
-            rateTotal: 'item' + ID + 'RateTotal',
-            numberMax: 'item' + ID + 'NumberMax',
-            autoBuyRate: 'item' + ID + 'CreationRate',
-            itemMenu: 'item' + ID + 'Menu',
-            upgradeMenu: 'item' + ID + 'UpgradeMenu',
-            HR: 'item' + ID + 'HR',
-            upgradeCost: 'item' + ID + 'UpgradeCost',
-            upgradeName: 'item' + ID + 'UpgradeName',
-            upgradeDesc: 'item' + ID + 'UpgradeDesc',
-            itemFlex: 'item' + ID + 'Flex',
+            cost:           'item' + ID + 'Cost',
+            itemCount:      'item' + ID + 'Number',
+            itemRate:       'item' + ID + 'Rate',
+            rateTotal:      'item' + ID + 'RateTotal',
+            numberMax:      'item' + ID + 'NumberMax',
+            autoBuyRate:    'item' + ID + 'CreationRate',
+            itemMenu:       'item' + ID + 'Menu',
+            upgradeMenu:    'item' + ID + 'UpgradeMenu',
+            HR:             'item' + ID + 'HR',
+            upgradeCost:    'item' + ID + 'UpgradeCost',
+            upgradeName:    'item' + ID + 'UpgradeName',
+            upgradeDesc:    'item' + ID + 'UpgradeDesc',
+            itemFlex:       'item' + ID + 'Flex',
             upgradeDetails: 'item' + ID + 'UpgradeDetails',
-            achOuter: 'item' + ID + 'achOuter',
-            achDisplay: 'item' + ID + 'achDisplay',
-            achName: 'item' + ID + 'achName'
+            achOuter:       'item' + ID + 'achOuter',
+            achDisplay:     'item' + ID + 'achDisplay',
+            achName:        'item' + ID + 'achName'
         };
     };
     window.itemList = [
-        new item('Cyberdeck', 0, Math.pow(gameData.BIC, 1), Math.pow(gameData.BUC, 3)),
-        new item('ICE Pick', 1, Math.pow(gameData.BIC, 3), Math.pow(gameData.BUC, 5)),
-        new item('Botnet', 2, Math.pow(gameData.BIC, 5), Math.pow(gameData.BUC, 7)),
-        new item('Femtocell Hijacker', 3, Math.pow(gameData.BIC, 4), Math.pow(gameData.BUC, 8)),
-        new item('Neural TETRA', 4, Math.pow(gameData.BIC, 5), Math.pow(gameData.BUC, 9)),
-        new item('Quantum Cryptograph', 5, Math.pow(gameData.BIC, 6), Math.pow(gameData.BUC, 10)),
-        new item('Infovault Mining', 6, Math.pow(gameData.BIC, 7), Math.pow(gameData.BUC, 11)),
-        new item('Neural Zombie', 7, Math.pow(gameData.BIC, 8), Math.pow(gameData.BUC, 12)),
-        new item('Satellite Jumper', 8, Math.pow(gameData.BIC, 9), Math.pow(gameData.BUC, 13)),
-        new item('Dark Matter Semiconductor', 9, Math.pow(gameData.BIC, 10), Math.pow(gameData.BUC, 14)),
-        new item('Artificial Intelligence', 10, Math.pow(gameData.BIC, 11), Math.pow(gameData.BUC, 15)),
-        new item('Actual Intelligence', 11, Math.pow(gameData.BIC, 12), Math.pow(gameData.BUC, 16)),
-        new item('Simulated Universe', 12, Math.pow(gameData.BIC, 13), Math.pow(gameData.BUC, 17))
+        new item('Cyberdeck',                   0, Math.pow(gameData.BIC, 1), Math.pow(gameData.BUC, 3)),
+        new item('ICE Pick',                    1, Math.pow(gameData.BIC, 3), Math.pow(gameData.BUC, 5)),
+        new item('Botnet',                      2, Math.pow(gameData.BIC, 5), Math.pow(gameData.BUC, 7)),
+        new item('Femtocell Hijacker',          3, Math.pow(gameData.BIC, 4), Math.pow(gameData.BUC, 8)),
+        new item('Neural TETRA',                4, Math.pow(gameData.BIC, 5), Math.pow(gameData.BUC, 9)),
+        new item('Quantum Cryptograph',         5, Math.pow(gameData.BIC, 6), Math.pow(gameData.BUC, 10)),
+        new item('Infovault Mining',            6, Math.pow(gameData.BIC, 7), Math.pow(gameData.BUC, 11)),
+        new item('Neural Zombie',               7, Math.pow(gameData.BIC, 8), Math.pow(gameData.BUC, 12)),
+        new item('Satellite Jumper',            8, Math.pow(gameData.BIC, 9), Math.pow(gameData.BUC, 13)),
+        new item('Dark Matter Semiconductor',   9, Math.pow(gameData.BIC, 10), Math.pow(gameData.BUC, 14)),
+        new item('Artificial Intelligence',     10, Math.pow(gameData.BIC, 11), Math.pow(gameData.BUC, 15)),
+        new item('Actual Intelligence',         11, Math.pow(gameData.BIC, 12), Math.pow(gameData.BUC, 16)),
+        new item('Simulated Universe',          12, Math.pow(gameData.BIC, 13), Math.pow(gameData.BUC, 17))
     ];
 
 }
@@ -189,7 +195,7 @@ function startUp() {
     runConstructors();
     itemTemplates();
     addData(gameData.BIC); // Adds data equal to the cost of the first item.
-    load();
+    //load();
     showGame();
     startHackGame();
     window.requestAnimationFrame(refreshGameTick); // Calls the first tick of the game.
@@ -497,13 +503,15 @@ function checkItemReveal(item) {
         showItemTier(item);
     }
 
-    function showItemTier(item) {
-        // Reveals the item, HR and achievement bar.
-        visibilityChange(item.div.itemMenu, true);
-        document.getElementById(item.div.itemFlex).style.display = 'flex';
-        visibilityChange(item.div.HR, true);
-        visibilityChange(item.div.achOuter, true);
-    }
+
+}
+
+function showItemTier(item) {
+    // Reveals the item, HR and achievement bar.
+    visibilityChange(item.div.itemMenu, true);
+    document.getElementById(item.div.itemFlex).style.display = 'flex';
+    visibilityChange(item.div.HR, true);
+    visibilityChange(item.div.achOuter, true);
 }
 
 function checkUpgradeReveal(item) {
@@ -534,85 +542,84 @@ function victory() {
     for (let i = allDOMElements.length - 1; i >= 0; i--) {
         allDOMElements[i].style.color = randomColorBright();
     }
+}
 
-    function randomColorBright() {
-        // Returns a string with # and three letters from the letter array.
-        // This will result in exclusively bright colors.
-        const letters = ["A", "B", "C", "D", "E"];
-        let color = '#';
-        for (let i = 0; i < 3; i++) {
-            // Due to the frequency in which this will be called, I am not using a compounding assignment.
-            color = color + letters[Math.floor(Math.random() * letters.length)];
-        }
-        return color;
+function randomColorBright() {
+    // Returns a string with # and three letters from the letter array.
+    // This will result in exclusively bright colors.
+    const letters = ["A", "B", "C", "D", "E"];
+    let color = '#';
+    for (let i = 0; i < 3; i++) {
+        // Due to the frequency in which this will be called, I am not using a compounding assignment.
+        color = color + letters[Math.floor(Math.random() * letters.length)];
     }
+        return color;
 }
 
 function save() {
     // Saves info to local storage.
-    let savegame = makeSaveFile();
-    savegame = obfuscateSave(savegame);
+    const savegame = obfuscateSave(makeSaveFile());
     saveToLocalStorage(savegame);
+}
 
-    function makeSaveFile() {
-        // Makes an object that we want to save.
-        let savegame = {};
-        savegame = saveMiscData(savegame);
-        savegame = saveItemData(savegame);
-        //savegame = savePrestige(savegame);
+function makeSaveFile() {
+    // Makes an object that we want to save.
+    let savegame = {};
+    savegame = saveMiscData(savegame);
+    savegame = saveItemData(savegame);
+    //savegame = savePrestige(savegame);
+    return savegame;
+
+    function saveMiscData(savegame) {
+        // Saves data not part of itemList.
+        savegame.dataHacked = gameData.dataHacked;
+        savegame.totalDataHacked = gameData.totalDataHacked;
+        savegame.currentTheme = theme.currentTheme;
+        savegame.colorTheme = theme.colorTheme;
         return savegame;
+    }
+}
 
-        function saveMiscData(savegame) {
-            // Saves data not part of itemList.
-            savegame.dataHacked = gameData.dataHacked;
-            savegame.totalDataHacked = gameData.totalDataHacked;
-            savegame.currentTheme = theme.currentTheme;
-            savegame.colorTheme = theme.colorTheme;
-            return savegame;
-        }
-
-        function saveItemData(savegame) {
-            // Saves specific data from itemList.
-            savegame.itemList = [];
-            for (let i = itemList.length - 1; i >= 0; i--) {
-                savegame.itemList[i] = {
-                    itemData: {
-                        itemCount: itemList[i].itemData.itemCount
-                    },
-                    upgrade: {
-                        nextUpgradeCost: itemList[i].upgrade.nextUpgradeCost,
-                        upgradeCount: itemList[i].upgrade.upgradeCount
-                    },
-                    achievement: {
-                        achCount: itemList[i].achievement.achCount
-                    },
-                    autoBuy: {
-                        autoBuyAmount: itemList[i].autoBuy.autoBuyAmount
-                    }
-                };
+function saveItemData(savegame) {
+    // Saves specific data from itemList.
+    savegame.itemList = [];
+    for (let i = itemList.length - 1; i >= 0; i--) {
+        savegame.itemList[i] = {
+            itemData: {
+                itemCount: itemList[i].itemData.itemCount
+            },
+            upgrade: {
+                nextUpgradeCost: itemList[i].upgrade.nextUpgradeCost,
+                upgradeCount: itemList[i].upgrade.upgradeCount
+            },
+            achievement: {
+                achCount: itemList[i].achievement.achCount
+            },
+            autoBuy: {
+                autoBuyAmount: itemList[i].autoBuy.autoBuyAmount
             }
-            return savegame;
-        }
-
-        function savePrestige(savegame) {
-            savegame.prestige = {
-                sentencesDisplayed: prestige.data.sentencesDisplayed
-            };
-            return savegame;
-        }
+        };
     }
+    return savegame;
+}
 
-    function obfuscateSave(savegame) {
-        // Objects get weird if you save them as a local key, so it is converted to a string first.
-        // Because there is a feature that imports/exports saves as string we want to have them unreadable to humans.
-        const savegameString = JSON.stringify(savegame); // foo = JSON.stringify(foo) doesn't work, foo = JSON.stringify(bar) must be used instead.
-        const obfuscatedSave = window.btoa(savegameString); // String is converted to base 64
-        return obfuscatedSave;
-    }
+function savePrestige(savegame) {
+    savegame.prestige = {
+        sentencesDisplayed: prestige.data.sentencesDisplayed
+    };
+    return savegame;
+}
 
-    function saveToLocalStorage(savegame) {
-        localStorage.setItem(gameData.saveName, savegame); // Save is saved to local storage.
-    }
+function obfuscateSave(savegame) {
+    // Objects get weird if you save them as a local key, so it is converted to a string first.
+    // Because there is a feature that imports/exports saves as string we want to have them unreadable to humans.
+    const savegameString = JSON.stringify(savegame); // foo = JSON.stringify(foo) doesn't work, foo = JSON.stringify(bar) must be used instead.
+    const obfuscatedSave = window.btoa(savegameString); // String is converted to base 64
+    return obfuscatedSave;
+}
+
+function saveToLocalStorage(savegame) {
+    localStorage.setItem(gameData.saveName, savegame); // Save is saved to local storage.
 }
 
 function load() {
@@ -623,52 +630,52 @@ function load() {
         loadUIElements();
         applyColorTheme();
     }
+}
 
-    function getSaveFromLocalStorage() {
-        let savegame = localStorage.getItem(gameData.saveName);
-        savegame = window.atob(savegame); // Deobfusaces save to string.
-        savegame = JSON.parse(savegame); // Converts string to object.
-        return savegame;
+function getSaveFromLocalStorage() {
+    let savegame = localStorage.getItem(gameData.saveName);
+    savegame = window.atob(savegame); // Deobfusaces save to string.
+    savegame = JSON.parse(savegame); // Converts string to object.
+    return savegame;
+}
+
+function loadDataFromSave(savegame) {
+    loadMiscData(savegame);
+    loadItemData(savegame);
+    //loadPrestige(savegame);
+}
+
+function loadMiscData(savegame) {
+    // Loads data not associated with itemList
+    gameData.dataHacked = savegame.dataHacked;
+    gameData.totalDataHacked = savegame.totalDataHacked;
+    theme.currentTheme = savegame.currentTheme;
+    theme.colorTheme = savegame.colorTheme;
+}
+
+function loadItemData(savegame) {
+    //loads data into itemList
+    for (let i = savegame.itemList.length - 1; i >= 0; i--) {
+        itemList[i].itemData.itemCount = savegame.itemList[i].itemData.itemCount;
+        itemList[i].upgrade.nextUpgradeCost = savegame.itemList[i].upgrade.nextUpgradeCost;
+        itemList[i].upgrade.upgradeCount = savegame.itemList[i].upgrade.upgradeCount;
+        itemList[i].achievement.achCount = savegame.itemList[i].achievement.achCount;
+        itemList[i].autoBuy.autoBuyAmount = savegame.itemList[i].autoBuy.autoBuyAmount;
     }
+}
 
-    function loadDataFromSave(savegame) {
-        loadMiscData(savegame);
-        loadItemData(savegame);
-        //loadPrestige(savegame);
-
-        function loadMiscData(savegame) {
-            // Loads data not associated with itemList
-            gameData.dataHacked = savegame.dataHacked;
-            gameData.totalDataHacked = savegame.totalDataHacked;
-            theme.currentTheme = savegame.currentTheme;
-            theme.colorTheme = savegame.colorTheme;
-        }
-
-        function loadItemData(savegame) {
-            //loads data into itemList
-            for (let i = savegame.itemList.length - 1; i >= 0; i--) {
-                itemList[i].itemData.itemCount = savegame.itemList[i].itemData.itemCount;
-                itemList[i].upgrade.nextUpgradeCost = savegame.itemList[i].upgrade.nextUpgradeCost;
-                itemList[i].upgrade.upgradeCount = savegame.itemList[i].upgrade.upgradeCount;
-                itemList[i].achievement.achCount = savegame.itemList[i].achievement.achCount;
-                itemList[i].autoBuy.autoBuyAmount = savegame.itemList[i].autoBuy.autoBuyAmount;
-            }
-        }
-
-        function loadPrestige(savegame) {
-            const sentences = savegame.prestige.sentencesDisplayed;
-            for (let i = 0; i < sentences; i++) {
-                displayCurrentSentence();
-                prestige.data.sentencesDisplayed++;
-            }
-        }
+function loadPrestige(savegame) {
+    const sentences = savegame.prestige.sentencesDisplayed;
+    for (let i = 0; i < sentences; i++) {
+        displayCurrentSentence();
+        prestige.data.sentencesDisplayed++;
     }
+}
 
-    function loadUIElements() {
-        for (let i = itemList.length - 1; i >= 0; i--) {
-            changeUpgradeText(itemList[i]);
-            updateItemMax(itemList[i]);
-        }
+function loadUIElements() {
+    for (let i = itemList.length - 1; i >= 0; i--) {
+        changeUpgradeText(itemList[i]);
+        updateItemMax(itemList[i]);
     }
 }
 
@@ -947,21 +954,7 @@ function changeTab(tabName) {
 }
 
 function applyColorTheme() {
-    // Changes the UI color theme.
-    // Gets an array of elements of a class.
-    changeClassColor(document.getElementsByClassName('bodyAll'), theme.colorTheme[theme.currentTheme].bodyColor);
-    changeClassColor(document.getElementsByClassName('clickable'), theme.colorTheme[theme.currentTheme].clickColor);
-    changeClassColor(document.getElementsByClassName('important'), theme.colorTheme[theme.currentTheme].importantColor);
-    changeClassColor(document.getElementsByClassName('dropbtn'), theme.colorTheme[theme.currentTheme].clickColor);
-    // This is weird but HRs don't inherit color properly in Firefox so this is necessary.
-    changeClassColor(document.getElementsByClassName('hr'), theme.colorTheme[theme.currentTheme].bodyColor);
-    document.getElementById('menuHR').style.color = theme.colorTheme[theme.currentTheme].importantColor;
-    function changeClassColor(classes, color) {
-        // Sets an array of elements to a given color.
-        for (let i = classes.length - 1; i >= 0; i--) {
-            classes[i].style.color = color;
-        }
-    }
+    theme.colorTheme[theme.currentTheme].changePresetColors();
 }
 
 function changeThemePreset() {
@@ -1045,23 +1038,24 @@ function changeUpgradeText(item) {
     }
     showBaseText(item, upgradeCount);
     showDetailText(item, upgradeCount);
+}
 
-    function showBaseText(item, upgradeCount) {
-        const upgradeName = item.upgradeText[upgradeCount][0];
-        const upgradeDesc = item.upgradeText[upgradeCount][1];
-        HTMLEditor(item.div.upgradeCost, formatBytes(item.upgrade.nextUpgradeCost)); // Updates cost.
-        HTMLEditor(item.div.upgradeName, upgradeName); // Updates name.
-        HTMLEditor(item.div.upgradeDesc, upgradeDesc); // Updates desc.
+function showBaseText(item, upgradeCount) {
+    const upgradeName = item.upgradeText[upgradeCount][0];
+    const upgradeDesc = item.upgradeText[upgradeCount][1];
+    HTMLEditor(item.div.upgradeCost, formatBytes(item.upgrade.nextUpgradeCost)); // Updates cost.
+    HTMLEditor(item.div.upgradeName, upgradeName); // Updates name.
+    HTMLEditor(item.div.upgradeDesc, upgradeDesc); // Updates desc.
+}
+
+function showDetailText(item, upgradeCount) {
+    const doublingText = 'Doubles the income of each ' + item.info.name + '.'; // Every upgrade will display this.
+    if (item !== itemList[0] && upgradeCount === 3) {
+        const autoBuyingText = 'For every ' + item.info.name + ' you will generate 0.1 ' + itemList[item.info.ID - 1].info.name + 's.';
+        HTMLEditor(item.div.upgradeDetails, doublingText + '<br>' + autoBuyingText);
     }
-
-    function showDetailText(item, upgradeCount) {
-        const doublingText = 'Doubles the income of each ' + item.info.name + '.'; // Every upgrade will display this.
-        if (item !== itemList[0] && upgradeCount === 3) {
-            const autoBuyingText = 'For every ' + item.info.name + ' you will generate 0.1 ' + itemList[item.info.ID - 1].info.name + 's.';
-            HTMLEditor(item.div.upgradeDetails, doublingText + '<br>' + autoBuyingText);
-        } else {
-            HTMLEditor(item.div.upgradeDetails, doublingText);
-        }
+    else {
+        HTMLEditor(item.div.upgradeDetails, doublingText);
     }
 }
 
