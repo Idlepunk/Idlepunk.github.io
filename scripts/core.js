@@ -43,8 +43,21 @@ function debugTools() {
             }
         };
         this.showPointerLoc = function() {
-            console.log("x: " + grid.pointerLoc.x, "y: " + grid.pointerLoc.y);
+            const x = grid.coords.pointerLoc.x;
+            const y = grid.coords.pointerLoc.y;
+            console.log("x: " + x, "y: " + y);
+            console.log(grid.maps.connections[y][x], grid.maps.ICEConnections[y][x]);
         };
+        this.hasICE = function() {
+            const x = grid.coords.pointerLoc.x;
+            const y = grid.coords.pointerLoc.y;
+            console.log(grid.maps.ICEPresence[y][x].hasICE)
+        }
+        this.hasAccess = function() {
+            const x = grid.coords.pointerLoc.x;
+            const y = grid.coords.pointerLoc.y;
+            console.log(grid.maps.playerAccess[y][x])
+        }
     }();
 }
 

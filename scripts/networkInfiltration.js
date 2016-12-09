@@ -40,16 +40,13 @@ function netWorkInfiltrationConstructor() {
                 }
             },
             this.ICEAI = {
-                //stepsTaken: 0,
-                //path: null,
-                targets: null,
+                targets: [],
                 isHunting: false,
                 playerActionTaken: false,
                 animation: {
-                    tickLength: 5000,
                     startEvery: 5,
                     tickCount: 0
-                }
+                },
             },
             this.maps = {
                 // Maps are made by drawing these 3 arrays.
@@ -87,6 +84,7 @@ function netWorkInfiltrationConstructor() {
                     [1, 0, 1, 0, 0, 1, 0, 0, 1, 1],
                     [1, 1, 1, 0, 0, 1, 1, 1, 1, 1]
                 ],
+                ICEConnections: [],
                 // Where the player has access to.
                 playerAccess: [
                     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -149,12 +147,6 @@ function netWorkInfiltrationConstructor() {
     }
 
     function shouldICERender(x, y) {
-        // If tickCount is multiple of x
-
-        // Every X ticks, block out cells 0, 4, 8
-        // Every X+1 ticks, block out cell 2, 5, 8
-        // Every X+2 ticks, block out cells 2, 6, 9
-        //console.log(grid.maps.ICEPresence[y][x].steps);
 
         if ((grid.ICEAI.animation.tickCount - grid.maps.ICEPresence[y][x].steps) % grid.ICEAI.animation.startEvery === 0) {
             return false
@@ -202,7 +194,9 @@ function startHackGame() {
     // First time run.
     refreshNetworkInfiltration();
     displayPointerText();
-    //drawPointerOnCell();
+
+    grid.maps.ICEConnections = grid.maps.connections.map(function(arr) {return arr.slice();});
+    getListOfServers();
     ICEHunt(); // Happens asynchronously.
 }
 
@@ -220,7 +214,8 @@ function refreshNetworkInfiltration() {
 }
 
 function updateICEAnimation() {
-    grid.ICEAI.animation.tickCount < grid.ICEAI.animation.tickLength ? grid.ICEAI.animation.tickCount++ : grid.ICEAI.animation.tickCount = 0;
+    grid.ICEAI.animation.tickCount < 1000 ? grid.ICEAI.animation.tickCount++ : grid.ICEAI.animation.tickCount = 0;
+    //grid.ICEAI.animation.tickCount++;
 }
 
 function createGridCoordinates() {
@@ -696,6 +691,8 @@ function checkCanEnableAccessOnCell() {
 
 function enableAccessOnCell(x, y) {
     grid.maps.playerAccess[y][x] = 1;
+    grid.maps.ICEConnections[y][x] = 0;
+    grid.maps.ICEPresence[y][x].hasICE = false;
 }
 
 function checkCellIsAccessed(x, y) {
@@ -728,7 +725,6 @@ function checkAccessRight(x, y) {
 }
 
 function ICEHunt() {
-    getListOfServers();
     getPathsForICETargets();
     //new EasyStar.js().calculate()
     if (grid.ICEAI.isHunting) {
@@ -741,15 +737,13 @@ function ICEHunt() {
 function calculateICEHuntPath(i) {
     const es = new EasyStar.js();
     es.setIterationsPerCalculation(1000);
-    es.setGrid(grid.maps.connections);
+    es.setGrid(grid.maps.ICEConnections);
     es.setAcceptableTiles([1]);
     es.findPath(9, 9, grid.ICEAI.targets[i].x, grid.ICEAI.targets[i].y, function(path) {
         if (path === null) {
             console.log("No possible path for ICE.");
         }
         else {
-            //console.log(path);
-            //return path;
             addICEHuntPath(path, i);
         }
     });
@@ -763,40 +757,34 @@ function getPathsForICETargets() {
 }
 
 function addICEHuntPath(path, i) {
+    // when calculateICEHuntPath() finds a path it will be added here.
     grid.ICEAI.targets[i].path = path;
 }
 
 function getListOfServers() {
     // Populates an array of coordinates where servers exist.
-    // If the array already exists, nothing will happen.
-    if (grid.ICEAI.targets === null) {
-        loopThroughtItemMap();
-    }
-
-    function loopThroughtItemMap() {
-        grid.ICEAI.targets = [];
-        for (let y = 0; y < grid.maps.items.length; y++) {
-            for (let x = 0; x < grid.maps.items.length; x++) {
-                detectServer(x, y);
-            }
+    // These will be used as targets for ICE.
+    for (let y = 0; y < grid.maps.items.length; y++) {
+        for (let x = 0; x < grid.maps.items.length; x++) {
+            detectServer(x, y);
         }
     }
 
     function detectServer(x, y) {
-        if (grid.maps.items[y][x] === 5) {
-            grid.ICEAI.targets.push({
-                x: x,
-                y: y
-            });
+        if (grid.maps.items[y][x] === 5) { // The ID for servers is 5
+            grid.ICEAI.targets.push({x:x, y:y});
         }
     }
 }
 
 function increaseICEHuntSteps() {
+    // ICE will move one step every time the player takes an action.
     for (let i = grid.ICEAI.targets.length - 1; i >= 0; i--) {
+        // If it is a new target, it will not have any steps.
         if (typeof grid.ICEAI.targets[i].stepsTaken === "undefined") {
             grid.ICEAI.targets[i].stepsTaken = 0;
         }
+        // Increase steps until end of path is reached.
         else if (grid.ICEAI.targets[i].stepsTaken < grid.ICEAI.targets[i].path.length) {
             grid.ICEAI.targets[i].stepsTaken++;
         }
@@ -804,10 +792,11 @@ function increaseICEHuntSteps() {
 }
 
 function updateICEHunt() {
-    // This is a clusterfuck
+    // This is a clusterfuck.
+    // There is a list of targets, each target may have a list of steps to reach the target (depending on async pathfinding)
     if (grid.ICEAI.isHunting) { // If ICE has been triggered.
         for (let tarI = grid.ICEAI.targets.length - 1; tarI >= 0; tarI--) { // Loop through ICE targets.
-            if (grid.ICEAI.targets[tarI].path) { // If a path has been found for the target.
+            if (grid.ICEAI.targets[tarI].path) { // If a path has been found to reach the target.
                 for (let stepI = 0; stepI < grid.ICEAI.targets[tarI].stepsTaken; stepI++) { // Loop through the steps in the path.
                     setICEAILocation(tarI, stepI); // Update grid with the current locations of ICE.
                 }
@@ -817,6 +806,28 @@ function updateICEHunt() {
 }
 
 function setICEAILocation(target, step) {
-    grid.maps.ICEPresence[grid.ICEAI.targets[target].path[step].y][grid.ICEAI.targets[target].path[step].x].hasICE = true;
-    grid.maps.ICEPresence[grid.ICEAI.targets[target].path[step].y][grid.ICEAI.targets[target].path[step].x].steps = step;
+    // 
+    if (grid.ICEAI.targets[target].path[step]) {
+        const x = grid.ICEAI.targets[target].path[step].x;
+        const y = grid.ICEAI.targets[target].path[step].y;
+
+        updateCellSteps(x, y, step)
+
+        if (grid.maps.playerAccess[y][x] === 0) {
+            // If the player has not accessed this area, ICE may move here.
+            grid.maps.ICEPresence[y][x].hasICE = true;
+        }
+        else {
+            // If the player has accessed this area, ICE may not move here.
+            grid.maps.ICEPresence[y][x].hasICE = false;
+            // Remove all steps after this one since ICE cannot progress further.
+            grid.ICEAI.targets[target].path.splice(step, Infinity)
+        }
+    }
+}
+
+function updateCellSteps(x, y, step){
+    // So each cell on the ICE path knows how many steps away from the node it is.
+    // Used for animating pulses.
+    grid.maps.ICEPresence[y][x].steps = step;
 }
