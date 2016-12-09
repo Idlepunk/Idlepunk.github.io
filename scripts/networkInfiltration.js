@@ -58,6 +58,7 @@ function netWorkInfiltrationConstructor() {
                 // 3 = firewall
                 // 4 = ICE
                 // 5 = server
+                /*
                 items: [
                     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 4, 0, 0, 0, 0, 0, 0, 0],
@@ -70,8 +71,22 @@ function netWorkInfiltrationConstructor() {
                     [0, 0, 0, 0, 0, 4, 0, 0, 3, 3],
                     [5, 0, 0, 0, 0, 4, 0, 0, 3, 2]
                 ],
+                */
+                items: [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                    [4, 0, 0, 0, 0, 0, 0, 0, 0, 4],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [5, 0, 0, 0, 0, 0, 0, 5, 5, 5],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 5, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+                ],
                 // Where connections should appear running through the grid.
                 // two 1s must be touching to draw a line between those rectangles.
+                /*
                 connections: [
                     [1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
                     [1, 0, 1, 0, 0, 1, 1, 1, 1, 1],
@@ -84,10 +99,23 @@ function netWorkInfiltrationConstructor() {
                     [1, 0, 1, 0, 0, 1, 0, 0, 1, 1],
                     [1, 1, 1, 0, 0, 1, 1, 1, 1, 1]
                 ],
+                */
+                connections: [
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                ],
                 ICEConnections: [],
                 // Where the player has access to.
                 playerAccess: [
-                    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -136,10 +164,16 @@ function netWorkInfiltrationConstructor() {
 
     gridItem.prototype.drawICE = function(x, y) {
         if (grid.maps.ICEPresence[y][x].hasICE) {
-            if (shouldICERender(x, y)) {
+
+            if (    !grid.maps.ICEPresence[y][x].pathIntact) {
+                renderCellInternalOutline(x, y, grid.colors.ICE);
+            }
+
+            else if (shouldICERender(x, y)) {
                 //renderCellInternalOutline(x, y, grid.colors.ICE);
                 renderCellInternalOutline(x, y, grid.colors.ICE);
             }
+
             else {
                 renderCellInternalOutline(x, y, '#FF5900');
             }
@@ -147,7 +181,6 @@ function netWorkInfiltrationConstructor() {
     };
 
     function shouldICERender(x, y) {
-
         if ((grid.ICEAI.animation.tickCount - grid.maps.ICEPresence[y][x].steps) % grid.ICEAI.animation.startEvery === 0) {
             return false;
         }
@@ -686,7 +719,8 @@ function checkPointerOverAccessedCell() {
 
 function checkCanEnableAccessOnCell() {
     // If cell can be changed from unaccessed to accessed.
-    return checkPointerOverLine() && checkPointerNextToAccessArea() && !checkPointerOverAccessedCell();
+    //return checkPointerOverLine() && checkPointerNextToAccessArea() && !checkPointerOverAccessedCell();
+    return true
 }
 
 function enableAccessOnCell(x, y) {
@@ -806,7 +840,6 @@ function updateICEHunt() {
 }
 
 function setICEAILocation(target, step) {
-    // 
     if (grid.ICEAI.targets[target].path[step]) {
         const x = grid.ICEAI.targets[target].path[step].x;
         const y = grid.ICEAI.targets[target].path[step].y;
@@ -816,13 +849,24 @@ function setICEAILocation(target, step) {
         if (grid.maps.playerAccess[y][x] === 0) {
             // If the player has not accessed this area, ICE may move here.
             grid.maps.ICEPresence[y][x].hasICE = true;
+            grid.maps.ICEPresence[y][x].pathIntact = true;
         }
         else {
             // If the player has accessed this area, ICE may not move here.
             grid.maps.ICEPresence[y][x].hasICE = false;
+            
             // Remove all steps after this one since ICE cannot progress further.
-            grid.ICEAI.targets[target].path.splice(step, Infinity);
+            severPath(target,step)
+            grid.ICEAI.targets[target].path.splice(step);
         }
+    }
+}
+
+function severPath(target, step) {
+    for (var i = grid.ICEAI.targets[target].path.length - 1; i >= step; i--) {
+        const x = grid.ICEAI.targets[target].path[i].x
+        const y = grid.ICEAI.targets[target].path[i].y
+        grid.maps.ICEPresence[y][x].pathIntact = false;
     }
 }
 
