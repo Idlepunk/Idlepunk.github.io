@@ -3,6 +3,27 @@
 /*jshint eqeqeq: true */
 /*jshint supernew: true */
 /*jshint multistr: true */
+
+/*
+TODO
+Make each cell its own object containing:
+x,y coords,
+dimensions,
+rendering instructions,
+id,
+name, 
+desc,
+access status,
+access requirements,
+access reward,
+ice status,
+ice path intactness,
+neighbour status (maybe?),
+play action instructions,
+connection status.
+
+At start of game, populate an array with all this information, most can be taken from maps.
+*/
 function netWorkInfiltrationConstructor() {
     window.grid = new function() {
         const canvas = document.getElementById("hackGame");
@@ -74,7 +95,7 @@ function netWorkInfiltrationConstructor() {
                 */
                 items: [
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                    [4, 0, 0, 0, 0, 0, 0, 0, 0, 4],
+                    [4, 4, 0, 0, 0, 0, 0, 0, 0, 4],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [5, 0, 0, 0, 0, 0, 0, 5, 5, 5],
@@ -137,14 +158,24 @@ function netWorkInfiltrationConstructor() {
     };
     createGridCoordinates();
 
-    function gridItem(name, description, requirements, fillColor) {
-        this.name = name;
-        this.description = description;
-        this.requirements = requirements;
-        this.fillColor = fillColor;
+
+}
+    function gridItem(){
+        this.coords = {},
+        this.dimensions = {};
     }
 
-    gridItem.prototype.renderCell = function(x, y) {
+    gridItem.prototype.build = function(d) {
+        this.name = d.name;
+        this.id = d.id;
+        this.description = d.description;
+        this.costMultiplier = d.costMultiplier;
+        this.fillColor = d.fillColor;
+    }
+
+    gridItem.prototype.renderCell = function() {
+        const x = this.coords.x
+        const y = this.coords.y
         this.drawItem(x, y);
         this.drawPlayerAccess(x, y);
         this.drawICE(x, y);
@@ -165,7 +196,7 @@ function netWorkInfiltrationConstructor() {
     gridItem.prototype.drawICE = function(x, y) {
         if (grid.maps.ICEPresence[y][x].hasICE) {
 
-            if (    !grid.maps.ICEPresence[y][x].pathIntact) {
+            if (!grid.maps.ICEPresence[y][x].pathIntact) {
                 renderCellInternalOutline(x, y, grid.colors.ICE);
             }
 
@@ -180,6 +211,12 @@ function netWorkInfiltrationConstructor() {
         }
     };
 
+    gridItem.prototype.playerAction = function(x, y) {
+        if (canEnableAccessAtPointer() && canAfforedAccess(x, y, this.costMultiplier)) {
+            enableAccessOnCell(x, y);
+        } 
+    }
+
     function shouldICERender(x, y) {
         if ((grid.ICEAI.animation.tickCount - grid.maps.ICEPresence[y][x].steps) % grid.ICEAI.animation.startEvery === 0) {
             return false;
@@ -189,45 +226,80 @@ function netWorkInfiltrationConstructor() {
         }
 
     }
-    grid.gridItem = [
-        new gridItem(
-            "Switch", 
-            "There is nothing of import here", 
-            "Requires a Virtual Server to capture", 
-            false),
-        new gridItem(
-            "Entry Node", 
-            "Your attack starts here", 
-            false, 
-            grid.colors.playerAccess),
-        new gridItem(
-            "Node Core", 
-            "Contains large quantities of sensitive information", 
-            "Requires an ICEPick, Dummy Barrier & Virtual Server to capture", 
-            "#283747"),
-        new gridItem(
-            "Firewall", 
-            "Prevents access", 
-            "Requires a Dummy Barrier to capture", 
-            "grey"),
-        new gridItem(
-            "ICE", 
-            "Attacks Intruders", 
-            "Requires an ICE Pick to capture", 
-            "#E74C3C"),
-        new gridItem(
-            "Server", 
-            "Contains information", 
-            "Requires an ICEPick & Dummy Barrier to capture", 
-            "#2980B9")
-    ];
+
+function getItemData(id) {
+    const getData = {
+        0: () => getSwitchConstructionData(),
+        1: () => getEntryNodeConstrutionData(),
+        2: () => getNodeCoreConstructionData(),
+        3: () => getFirewallConstructionData(),
+        4: () => getICEConstructionData(),
+        5: () => getServerConstructionData()
+    }[id]
+    return getData();
+}
+
+function getSwitchConstructionData() {
+    return {
+        name: "Switch",
+        id: 0, 
+        description: "There is nothing of import here",
+        costMultiplier: 1,
+        fillColor: false
+    };
+}
+function getEntryNodeConstrutionData() {
+    return {
+        name: "Entry Node",
+        id: 1, 
+        description: 0, 
+        costMultiplier: false, 
+        fillColor: grid.colors.playerAccess
+    };
+}
+function getNodeCoreConstructionData() {
+    return {
+        name: "Node Core",
+        id: 2, 
+        description: "Contains large quantities of sensitive information", 
+        costMultiplier: 5, 
+        fillColor: "#283747"
+    };
+}
+function getFirewallConstructionData() {
+    return {
+        name: "Firewall",
+        id: 3, 
+        description: "Prevents access", 
+        costMultiplier: 3, 
+        fillColor: "grey"
+    };
+}
+function getICEConstructionData() {
+    return {
+        name: "ICE",
+        id: 4, 
+        description: "Attacks Intruders", 
+        costMultiplier: 0, 
+        fillColor: "#E74C3C"
+    };
+}
+function getServerConstructionData() {
+    return {
+        name: "Server",
+        id: 5, 
+        description: "Contains information", 
+        costMultiplier: 2, 
+        fillColor: "#2980B9"
+    };
 }
 
 function startHackGame() {
     // First time run.
+    populateItemMap();
     refreshNetworkInfiltration();
     displayPointerText();
-
+    // Clones array.
     grid.maps.ICEConnections = grid.maps.connections.map(function(arr) {return arr.slice();});
     getListOfServers();
     ICEHunt(); // Happens asynchronously.
@@ -281,6 +353,26 @@ function populateGrid() {
         }
         gridY++;
         gridX = 0;
+    }
+}
+
+function populateItemMap() {
+    for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
+        for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
+            const itemType = grid.maps.items[y][x];
+            //const itemType = grid.itemType[gridCoord]
+
+            grid.maps.items[y][x] = new gridItem();
+            grid.maps.items[y][x].build(getItemData(itemType));
+
+            grid.maps.items[y][x].coords.x = x;
+            grid.maps.items[y][x].coords.y = y;
+
+            grid.maps.items[y][x].dimensions.x = grid.coords.cellCoords[y][x].x;
+            grid.maps.items[y][x].dimensions.y = grid.coords.cellCoords[y][x].y;
+
+            grid.maps.items[y][x].access = grid.maps.playerAccess[y][x];
+        }
     }
 }
 
@@ -382,8 +474,8 @@ function drawCellItems() {
     // Fills grid in with objects from the .maps.items.
     for (let y = grid.coords.cellCoords.length - 1; y >= 0; y--) {
         for (let x = grid.coords.cellCoords[y].length - 1; x >= 0; x--) {
-            const gridCoord = grid.maps.items[y][x];
-            grid.gridItem[gridCoord].renderCell(x, y);
+            //const gridCoord = grid.maps.items[y][x].id;
+            grid.maps.items[y][x].renderCell();
         }
     }
 }
@@ -414,9 +506,10 @@ function displayPointerText() {
 }
 
 function getPointerText() {
-    const objectType = grid.maps.items[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x];
+    const objectType = grid.maps.items[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x].id;
     // Creates an array of strings.
     // If a string does not apply to the specific object it will be undefined.
+    /*
     let displayText = [];
     displayText.push(getPointerTextName(objectType));
     displayText.push(getPointerTextDesc(objectType));
@@ -430,22 +523,25 @@ function getPointerText() {
             displayText.splice(i, 1);
         }
     }
+
     return displayText;
+    */
+    return 'temp';
 }
 
 function getPointerTextName(objectType) {
-    const text = "<span style=color:" + theme.colorTheme[theme.currentTheme].importantColor + ">" + grid.gridItem[objectType].name + "</span>";
+    const text = "<span style=color:" + theme.colorTheme[theme.currentTheme].importantColor + ">" + grid.itemType[objectType].name + "</span>";
     return text;
     //theme.colorTheme[theme.currentTheme].importantColor
 }
 
 function getPointerTextDesc(objectType) {
-    return grid.gridItem[objectType].description;
+    return grid.itemType[objectType].description;
 }
 
 function getPointerTextRequirements(objectType) {
     if (!checkPointerOverAccessedCell()) {
-        return grid.gridItem[objectType].requirements;
+        return grid.itemType[objectType].requirements;
     }
 }
 
@@ -602,8 +698,9 @@ function movePointerRight() {
 
 function playerAction() {
     // The pointer is interacting with something on the grid.
-    const pointerLocation = grid.maps.items[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x];
+    const pointerLocation = grid.maps.items[grid.coords.pointerLoc.y][grid.coords.pointerLoc.x].id;
     // Things that the player can interact with.
+    //grid.itemType[pointerLocation].playerAction()
     const itemInteractions = {
         0: () => actionOnEmpty(),
         1: () => undefined,
@@ -629,7 +726,7 @@ function actionOnEmpty() {
     // 2. Adjacent to an accessible location.
     // 3. Not already accessed.
     // 4. The player has an item to use here.
-    if (checkCanEnableAccessOnCell() && grid.playerItems.virtualServer >= 1) {
+    if (canEnableAccessAtPointer() && grid.playerItems.virtualServer >= 1) {
         // Remove a virtual server.
         grid.playerItems.virtualServer--;
         // Change this maps.playerAccess location from unaccessed to accessed.
@@ -641,7 +738,7 @@ function actionOnEmpty() {
 function actionOnNodeCore() {
     // If the player attempts an action on the end goal.
     // Should be a win condition.
-    if (checkCanEnableAccessOnCell() && grid.playerItems.ICEPick >= 1 && grid.playerItems.dummyBarrier >= 1 && grid.playerItems.virtualServer >= 1) {
+    if (canEnableAccessAtPointer() && grid.playerItems.ICEPick >= 1 && grid.playerItems.dummyBarrier >= 1 && grid.playerItems.virtualServer >= 1) {
         grid.playerItems.ICEPick--;
         grid.playerItems.dummyBarrier--;
         grid.playerItems.virtualServer--;
@@ -652,7 +749,7 @@ function actionOnNodeCore() {
 
 function actionOnServer() {
     // Should give the player a reward.
-    if (checkCanEnableAccessOnCell() && grid.playerItems.ICEPick >= 1 && grid.playerItems.dummyBarrier) {
+    if (canEnableAccessAtPointer() && grid.playerItems.ICEPick >= 1 && grid.playerItems.dummyBarrier) {
         // Removes items required to access a server.
         grid.playerItems.ICEPick--;
         grid.playerItems.dummyBarrier--;
@@ -686,7 +783,7 @@ function getBestUnlockedItem() {
 
 function actionOnFirewall() {
     // Should block the player until they access it.
-    if (checkCanEnableAccessOnCell() && grid.playerItems.dummyBarrier >= 1) {
+    if (canEnableAccessAtPointer() && grid.playerItems.dummyBarrier >= 1) {
         grid.playerItems.dummyBarrier--;
         enableAccessOnCell(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y);
         grid.ICEAI.playerActionTaken = true;
@@ -695,7 +792,7 @@ function actionOnFirewall() {
 
 function actionOnICE() {
     // Should attack the player until they access it.
-    if (checkCanEnableAccessOnCell() && grid.playerItems.ICEPick >= 1) {
+    if (canEnableAccessAtPointer() && grid.playerItems.ICEPick >= 1) {
         grid.playerItems.ICEPick--;
         enableAccessOnCell(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y);
         grid.ICEAI.isHunting = true;
@@ -717,20 +814,28 @@ function checkPointerOverAccessedCell() {
     return checkCellIsAccessed(grid.coords.pointerLoc.x, grid.coords.pointerLoc.y);
 }
 
-function checkCanEnableAccessOnCell() {
+function canEnableAccessAtPointer() {
     // If cell can be changed from unaccessed to accessed.
-    //return checkPointerOverLine() && checkPointerNextToAccessArea() && !checkPointerOverAccessedCell();
-    return true
+    return checkPointerOverLine() && checkPointerNextToAccessArea() && !checkPointerOverAccessedCell();
+}
+
+function canAfforedAccessAtPointer(x, y, multi) {
+    return gameData.dataHacked >= accessCost(multi);
+}
+
+function accessCost(multi) {
+    return 10 * multi;
 }
 
 function enableAccessOnCell(x, y) {
-    grid.maps.playerAccess[y][x] = 1;
+    //grid.maps.playerAccess[y][x] = 1;
+    grid.maps.items[y][x].access = 1;
     grid.maps.ICEConnections[y][x] = 0;
     grid.maps.ICEPresence[y][x].hasICE = false;
 }
 
 function checkCellIsAccessed(x, y) {
-    return grid.maps.playerAccess[y][x] === 1;
+    return grid.maps.items[y][x].access === 1;
 }
 
 function checkPointerNextToAccessArea() {
@@ -747,7 +852,8 @@ function checkAccessAbove(x, y) {
 }
 
 function checkAccessBelow(x, y) {
-    return y === grid.maps.playerAccess.length - 1 ? false : checkCellIsAccessed(x, y+1);
+    //return y === grid.maps.playerAccess.length - 1 ? false : checkCellIsAccessed(x, y+1);
+    return y === grid.maps.items.length - 1 ? false : checkCellIsAccessed(x, y+1);
 }
 
 function checkAccessLeft(x, y) {
@@ -755,7 +861,8 @@ function checkAccessLeft(x, y) {
 }
 
 function checkAccessRight(x, y) {
-    return x === grid.maps.playerAccess[y].length - 1 ? false : checkCellIsAccessed(x+1, y);
+    //return x === grid.maps.playerAccess[y].length - 1 ? false : checkCellIsAccessed(x+1, y);
+    return x === grid.maps.items[y].length - 1 ? false : checkCellIsAccessed(x+1, y);
 }
 
 function ICEHunt() {
@@ -805,7 +912,7 @@ function getListOfServers() {
     }
 
     function detectServer(x, y) {
-        if (grid.maps.items[y][x] === 5) { // The ID for servers is 5
+        if (grid.maps.items[y][x].id === 5) { // The ID for servers is 5
             grid.ICEAI.targets.push({x:x, y:y});
         }
     }
@@ -846,7 +953,7 @@ function setICEAILocation(target, step) {
 
         updateCellSteps(x, y, step);
 
-        if (grid.maps.playerAccess[y][x] === 0) {
+        if (grid.maps.items[y][x].access === 0) {
             // If the player has not accessed this area, ICE may move here.
             grid.maps.ICEPresence[y][x].hasICE = true;
             grid.maps.ICEPresence[y][x].pathIntact = true;
