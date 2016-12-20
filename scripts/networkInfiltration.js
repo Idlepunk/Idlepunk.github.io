@@ -29,7 +29,9 @@ function netWorkInfiltrationConstructor() {
         };
         this.colors = {
             playerAccess: '#00ff00',
-            ICE: 'red',
+            ICEMain: 'red',
+            ICEAlt: '#FF5900',
+            ICEDead: '#AD4D4D',
             pointer: 'white'
         };
         // Sets the dimensions of cells
@@ -120,46 +122,47 @@ cell.prototype.create = function(e) {
 
 cell.prototype.renderCell = function() {
     if (this.fillColor){
-        this.renderCellFill();
+        this.drawCellFill();
     }
-    this.drawPlayerAccess();
-    this.drawICE();
-    this.drawPointer();
+    this.renderPlayerAccess();
+    this.renderICE();
+    this.renderPointer();
 };
 
-cell.prototype.drawPlayerAccess = function(x, y) {
+cell.prototype.renderPlayerAccess = function(x, y) {
     if (this.access) {
-        //renderCellOutline(x, y, grid.colors.playerAccess);
-        this.renderCellOutline(grid.colors.playerAccess);
+        this.drawCellOutline(grid.colors.playerAccess);
     }
 };
 
-cell.prototype.drawICE = function() {
-    const x = this.coords.x;
-    const y = this.coords.y;
-    ///if (grid.maps.ICEPresence[y][x].hasICE) {
-    if (grid.maps.cells[y][x].ICE.hasICE) {
-        if (!grid.maps.cells[y][x].ICE.pathIntact) {
-            this.renderCellInternalOutline(grid.colors.ICE);
-        }
-        else if (shouldICERender(x, y)) {
-            this.renderCellInternalOutline(grid.colors.ICE);
+cell.prototype.renderICE = function() {
+    if (this.ICE.hasICE) {
+        if (!this.ICE.pathIntact) {
+            // If the path is broken, display the dead ICE color.
+            this.drawCellInternalOutline(grid.colors.ICEDead);
         }
         else {
-            this.renderCellInternalOutline("#FF5900");
+            // Else pick a color based on animation.
+            this.drawCellInternalOutline(this.ICEColorThisTick());
         }
     }
 };
 
-cell.prototype.drawPointer = function() {
+cell.prototype.ICEColorThisTick= function() {
+    // Alternate colors are displayed based on the tick count and how far away the cell is from the exit point.
+    const shouldAltColorRender = (grid.ICEAI.animation.tickCount - this.ICE.steps) % grid.ICEAI.animation.startEvery === 0;
+    return shouldAltColorRender ? grid.colors.ICEAlt : grid.colors.ICEMain;
+}
+
+cell.prototype.renderPointer = function() {
+    // If the pointer is over this cell, display a white outline over it.
     if (grid.pointer.y === this.coords.y && grid.pointer.x === this.coords.x) {
-        this.renderCellOutline("white");
+        this.drawCellOutline("white");
         this.drawPointerText();
     }
 };
 
 cell.prototype.drawPointerText = function() {
-
     HTMLEditor(grid.DOM.pointerDetail,      this.name)
     HTMLEditor(grid.DOM.pointerDescription, this.description)
     HTMLEditor(grid.DOM.pointerCost,        this.getCostToAccess())
@@ -167,7 +170,7 @@ cell.prototype.drawPointerText = function() {
     HTMLEditor(grid.DOM.pointerICE,         this.ICE.hasICE)
 }
 
-cell.prototype.renderCellFill = function(color) {
+cell.prototype.drawCellFill = function(color) {
     // Draws a full color square.
     grid.ctx.lineWidth = "4";
     grid.ctx.fillStyle = color || this.fillColor;
@@ -181,7 +184,7 @@ cell.prototype.renderCellFill = function(color) {
     grid.ctx.fillRect(drawX, drawY, cellWidth, cellHeight);
 };
 
-cell.prototype.renderCellOutline = function(color) {
+cell.prototype.drawCellOutline = function(color) {
     // Draws the outline of a square.
     grid.ctx.lineWidth = "3";
     grid.ctx.strokeStyle = color || this.fillColor;
@@ -195,7 +198,7 @@ cell.prototype.renderCellOutline = function(color) {
     grid.ctx.strokeRect(drawX, drawY, cellWidth, cellHeight);
 };
 
-cell.prototype.renderCellInternalOutline = function(color) {
+cell.prototype.drawCellInternalOutline = function(color) {
     // Draws the outline of a square with somne negative padding.
     const bonusPad = 3;
     grid.ctx.lineWidth = "3";
@@ -210,12 +213,21 @@ cell.prototype.renderCellInternalOutline = function(color) {
     grid.ctx.strokeRect(drawX, drawY, cellWidth, cellHeight);
 };
 
+cell.prototype.clear = function() {
+        // Hides a grid square.
+    const hideX = this.coords.x;
+    const hideY = this.coords.y;
+    const cellWidth = grid.dimensions.cellWidth;
+    const cellHeight = grid.dimensions.cellHeight;
+    grid.ctx.clearRect(hideX, hideY, cellWidth, cellHeight);
+}
+
 cell.prototype.action = function() {
     if (canEnableAccessAtPointer() && this.canAffordAccess()) {
         subtractData(this.getCostToAccess())
         const x = this.coords.x;
         const y = this.coords.y;
-        enableAccessOnCell(x, y);
+        this.enableAccessOnCell();
         if (this.id === 4) {
             grid.ICEAI.isHunting = true;
         }
@@ -223,11 +235,16 @@ cell.prototype.action = function() {
     }
 };
 
-/*
-cell.prototype.hasAccess() = function() {
-    return this.access === 1
+cell.prototype.enableAccessOnCell = function() {
+    // Possible glitch with ICE AI here.
+    this.access = true;
+    grid.maps.ICEConnections[this.coords.y][this.coords.x] = false;
+    this.ICE.hasICE = false;
 }
-*/
+
+cell.prototype.isAccessed = function() {
+    return this.access;
+}
 
 cell.prototype.canAffordAccess = function() {
     return (gameData.dataHacked >= this.getCostToAccess());
@@ -235,16 +252,6 @@ cell.prototype.canAffordAccess = function() {
 
 cell.prototype.getCostToAccess = function() {
     return this.costMultiplier * itemList[getBestUnlockedItem()].itemData.baseCost;
-}
-
-function shouldICERender(x, y) {
-    //if ((grid.ICEAI.animation.tickCount - grid.maps.ICEPresence[y][x].steps) % grid.ICEAI.animation.startEvery === 0) {
-    if ((grid.ICEAI.animation.tickCount - grid.maps.cells[y][x].ICE.steps) % grid.ICEAI.animation.startEvery === 0) {
-        return false;
-    }
-    else {
-        return true;
-    }
 }
 
 function getItemData(id) {
@@ -337,7 +344,7 @@ function startHackGame() {
 function refreshNetworkInfiltration() {
     // Refreshes the UI.
     clearGrid();
-    drawConnectionsBetweenCells();
+    renderCellConnections();
     drawCellBase();
     drawCellItems();
     updateICEHunt();
@@ -345,7 +352,8 @@ function refreshNetworkInfiltration() {
 }
 
 function updateICEAnimation() {
-    grid.ICEAI.animation.tickCount < 1000 ? grid.ICEAI.animation.tickCount++ : grid.ICEAI.animation.tickCount = 0;
+    //grid.ICEAI.animation.tickCount < 1000 ? grid.ICEAI.animation.tickCount++ : grid.ICEAI.animation.tickCount = 0;
+    grid.ICEAI.animation.tickCount++;
 }
 
 function clearGrid() {
@@ -431,21 +439,12 @@ function renderLineBetweenCells(startCellX, startCellY, endCellX, endCellY, colo
     grid.ctx.stroke();
 }
 
-function clearCellRendering(x, y) {
-    // Hides a grid square.
-    const hideX = grid.coords.cellCoords[y][x].x;
-    const hideY = grid.coords.cellCoords[y][x].y;
-    const cellWidth = grid.dimensions.cellWidth;
-    const cellHeight = grid.dimensions.cellHeight;
-    grid.ctx.clearRect(hideX, hideY, cellWidth, cellHeight);
-}
-
 function drawCellBase() {
     // Draws the grid based on coordinates.
     for (let y = grid.maps.cells.length - 1; y >= 0; y--) {
         for (let x = grid.maps.cells[y].length - 1; x >= 0; x--) {
-            //renderCellOutline(x, y, theme.colorTheme[theme.currentTheme].bodyColor);
-            grid.maps.cells[y][x].renderCellOutline(theme.colorTheme[theme.currentTheme].bodyColor);
+            //drawCellOutline(x, y, theme.colorTheme[theme.currentTheme].bodyColor);
+            grid.maps.cells[y][x].drawCellOutline(theme.colorTheme[theme.currentTheme].bodyColor);
         }
     }
 }
@@ -460,57 +459,42 @@ function drawCellItems() {
     }
 }
 
-function drawConnectionsBetweenCells() {
+function renderCellConnections() {
     // Draws horizontal lines from maps.connections.
     for (let y = grid.maps.cells.length - 1; y >= 0; y--) {
         for (let x = grid.maps.cells[y].length - 1; x >= 0; x--) {
-            drawHorizontalLines(x, y);
-            drawVerticalLines(x, y);
+            renderLinesWhereConnectionsExist(x, y);
         }
     }
 }
 
-function drawHorizontalLines(x, y) {
-    if (checkForXLineNeighbour(x, y)) {
-        // Two adjacent cells that have access will have a green line between them.
-        if (checkCellIsAccessed(x, y) && isCellToRightAccessed(x, y)) {
-            renderLineBetweenCells(x, y, x + 1, y, grid.colors.playerAccess);
-        }
-        // If one or both do not have access, the default color will be applied.
-        else {
-            renderLineBetweenCells(x, y, x + 1, y, theme.colorTheme[theme.currentTheme].importantColor);
-        }
-        // Covers lines that enter cells.
-        grid.maps.cells[y][x].renderCellFill("black");
-        grid.maps.cells[y][x + 1].renderCellFill("black");
+function renderLinesWhereConnectionsExist(x, y) {
+    if (connectionRightOfCell(x, y)) {
+        renderLinesByAccess(x, y, x + 1, y)
+    }
+    if (connectionLeftOfCell(x, y)) {
+        renderLinesByAccess(x, y, x, y + 1)
     }
 }
 
-function drawVerticalLines(x, y) {
-    if (checkForYLineNeighbour(x, y)) {
-        // Two adjacent cells that have access will have a green line between them.
-        if (checkCellIsAccessed(x, y) && isCellBelowAccessed(x, y)) {
-            renderLineBetweenCells(x, y, x, y + 1, grid.colors.playerAccess);
-        }
-        // If one or both do not have access, the default color will be applied.
-        else {
-            renderLineBetweenCells(x, y, x, y + 1, theme.colorTheme[theme.currentTheme].importantColor);
-        }
-        // Covers lines that overlap cells.
-        //renderCellFill(x, y, "black");
-        //renderCellFill(x, y + 1, "black");
-        grid.maps.cells[y][x].renderCellFill("black");
-        grid.maps.cells[y + 1][x].renderCellFill("black");
+function renderLinesByAccess(startX, startY, endX, endY) {
+    if (grid.maps.cells[startY][startX].isAccessed() && grid.maps.cells[endY][endX].isAccessed()) {
+        renderLineBetweenCells(startX, startY, endX, endY, grid.colors.playerAccess);
     }
+    else {
+        renderLineBetweenCells(startX, startY, endX, endY, theme.colorTheme[theme.currentTheme].importantColor);
+    }
+    grid.maps.cells[startY][startX].drawCellFill("black");
+    grid.maps.cells[endY][endX].drawCellFill("black");
 }
 
-function checkForXLineNeighbour(x, y) {
+function connectionRightOfCell(x, y) {
     // Checks if there is a 1 to the right of x on the lineMap.
     // If x is on a rightmost cell, nothing can be to the right of it so return false.
     return x === grid.maps.connections[y].length - 1 ? false : grid.maps.connections[y][x] && grid.maps.connections[y][x + 1];
 }
 
-function checkForYLineNeighbour(x, y) {
+function connectionLeftOfCell(x, y) {
     // Checks if there is a 1 below y in the lineMap.
     return y === grid.maps.connections[x].length - 1 ? false : grid.maps.connections[y][x] && grid.maps.connections[y + 1][x];
 }
@@ -617,7 +601,7 @@ function isPointerOverConnectionCell() {
 }
 
 function isPointerOverAccessedCell() {
-    return checkCellIsAccessed(grid.pointer.x, grid.pointer.y);
+    return grid.maps.cells[grid.pointer.y][grid.pointer.x].isAccessed()
 }
 
 function canEnableAccessAtPointer() {
@@ -629,17 +613,6 @@ function canEnableAccessAtPointer() {
     return isPointerOverConnectionCell() && isPointerAdjacentToAccessedCell() && !isPointerOverAccessedCell();
 }
 
-function enableAccessOnCell(x, y) {
-    grid.maps.cells[y][x].access = true;
-    // ICE is cannot exist where the player has access.
-    grid.maps.ICEConnections[y][x] = false;
-    grid.maps.cells[y][x].ICE.hasICE = false;
-}
-
-function checkCellIsAccessed(x, y) {
-    return grid.maps.cells[y][x].access;
-}
-
 function isPointerAdjacentToAccessedCell() {
     const x = grid.pointer.x;
     const y = grid.pointer.y;
@@ -647,19 +620,19 @@ function isPointerAdjacentToAccessedCell() {
 }
 
 function isCellAboveAccessed(x, y) {
-    return y === 0 ? false : checkCellIsAccessed(x, y - 1);
+    return y === 0 ? false : grid.maps.cells[y - 1][x].isAccessed();
 }
 
 function isCellBelowAccessed(x, y) {
-    return y === grid.maps.cells.length - 1 ? false : checkCellIsAccessed(x, y + 1);
+    return y === grid.maps.cells.length - 1 ? false : grid.maps.cells[y + 1][x].isAccessed();
 }
 
 function isCellToLeftAccessed(x, y) {
-    return x === 0 ? false : checkCellIsAccessed(x - 1, y);
+    return x === 0 ? false : grid.maps.cells[y][x - 1].isAccessed();
 }
 
 function isCellToRightAccessed(x, y) {
-    return x === grid.maps.cells[y].length - 1 ? false : checkCellIsAccessed(x + 1, y);
+    return x === grid.maps.cells[y].length - 1 ? false : grid.maps.cells[y][x + 1].isAccessed();
 }
 
 function ICEHunt() {
@@ -782,7 +755,6 @@ function severPath(target, step) {
 function updateCellSteps(x, y, step) {
     // So each cell on the ICE path knows how many steps away from the node it is.
     // Used for animating pulses.
-    //grid.maps.ICEPresence[y][x].steps = step;
     grid.maps.cells[y][x].ICE.steps = step;
 }
 
