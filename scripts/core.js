@@ -58,6 +58,11 @@ function debugTools() {
             const y = grid.coords.pointerLoc.y;
             console.log(grid.maps.playerAccess[y][x]);
         };
+        this.showPointerStatus = function(){
+            const x = grid.pointer.x;
+            const y = grid.pointer.y;
+            console.log(grid.maps.items[y][x]);   
+        }
     }();
 }
 
@@ -195,6 +200,7 @@ function startUp() {
     runConstructors();
     itemTemplates();
     addData(gameData.BIC); // Adds data equal to the cost of the first item.
+    addData(10e10);
     //load();
     showGame();
     startHackGame();

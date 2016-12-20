@@ -4,26 +4,6 @@
 /*jshint supernew: true */
 /*jshint multistr: true */
 
-/*
-TODO
-Make each cell its own object containing:
-x,y coords,
-dimensions,
-rendering instructions,
-id,
-name, 
-desc,
-access status,
-access requirements,
-access reward,
-ice status,
-ice path intactness,
-neighbour status (maybe?),
-play action instructions,
-connection status.
-
-At start of game, populate an array with all this information, most can be taken from maps.
-*/
 function netWorkInfiltrationConstructor() {
     window.grid = new function() {
         const canvas = document.getElementById("hackGame");
@@ -100,8 +80,7 @@ function netWorkInfiltrationConstructor() {
                     [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
                     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
                 ],
-            ICEConnections: [],
-            // Where the player has access to.
+            // Where the player has access to at the start of the game.
             playerAccess: [
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -114,14 +93,9 @@ function netWorkInfiltrationConstructor() {
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                 ],
-            // Where ICE is currently located.
-            ICEPresence: []
         };
-        this.playerItems = {
-            ICEPick: 30,
-            dummyBarrier: 30,
-            virtualServer: 30
-        };
+        // Clones connections map into ICEConnections
+        this.maps.ICEConnections = this.maps.connections.map(function(arr) {return arr.slice();});
     };
 }
 
@@ -130,12 +104,12 @@ function cell() {
     this.dimensions = {};
 }
 
-cell.prototype.build = function(d) {
-    this.name = d.name;
-    this.id = d.id;
-    this.description = d.description;
-    this.costMultiplier = d.costMultiplier;
-    this.fillColor = d.fillColor;
+cell.prototype.create = function(e) {
+    this.name = e.name;
+    this.id = e.id;
+    this.description = e.description;
+    this.costMultiplier = e.costMultiplier;
+    this.fillColor = e.fillColor;
 };
 
 cell.prototype.renderCell = function() {
@@ -147,7 +121,6 @@ cell.prototype.renderCell = function() {
 
 cell.prototype.drawItem = function(x, y) {
     if (this.fillColor) {
-        //renderCellFill(x, y, this.fillColor);
         this.renderCellFill();
     }
 };
@@ -162,20 +135,15 @@ cell.prototype.drawPlayerAccess = function(x, y) {
 cell.prototype.drawICE = function() {
     const x = this.coords.x;
     const y = this.coords.y;
-    if (grid.maps.ICEPresence[y][x].hasICE) {
-
-        if (!grid.maps.ICEPresence[y][x].pathIntact) {
+    ///if (grid.maps.ICEPresence[y][x].hasICE) {
+    if (grid.maps.items[y][x].ICE.hasICE) {
+        if (!grid.maps.items[y][x].ICE.pathIntact) {
             this.renderCellInternalOutline(grid.colors.ICE);
         }
-
         else if (shouldICERender(x, y)) {
-            //renderCellInternalOutline(x, y, grid.colors.ICE);
-            //renderCellInternalOutline(x, y, grid.colors.ICE);
             this.renderCellInternalOutline(grid.colors.ICE);
         }
-
         else {
-            //renderCellInternalOutline(x, y, '#FF5900');
             this.renderCellInternalOutline("#FF5900");
         }
     }
@@ -230,20 +198,41 @@ cell.prototype.renderCellInternalOutline = function(color) {
     grid.ctx.strokeRect(drawX, drawY, cellWidth, cellHeight);
 };
 
-cell.prototype.playerAction = function(x, y) {
-    if (canEnableAccessAtPointer() && canAfforedAccess(x, y, this.costMultiplier)) {
+cell.prototype.action = function() {
+    if (canEnableAccessAtPointer() && this.canAffordAccess()) {
+        subtractData(this.getCostToAccess())
+        const x = this.coords.x;
+        const y = this.coords.y;
         enableAccessOnCell(x, y);
+        if (this.id === 4) {
+            grid.ICEAI.isHunting = true;
+        }
+        /*
+        if (grid.ICEAI.playerActionTaken) {
+            grid.ICEAI.playerActionTaken = false;
+            ICEHunt();
+        }
+        */
+        ICEHunt();
     }
 };
 
+cell.prototype.canAffordAccess = function() {
+    return (gameData.dataHacked >= this.getCostToAccess());
+}
+
+cell.prototype.getCostToAccess = function() {
+    return this.costMultiplier * itemList[getBestUnlockedItem()].itemData.baseCost;
+}
+
 function shouldICERender(x, y) {
-    if ((grid.ICEAI.animation.tickCount - grid.maps.ICEPresence[y][x].steps) % grid.ICEAI.animation.startEvery === 0) {
+    //if ((grid.ICEAI.animation.tickCount - grid.maps.ICEPresence[y][x].steps) % grid.ICEAI.animation.startEvery === 0) {
+    if ((grid.ICEAI.animation.tickCount - grid.maps.items[y][x].ICE.steps) % grid.ICEAI.animation.startEvery === 0) {
         return false;
     }
     else {
         return true;
     }
-
 }
 
 function getItemData(id) {
@@ -320,23 +309,19 @@ function getServerConstructionData() {
 
 function startHackGame() {
     // First time run.
-    gridDimensions();
+    //gridDimensions();
     populateItemMap();
     populateGrid();
 
     refreshNetworkInfiltration();
     displayPointerText();
-    // Clones array.
-    grid.maps.ICEConnections = grid.maps.connections.map(function(arr) {
-        return arr.slice();
-    });
+
     getListOfServers();
     ICEHunt(); // Happens asynchronously.
 }
 
 function refreshNetworkInfiltration() {
     // Refreshes the UI.
-    updateItemCountDisplay();
     displayPointerText();
     grid.ctx.clearRect(0, 0, grid.dimensions.gridWidth, grid.dimensions.gridHeight);
     drawConnectionsBetweenCells();
@@ -352,6 +337,7 @@ function updateICEAnimation() {
     //grid.ICEAI.animation.tickCount++;
 }
 
+/*
 function gridDimensions() {
     // Creates empty 2d grid based on how many cells can fit inside.
     const cellNumX = grid.dimensions.cellNumX;
@@ -363,6 +349,7 @@ function gridDimensions() {
         grid.maps.ICEPresence[i] = [];
     }
 }
+*/
 
 function populateGrid() {
     // Creates coords for individual cells.
@@ -372,7 +359,7 @@ function populateGrid() {
     for (let y = 1; y < grid.dimensions.gridHeight; y += grid.dimensions.cellHeight) {
         for (let x = 1; x < grid.dimensions.gridWidth; x += grid.dimensions.cellWidth) {
             insertCellCoord(x, y, gridX, gridY);
-            insertICEStatus(x, y, gridX, gridY);
+            //insertICEStatus(x, y, gridX, gridY);
             gridX++;
         }
         gridY++;
@@ -387,11 +374,19 @@ function insertCellCoord(coordX, coordY, cellX, cellY) {
     };
 }
 
-function insertICEStatus(x, y, cellX, cellY) {
+function insertICEStatus(x, y) {
+    /*
     grid.maps.ICEPresence[cellY][cellX] = {
         hasICE: false,
         offsetAnimation: (10 - cellX) + (10 - cellY)
     };
+    */
+    return {
+        hasICE: false,
+        pathIntact: true,
+        animationOffset: (grid.dimensions.cellNumX - x) + (grid.dimensions.cellNumY - y)
+    }
+
 }
 
 function populateItemMap() {
@@ -401,7 +396,7 @@ function populateItemMap() {
             //const itemType = grid.itemType[gridCoord]
 
             grid.maps.items[y][x] = new cell();
-            grid.maps.items[y][x].build(getItemData(itemType));
+            grid.maps.items[y][x].create(getItemData(itemType));
 
             grid.maps.items[y][x].coords.x = x;
             grid.maps.items[y][x].coords.y = y;
@@ -410,6 +405,8 @@ function populateItemMap() {
             //grid.maps.items[y][x].dimensions.y = grid.coords.cellCoords[y][x].y;
 
             grid.maps.items[y][x].access = grid.maps.playerAccess[y][x];
+
+            grid.maps.items[y][x].ICE = insertICEStatus(x, y);
         }
     }
 }
@@ -446,13 +443,6 @@ function clearCellRendering(x, y) {
     const cellWidth = grid.dimensions.cellWidth;
     const cellHeight = grid.dimensions.cellHeight;
     grid.ctx.clearRect(hideX, hideY, cellWidth, cellHeight);
-}
-
-function updateItemCountDisplay() {
-    //Updates the displayed number of items.
-    HTMLEditor("gridItemICEPick", grid.playerItems.ICEPick);
-    HTMLEditor("gridItemDummyBarrier", grid.playerItems.dummyBarrier);
-    HTMLEditor("gridItemVirtualServer", grid.playerItems.virtualServer);
 }
 
 function drawCellBase() {
@@ -548,7 +538,8 @@ function getPointerTextAccess() {
 function getPointerTextICE() {
     const x = grid.pointer.x;
     const y = grid.pointer.y;
-    return grid.maps.ICEPresence[y][x].hasICE ? "<span style='color:red'>ICE</span> is present here" : undefined;
+    //return grid.maps.ICEPresence[y][x].hasICE ? "<span style='color:red'>ICE</span> is present here" : undefined;
+    return grid.maps.items[y][x].ICE.hasICE ? "<span style='color:red'>ICE</span> is present here" : undefined;
 }
 
 function getPointerTextServerReward(objectType) {
@@ -698,67 +689,7 @@ function movePointerRight() {
 }
 
 function playerAction() {
-    // The pointer is interacting with something on the grid.
-    const pointerLocation = grid.maps.items[grid.pointer.y][grid.pointer.x].id;
-    // Things that the player can interact with.
-    //grid.itemType[pointerLocation].playerAction()
-    const itemInteractions = {
-        0: () => actionOnEmpty(),
-        1: () => undefined,
-        2: () => actionOnNodeCore(),
-        3: () => actionOnFirewall(),
-        4: () => actionOnICE(),
-        5: () => actionOnServer()
-    }[pointerLocation];
-    // If the pointer is over an interactable thing.
-    if (itemInteractions) {
-        itemInteractions();
-        updateItemCountDisplay();
-    }
-    if (grid.ICEAI.playerActionTaken) {
-        grid.ICEAI.playerActionTaken = false;
-        ICEHunt();
-    }
-}
-
-function actionOnEmpty() {
-    // If the target is:
-    // 1. On a line.
-    // 2. Adjacent to an accessible location.
-    // 3. Not already accessed.
-    // 4. The player has an item to use here.
-    if (canEnableAccessAtPointer() && grid.playerItems.virtualServer >= 1) {
-        // Remove a virtual server.
-        grid.playerItems.virtualServer--;
-        // Change this maps.playerAccess location from unaccessed to accessed.
-        enableAccessOnCell(grid.pointer.x, grid.pointer.y);
-        grid.ICEAI.playerActionTaken = true;
-    }
-}
-
-function actionOnNodeCore() {
-    // If the player attempts an action on the end goal.
-    // Should be a win condition.
-    if (canEnableAccessAtPointer() && grid.playerItems.ICEPick >= 1 && grid.playerItems.dummyBarrier >= 1 && grid.playerItems.virtualServer >= 1) {
-        grid.playerItems.ICEPick--;
-        grid.playerItems.dummyBarrier--;
-        grid.playerItems.virtualServer--;
-        enableAccessOnCell(grid.pointer.x, grid.pointer.y);
-        grid.ICEAI.playerActionTaken = true;
-    }
-}
-
-function actionOnServer() {
-    // Should give the player a reward.
-    if (canEnableAccessAtPointer() && grid.playerItems.ICEPick >= 1 && grid.playerItems.dummyBarrier) {
-        // Removes items required to access a server.
-        grid.playerItems.ICEPick--;
-        grid.playerItems.dummyBarrier--;
-        // Mark location accessed.
-        enableAccessOnCell(grid.pointer.x, grid.pointer.y);
-        giveDataReward();
-        grid.ICEAI.playerActionTaken = true;
-    }
+    grid.maps.items[grid.pointer.y][grid.pointer.x].action();
 }
 
 function giveDataReward() {
@@ -782,29 +713,6 @@ function getBestUnlockedItem() {
     return 0;
 }
 
-function actionOnFirewall() {
-    // Should block the player until they access it.
-    if (canEnableAccessAtPointer() && grid.playerItems.dummyBarrier >= 1) {
-        grid.playerItems.dummyBarrier--;
-        enableAccessOnCell(grid.pointer.x, grid.pointer.y);
-        grid.ICEAI.playerActionTaken = true;
-    }
-}
-
-function actionOnICE() {
-    // Should attack the player until they access it.
-    if (canEnableAccessAtPointer() && grid.playerItems.ICEPick >= 1) {
-        grid.playerItems.ICEPick--;
-        enableAccessOnCell(grid.pointer.x, grid.pointer.y);
-        grid.ICEAI.isHunting = true;
-        grid.ICEAI.playerActionTaken = true;
-    }
-}
-
-function checkCellIsOnALine() {
-
-}
-
 function checkPointerOverLine() {
     // Checks if the pointer is over a line.
     return grid.maps.connections[grid.pointer.y][grid.pointer.x] === 1;
@@ -820,19 +728,12 @@ function canEnableAccessAtPointer() {
     return checkPointerOverLine() && checkPointerNextToAccessArea() && !checkPointerOverAccessedCell();
 }
 
-function canAfforedAccessAtPointer(x, y, multi) {
-    return gameData.dataHacked >= accessCost(multi);
-}
-
-function accessCost(multi) {
-    return 10 * multi;
-}
-
 function enableAccessOnCell(x, y) {
     //grid.maps.playerAccess[y][x] = 1;
     grid.maps.items[y][x].access = 1;
     grid.maps.ICEConnections[y][x] = 0;
-    grid.maps.ICEPresence[y][x].hasICE = false;
+    //grid.maps.ICEPresence[y][x].hasICE = false;
+    grid.maps.items[y][x].ICE.hasICE = false;
 }
 
 function checkCellIsAccessed(x, y) {
@@ -959,12 +860,14 @@ function setICEAILocation(target, step) {
 
         if (grid.maps.items[y][x].access === 0) {
             // If the player has not accessed this area, ICE may move here.
-            grid.maps.ICEPresence[y][x].hasICE = true;
-            grid.maps.ICEPresence[y][x].pathIntact = true;
+            //grid.maps.ICEPresence[y][x].hasICE = true;
+            grid.maps.items[y][x].ICE.hasICE = true;
+            //grid.maps.ICEPresence[y][x].pathIntact = true;
+            grid.maps.items[y][x].ICE.pathIntact = true;
         }
         else {
             // If the player has accessed this area, ICE may not move here.
-            grid.maps.ICEPresence[y][x].hasICE = false;
+            grid.maps.items[y][x].ICE.hasICE = false;
 
             // Remove all steps after this one since ICE cannot progress further.
             severPath(target, step);
@@ -977,12 +880,14 @@ function severPath(target, step) {
     for (var i = grid.ICEAI.targets[target].path.length - 1; i >= step; i--) {
         const x = grid.ICEAI.targets[target].path[i].x;
         const y = grid.ICEAI.targets[target].path[i].y;
-        grid.maps.ICEPresence[y][x].pathIntact = false;
+        //grid.maps.ICEPresence[y][x].pathIntact = false;
+        grid.maps.items[y][x].ICE.pathIntact = false;
     }
 }
 
 function updateCellSteps(x, y, step) {
     // So each cell on the ICE path knows how many steps away from the node it is.
     // Used for animating pulses.
-    grid.maps.ICEPresence[y][x].steps = step;
+    //grid.maps.ICEPresence[y][x].steps = step;
+    grid.maps.items[y][x].ICE.steps = step;
 }
