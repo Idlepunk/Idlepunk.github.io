@@ -16,6 +16,7 @@
 // Debug tools.
 function debugTools() {
     window.debug = new function() {
+        // For main game.
         this.addAllitems = function() {
             for (let i = itemList.length - 1; i >= 0; i--) {
                 itemList[i].itemData.itemCount = 1e99;
@@ -42,26 +43,23 @@ function debugTools() {
                 prestigePrint();
             }
         };
-        this.showPointerLoc = function() {
-            const x = grid.coords.pointerLoc.x;
-            const y = grid.coords.pointerLoc.y;
+        // For network game.
+        this.selectorLocation = function() {
+            const x = grid.selector.x   ;
+            const y = grid.selector.y;
             console.log("x: " + x, "y: " + y);
-            console.log(grid.maps.connections[y][x], grid.maps.ICEConnections[y][x]);
         };
-        this.hasICE = function() {
-            const x = grid.coords.pointerLoc.x;
-            const y = grid.coords.pointerLoc.y;
-            console.log(grid.maps.ICEPresence[y][x].hasICE);
+        this.selectorICEStatus = function() {
+            const x = grid.selector.x;
+            const y = grid.selector.y;
+            console.log("Has ICE: " + grid.cells[y][x].ICE.hasICE);
+            console.log("Has ICE Connection: " + grid.cells[y][x].ICE.connection);
+            console.log("ICE path Intact: " + grid.cells[y][x].ICE.pathIntact);
         };
-        this.hasAccess = function() {
-            const x = grid.coords.pointerLoc.x;
-            const y = grid.coords.pointerLoc.y;
-            console.log(grid.maps.playerAccess[y][x]);
-        };
-        this.showPointerStatus = function(){
-            const x = grid.pointer.x;
-            const y = grid.pointer.y;
-            console.log(grid.maps.items[y][x]);   
+        this.selectorCellStatus = function(){
+            const x = grid.selector.x;
+            const y = grid.selector.y;
+            console.log(grid.cells[y][x]);   
         }
     }();
 }
