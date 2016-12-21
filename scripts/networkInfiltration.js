@@ -9,6 +9,7 @@ TODO:
 -Work out the difference between rendering and drawing.
 -More prototypes.
 -Refactor ICE.
+-Rename classes with UpperCamelCase.
 */
 
 function netWorkInfiltrationConstructor() {
@@ -65,7 +66,7 @@ function netWorkInfiltrationConstructor() {
             // The game level is made by drawing these 3 arrays.
             // All the arrays will get merged into the cells array.
 
-            // This determines what items are in what cell:
+            // This determines what items are in what Cell:
             // The number corresponds to what item will be in that array position.
             // 0 = blank
             // 1 = start
@@ -118,7 +119,7 @@ function netWorkInfiltrationConstructor() {
     };
 }
 
-class cell {
+class Cell {
     constructor(x, y){
         this.coords = {x: x, y: y};
         this.dimensions = {};
@@ -128,7 +129,7 @@ class cell {
     }
 }   
 
-class switch_ extends cell {
+class Switch extends Cell {
     constructor(x, y) {
         super(x, y);
         this.createSpecificItem({
@@ -141,7 +142,7 @@ class switch_ extends cell {
     }
 }
 
-class entryNode_ extends cell {
+class EntryNode extends Cell {
     constructor(x, y) {
         super(x, y);
         this.createSpecificItem({
@@ -154,7 +155,7 @@ class entryNode_ extends cell {
     }
 }
 
-class nodeCore_ extends cell {
+class NodeCore extends Cell {
     constructor(x, y) {
         super(x, y);
         this.createSpecificItem({
@@ -167,7 +168,7 @@ class nodeCore_ extends cell {
     }
 }
 
-class firewall_ extends cell {
+class Firewall extends Cell {
     constructor(x, y) {
         super(x, y);
         this.createSpecificItem({
@@ -180,7 +181,7 @@ class firewall_ extends cell {
     }
 }
 
-class ICE_ extends cell {
+class ICE extends Cell {
     constructor(x, y) {
         super(x, y);
         this.createSpecificItem({
@@ -193,7 +194,7 @@ class ICE_ extends cell {
     }
 }
 
-class server_ extends cell {
+class server_ extends Cell {
     constructor(x, y) {
         super(x, y);
         this.createSpecificItem({
@@ -206,7 +207,7 @@ class server_ extends cell {
     }
 }
 
-cell.prototype.setDefaultICEStatus = function () {
+Cell.prototype.setDefaultICEStatus = function () {
     this.ICE = {
         hasICE: false,
         pathIntact: true,
@@ -215,7 +216,7 @@ cell.prototype.setDefaultICEStatus = function () {
     };
 };
 
-cell.prototype.createSpecificItem = function(e) {
+Cell.prototype.createSpecificItem = function(e) {
     this.name = e.name;
     this.id = e.id;
     this.description = e.description;
@@ -223,7 +224,7 @@ cell.prototype.createSpecificItem = function(e) {
     this.fillColor = e.fillColor;
 };
 
-cell.prototype.renderCell = function() {
+Cell.prototype.renderCell = function() {
     if (this.fillColor){
         this.drawCellFill();
     }
@@ -232,13 +233,13 @@ cell.prototype.renderCell = function() {
     this.renderSelector();
 };
 
-cell.prototype.renderPlayerAccess = function(x, y) {
+Cell.prototype.renderPlayerAccess = function(x, y) {
     if (this.access) {
         this.drawCellOutline(grid.colors.playerAccess);
     }
 };
 
-cell.prototype.renderICE = function() {
+Cell.prototype.renderICE = function() {
     if (this.ICE.hasICE) {
         if (!this.ICE.pathIntact) {
             // If the path is broken, display the dead ICE color.
@@ -251,21 +252,21 @@ cell.prototype.renderICE = function() {
     }
 };
 
-cell.prototype.ICEColorThisTick= function() {
-    // Alternate colors are displayed based on the tick count and how far away the cell is from the exit point.
+Cell.prototype.ICEColorThisTick= function() {
+    // Alternate colors are displayed based on the tick count and how far away the Cell is from the exit point.
     const shouldAltColorRender = (grid.ICEAI.animation.tickCount - this.ICE.steps) % grid.ICEAI.animation.startEvery === 0;
     return shouldAltColorRender ? grid.colors.ICEAlt : grid.colors.ICEMain;
 };
 
-cell.prototype.renderSelector = function() {
-    // If the selector is over this cell, display a white outline over it.
+Cell.prototype.renderSelector = function() {
+    // If the selector is over this Cell, display a white outline over it.
     if (grid.selector.y === this.coords.y && grid.selector.x === this.coords.x) {
         this.drawCellOutline("white");
         this.drawSelectorText();
     }
 };
 
-cell.prototype.drawSelectorText = function() {
+Cell.prototype.drawSelectorText = function() {
     // TODO.
     /*
     HTMLEditor(grid.DOM.selectorDetail,      this.name);
@@ -276,7 +277,7 @@ cell.prototype.drawSelectorText = function() {
     */
 };
 
-cell.prototype.drawCellFill = function(color) {
+Cell.prototype.drawCellFill = function(color) {
     // Draws a full color square.
     grid.ctx.lineWidth = "4";
     grid.ctx.fillStyle = color || this.fillColor;
@@ -290,7 +291,7 @@ cell.prototype.drawCellFill = function(color) {
     grid.ctx.fillRect(drawX, drawY, cellWidth, cellHeight);
 };
 
-cell.prototype.drawCellOutline = function(color) {
+Cell.prototype.drawCellOutline = function(color) {
     // Draws the outline of a square.
     grid.ctx.lineWidth = "3";
     grid.ctx.strokeStyle = color || this.fillColor;
@@ -304,7 +305,7 @@ cell.prototype.drawCellOutline = function(color) {
     grid.ctx.strokeRect(drawX, drawY, cellWidth, cellHeight);
 };
 
-cell.prototype.drawCellInternalOutline = function(color) {
+Cell.prototype.drawCellInternalOutline = function(color) {
     // Draws the outline of a square with some negative padding.
     const bonusPad = 3;
     grid.ctx.lineWidth = "3";
@@ -319,7 +320,7 @@ cell.prototype.drawCellInternalOutline = function(color) {
     grid.ctx.strokeRect(drawX, drawY, cellWidth, cellHeight);
 };
 
-cell.prototype.takeAction = function() {
+Cell.prototype.takeAction = function() {
     if (canEnableAccessAtSelector() && this.canAffordAccess()) {
         subtractData(this.getCostToAccess());
         const x = this.coords.x;
@@ -333,24 +334,24 @@ cell.prototype.takeAction = function() {
     }
 };
 
-cell.prototype.enableAccessOnCell = function() {
+Cell.prototype.enableAccessOnCell = function() {
     // Possible glitch with ICE AI here.
     this.access = true;
     grid.cells[this.coords.y][this.coords.x].ICE.connection = false;
     this.ICE.hasICE = false;
 };
 
-cell.prototype.isAccessed = function() {
+Cell.prototype.isAccessed = function() {
     // Yeah... this is fairly pointless...
     // TODO.
     return this.access;
 };
 
-cell.prototype.canAffordAccess = function() {
+Cell.prototype.canAffordAccess = function() {
     return (gameData.dataHacked >= this.getCostToAccess());
 };
 
-cell.prototype.getCostToAccess = function() {
+Cell.prototype.getCostToAccess = function() {
     return this.costMultiplier * itemList[getBestUnlockedItem()].itemData.baseCost;
 };
 
@@ -434,7 +435,7 @@ function createCellMap() {
 }
 
 function populateCellMap() {
-    // Populates the cell map with cell data.
+    // Populates the Cell map with Cell data.
     for (let y = grid.levelBuilder.items.length - 1; y >= 0; y--) {
         for (let x = grid.levelBuilder.items[y].length - 1; x >= 0; x--) {
             createCell(x, y);
@@ -443,7 +444,7 @@ function populateCellMap() {
 }
 
 function createCell(x, y) {
-    // Creates an item cell based on what item is in the level builder items array.
+    // Creates an item Cell based on what item is in the level builder items array.
     const itemID = grid.levelBuilder.items[y][x];
     const itemClass = getItemClass(itemID);
     grid.cells[y][x] = new itemClass(x, y);
@@ -451,11 +452,11 @@ function createCell(x, y) {
 
 function getItemClass(id) {
     return itemTypes = {
-        0: switch_,
-        1: entryNode_,
-        2: nodeCore_,
-        3: firewall_,
-        4: ICE_,
+        0: Switch,
+        1: EntryNode,
+        2: NodeCore,
+        3: Firewall,
+        4: ICE,
         5: server_
     }[id];
 }
@@ -528,17 +529,17 @@ function renderLinesByAccess(startX, startY, endX, endY) {
 }
 
 function connectionRightOfCell(x, y) {
-    // Checks if both the cell at the provided coordinates and the one to the right of it are connection cells.
+    // Checks if both the Cell at the provided coordinates and the one to the right of it are connection cells.
     return x === grid.cells[y].length - 1 ? false : grid.cells[y][x].connection && grid.cells[y][x + 1].connection;
 }
 
 function connectionAboveCell(x, y) {
-    // Checks if both the cell at the provided coordinates and the one above it are connection cells.
+    // Checks if both the Cell at the provided coordinates and the one above it are connection cells.
     return y === grid.cells[x].length - 1 ? false : grid.cells[y][x].connection && grid.cells[y + 1][x].connection;
 }
 
 document.onkeydown = function(e) {
-    // Either moves the selector to another cell or takes an action on the cell.
+    // Either moves the selector to another Cell or takes an action on the Cell.
     e = e || window.event;
     // Different keys call different functions.
     // foo = {bar: () => baz()} will not call baz() when foo is initialized, baz can be called through foo().
@@ -608,7 +609,7 @@ function moveSelectorRight() {
 }
 
 function playerAction() {
-    // Makes the cell that the selector is over take an action.
+    // Makes the Cell that the selector is over take an action.
     grid.cells[grid.selector.y][grid.selector.x].takeAction();
 }
 
@@ -644,11 +645,11 @@ function isSelectorOverAccessedCell() {
 }
 
 function canEnableAccessAtSelector() {
-    // If cell can be changed from unaccessed to accessed.
+    // If Cell can be changed from unaccessed to accessed.
     // It has to be:
-    // 1. Over a cell that is connected.
-    // 2. Adjacent to a cell that the player has already accessed.
-    // 3. Over a cell that the player has not already accessed.
+    // 1. Over a Cell that is connected.
+    // 2. Adjacent to a Cell that the player has already accessed.
+    // 3. Over a Cell that the player has not already accessed.
     return isSelectorOverConnectionCell() && isSelectorAdjacentToAccessedCell() && !isSelectorOverAccessedCell();
 }
 
@@ -793,7 +794,7 @@ function severPath(target, step) {
 }
 
 function updateCellSteps(x, y, step) {
-    // So each cell on the ICE path knows how many steps away from the node it is.
+    // So each Cell on the ICE path knows how many steps away from the node it is.
     // Used for animating pulses.
     grid.cells[y][x].ICE.steps = step;
 }
