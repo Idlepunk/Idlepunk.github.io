@@ -9,7 +9,6 @@ TODO:
 -Work out the difference between rendering and drawing.
 -More prototypes.
 -Refactor ICE.
--Rename classes with UpperCamelCase.
 */
 
 function netWorkInfiltrationConstructor() {
@@ -194,7 +193,7 @@ class ICE extends Cell {
     }
 }
 
-class server_ extends Cell {
+class Server extends Cell {
     constructor(x, y) {
         super(x, y);
         this.createSpecificItem({
@@ -247,12 +246,12 @@ Cell.prototype.renderICE = function() {
         }
         else {
             // Else pick a color based on animation.
-            this.drawCellInternalOutline(this.ICEColorThisTick());
+            this.drawCellInternalOutline(this.getICEColorFromTick());
         }
     }
 };
 
-Cell.prototype.ICEColorThisTick= function() {
+Cell.prototype.getICEColorFromTick= function() {
     // Alternate colors are displayed based on the tick count and how far away the Cell is from the exit point.
     const shouldAltColorRender = (grid.ICEAI.animation.tickCount - this.ICE.steps) % grid.ICEAI.animation.startEvery === 0;
     return shouldAltColorRender ? grid.colors.ICEAlt : grid.colors.ICEMain;
@@ -457,7 +456,7 @@ function getItemClass(id) {
         2: NodeCore,
         3: Firewall,
         4: ICE,
-        5: server_
+        5: Server
     }[id];
 }
 
@@ -768,9 +767,7 @@ function setICEAILocation(target, step) {
 
         if (grid.cells[y][x].access === false) {
             // If the player has not accessed this area, ICE may move here.
-            //grid.levelBuilder.ICEPresence[y][x].hasICE = true;
             grid.cells[y][x].ICE.hasICE = true;
-            //grid.levelBuilder.ICEPresence[y][x].pathIntact = true;
             grid.cells[y][x].ICE.pathIntact = true;
         }
         else {
@@ -788,7 +785,6 @@ function severPath(target, step) {
     for (var i = grid.ICEAI.targets[target].path.length - 1; i >= step; i--) {
         const x = grid.ICEAI.targets[target].path[i].x;
         const y = grid.ICEAI.targets[target].path[i].y;
-        //grid.levelBuilder.ICEPresence[y][x].pathIntact = false;
         grid.cells[y][x].ICE.pathIntact = false;
     }
 }
