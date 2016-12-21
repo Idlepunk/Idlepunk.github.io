@@ -216,6 +216,7 @@ Cell.prototype.setDefaultICEStatus = function () {
 };
 
 Cell.prototype.createSpecificItem = function(e) {
+    // TODO.
     this.name = e.name;
     this.id = e.id;
     this.description = e.description;
@@ -261,11 +262,11 @@ Cell.prototype.renderSelector = function() {
     // If the selector is over this Cell, display a white outline over it.
     if (grid.selector.y === this.coords.y && grid.selector.x === this.coords.x) {
         this.drawCellOutline("white");
-        this.drawSelectorText();
+        this.renderSelectorText();
     }
 };
 
-Cell.prototype.drawSelectorText = function() {
+Cell.prototype.renderSelectorText = function() {
     // TODO.
     /*
     HTMLEditor(grid.DOM.selectorDetail,      this.name);
@@ -377,14 +378,13 @@ function refreshNetworkInfiltration() {
     // Refreshes the UI without changing the game state.
     clearGrid();
     renderCellConnections();
-    drawCellBase();
-    drawCellItems();
+    renderCellBase();
+    renderCellItems();
     updateICEHunt();
     updateICEAnimation();
 }
 
 function updateICEAnimation() {
-    //grid.ICEAI.animation.tickCount < 1000 ? grid.ICEAI.animation.tickCount++ : grid.ICEAI.animation.tickCount = 0;
     grid.ICEAI.animation.tickCount++;
 }
 
@@ -414,6 +414,7 @@ function createDimensionalCoordianates() {
         cellY++;
         cellX = 0;
     }
+    console.log(cellX, cellY)
 }
 
 function insertCellCoord(dimensionX, dimensionY, cellX, cellY) {
@@ -465,14 +466,19 @@ function renderLineBetweenCells(startCellX, startCellY, endCellX, endCellY, colo
     grid.ctx.lineWidth = "3";
     grid.ctx.strokeStyle = color;
 
-    const offsetX = (grid.dimensions.cellWidth - grid.dimensions.cellPadding) / 2;
-    const offsetY = (grid.dimensions.cellHeight - grid.dimensions.cellPadding) / 2;
 
-    const startX = grid.cells[startCellY][startCellX].dimensions.x + offsetX;
-    const startY = grid.cells[startCellY][startCellX].dimensions.y + offsetX;
+    // Offset is so the lines only touch the cells, not enter them.
+    const offsetX = startCellX !== endCellX ? ((grid.dimensions.cellWidth / 2) - 2) / 2 : null;
+    const offsetY = startCellY !== endCellY ? ((grid.dimensions.cellHeight / 2) - 2) / 2 : null;
 
-    const endX = grid.cells[endCellY][endCellX].dimensions.x + offsetX;
-    const endY = grid.cells[endCellY][endCellX].dimensions.y + offsetY;
+    const paddingX = (grid.dimensions.cellWidth - grid.dimensions.cellPadding) / 2;
+    const paddingY = (grid.dimensions.cellHeight - grid.dimensions.cellPadding) / 2;
+
+    const startX = grid.cells[startCellY][startCellX].dimensions.x + paddingX + offsetX;
+    const startY = grid.cells[startCellY][startCellX].dimensions.y + paddingY + offsetY;
+
+    const endX = grid.cells[endCellY][endCellX].dimensions.x + paddingX - offsetX;
+    const endY = grid.cells[endCellY][endCellX].dimensions.y + paddingY - offsetY;
 
     grid.ctx.beginPath();
     grid.ctx.moveTo(startX, startY);
@@ -480,7 +486,11 @@ function renderLineBetweenCells(startCellX, startCellY, endCellX, endCellY, colo
     grid.ctx.stroke();
 }
 
-function drawCellBase() {
+function isCellBelowOtherCell(firstCellX) {
+
+}
+
+function renderCellBase() {
     // Draws the grid based on coordinates.
     for (let y = grid.cells.length - 1; y >= 0; y--) {
         for (let x = grid.cells[y].length - 1; x >= 0; x--) {
@@ -489,7 +499,7 @@ function drawCellBase() {
     }
 }
 
-function drawCellItems() {
+function renderCellItems() {
     // Fills grid in with objects from the .maps.cells.
     for (let y = grid.cells.length - 1; y >= 0; y--) {
         for (let x = grid.cells[y].length - 1; x >= 0; x--) {
@@ -499,6 +509,7 @@ function drawCellItems() {
 }
 
 function renderCellConnections() {
+    // Cell connections are the line running between cells, indicating where the player and ICE can 'travel'.
     for (let y = grid.cells.length - 1; y >= 0; y--) {
         for (let x = grid.cells[y].length - 1; x >= 0; x--) {
             renderLinesWhereConnectionsExist(x, y);
@@ -507,6 +518,7 @@ function renderCellConnections() {
 }
 
 function renderLinesWhereConnectionsExist(x, y) {
+    // Starts in the bottom right of the grid.
     if (connectionRightOfCell(x, y)) {
         renderLinesByAccess(x, y, x + 1, y);
     }
@@ -518,13 +530,11 @@ function renderLinesWhereConnectionsExist(x, y) {
 function renderLinesByAccess(startX, startY, endX, endY) {
     // Renders a line between two cells, the color is based on access status.
     if (grid.cells[startY][startX].isAccessed() && grid.cells[endY][endX].isAccessed()) {
-        renderLineBetweenCells(startX, startY, endX, endY, grid.colors.playerAccess);
+        renderLineBetweenCells(startX, startY, endX, endY ,grid.colors.playerAccess);
     }
     else {
         renderLineBetweenCells(startX, startY, endX, endY, theme.colorTheme[theme.currentTheme].importantColor);
     }
-    grid.cells[startY][startX].drawCellFill("black");
-    grid.cells[endY][endX].drawCellFill("black");
 }
 
 function connectionRightOfCell(x, y) {
@@ -539,7 +549,6 @@ function connectionAboveCell(x, y) {
 
 document.onkeydown = function(e) {
     // Either moves the selector to another Cell or takes an action on the Cell.
-    e = e || window.event;
     // Different keys call different functions.
     // foo = {bar: () => baz()} will not call baz() when foo is initialized, baz can be called through foo().
     const actionFromInput = {
