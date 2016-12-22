@@ -198,7 +198,7 @@ function startUp() {
     runConstructors();
     itemTemplates();
     addData(gameData.BIC); // Adds data equal to the cost of the first item.
-    addData(10e10);
+    addData(10e99);
     //load();
     showGame();
     startHackGame();
@@ -696,6 +696,10 @@ function HTMLEditor(elementID, input) {
     // changes the inner HTML of an element.
     // Mostly used to change text but can also insert other HTML stuff.
     document.getElementById(elementID).innerHTML = input;
+}
+
+function HTMLColorChange(elementID, color) {
+    document.getElementById(elementID).style.color = color;
 }
 
 function visibilityChange(elementID, visibility = false) {

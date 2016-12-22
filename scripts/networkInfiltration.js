@@ -4,19 +4,13 @@
 /*jshint supernew: true */
 /*jshint multistr: true */
 
-/*
-TODO:
--Work out the difference between rendering and drawing.
--More prototypes.
--Refactor ICE.
-*/
-
 function netWorkInfiltrationConstructor() {
     window.grid = new function() {
         this.DOM = {
             selectorDetail: "selectorName",
             selectorDescription: "selectorDescription",
             selectorCost: "selectorCost",
+            selectorCostNumber: "selectorCostNumber",
             selectorAccess: "selectorAccess",
             selectorICE: "selectorICE"
         };
@@ -51,16 +45,6 @@ function netWorkInfiltrationConstructor() {
             x: 0,
             y: 0
         };
-        /*
-        this.ICEAI = {
-            targets: [],
-            isHunting: false,
-            animation: {
-                startEvery: 5,
-                tickCount: 0
-            }
-        };
-        */
         // The grid is made up of cells.
         this.cells = [[]];
         this.levelBuilder = {
@@ -169,9 +153,9 @@ class EntryNode extends Cell {
         this.createSpecificItem({
             name: "Entry Node",
             id: 1,
-            description: 0,
+            description: "Start Here",
             costMultiplier: false,
-            fillColor: grid.colors.playerAccess
+            fillColor: grid.colors.playerAccess,
         });
     }
 }
@@ -247,7 +231,7 @@ Cell.prototype.createSpecificItem = function(e) {
 };
 
 Cell.prototype.renderCell = function() {
-    if (this.fillColor){
+    if (this.fillColor) {
         this.drawCellFill();
     }
     this.renderPlayerAccess();
@@ -274,9 +258,9 @@ Cell.prototype.renderICE = function() {
     }
 };
 
-Cell.prototype.getICEColorFromTick= function() {
+Cell.prototype.getICEColorFromTick = function() {
     // Alternate colors are displayed based on the tick count and how far away the Cell is from the exit point.
-    const shouldAltColorRender = (grid.newICE.animation.tickCount - this.ICE.steps) % grid.newICE.animation.startEvery === 0;
+    const shouldAltColorRender = (grid.ICE.animation.tickCount - this.ICE.steps) % grid.ICE.animation.startEvery === 0;
     return shouldAltColorRender ? grid.colors.ICEAlt : grid.colors.ICEMain;
 };
 
@@ -289,14 +273,55 @@ Cell.prototype.renderSelector = function() {
 };
 
 Cell.prototype.renderSelectorText = function() {
-    // TODO.
-    /*
-    HTMLEditor(grid.DOM.selectorDetail,      this.name);
+    // Displays the detailed text of the state of the cell where the selector is.
+    this.setCellNameText();
+    this.setCellDescriptionText();
+    this.setCellCostText();
+    this.setCellAccessText();
+    this.setCellICEText();
+};
+
+Cell.prototype.setCellNameText = function() {
+    HTMLEditor(grid.DOM.selectorDetail, this.name);
+    const color = this.fillColor || theme.colorTheme[theme.currentTheme].bodyColor;
+    HTMLColorChange(grid.DOM.selectorDetail, color);
+};
+
+Cell.prototype.setCellDescriptionText = function() {
     HTMLEditor(grid.DOM.selectorDescription, this.description);
-    HTMLEditor(grid.DOM.selectorCost,        this.getCostToAccess());
-    HTMLEditor(grid.DOM.selectorAccess,      this.access);
-    HTMLEditor(grid.DOM.selectorICE,         this.ICE.hasICE);
-    */
+};
+
+Cell.prototype.setCellCostText = function() {
+    HTMLEditor(grid.DOM.selectorCostNumber, formatBytes(this.getCostToAccess()));
+
+    const color = this.canAffordAccess() ? "Green" : "Red";
+    HTMLColorChange(grid.DOM.selectorCostNumber, color);
+};
+
+Cell.prototype.setCellAccessText = function() {
+    if (this.access) {
+        HTMLEditor(grid.DOM.selectorAccess, "You have access to this.");
+        HTMLColorChange(grid.DOM.selectorAccess, "Green");
+    }
+    else {
+        HTMLEditor(grid.DOM.selectorAccess, "You do not have access to this.");
+        HTMLColorChange(grid.DOM.selectorAccess, "Red");
+    }
+};
+
+Cell.prototype.setCellICEText = function() {
+    if (!this.pathIntact) {
+        HTMLEditor(grid.DOM.selectorICE, "Disconnected ICE is present here.");
+        HTMLColorChange(grid.DOM.selectorICE, "Yellow");
+    }
+    else if (this.ICE.hasICE) {
+        HTMLEditor(grid.DOM.selectorICE, "ICE is present here.");
+        HTMLColorChange(grid.DOM.selectorICE, "Red");
+    }
+    else {
+        HTMLEditor(grid.DOM.selectorICE, "ICE is not present here.");
+        HTMLColorChange(grid.DOM.selectorICE, "Green");
+    }
 };
 
 Cell.prototype.drawCellFill = function(color) {
@@ -350,9 +375,9 @@ Cell.prototype.takeAction = function() {
         this.enableAccessOnCell();
         // If this is a server.
         if (this.id === 4) {
-            grid.newICE.isHunting = true;
+            grid.ICE.isHunting = true;
         }
-        grid.newICE.takeAction();
+        grid.ICE.takeAction();
     }
 };
 
@@ -390,9 +415,9 @@ function startHackGame() {
 
     createDimensionalCoordianates();
 
-    grid.newICE = new ICEAI;
-    grid.newICE.setServersAsTargets();
-    refreshNetworkInfiltration();   
+    grid.ICE = new ICEAI;
+    grid.ICE.setServersAsTargets();
+    refreshNetworkInfiltration();
 
 }
 
@@ -402,17 +427,17 @@ function refreshNetworkInfiltration() {
     renderCellConnections();
     renderCellBase();
     renderCellItems();
-    grid.newICE.update();
+    grid.ICE.update();
     //updateICEHunt();
     updateICEAnimation();
 }
 
 function updateICEAnimation() {
-    grid.newICE.animation.tickCount++;
+    grid.ICE.animation.tickCount++;
 }
 
 function clearGrid() {
-    grid.ctx.clearRect(0, 0, grid.dimensions.gridWidth, grid.dimensions.gridHeight); 
+    grid.ctx.clearRect(0, 0, grid.dimensions.gridWidth, grid.dimensions.gridHeight);
 }
 
 function convertBinaryMapToBooleanMap(grid) {
@@ -488,7 +513,6 @@ function renderLineBetweenCells(startCellX, startCellY, endCellX, endCellY, colo
     // Draws a line between two cells.
     grid.ctx.lineWidth = "3";
     grid.ctx.strokeStyle = color;
-
 
     // Offset is so the lines only touch the cells, not enter them.
     const offsetX = startCellX !== endCellX ? ((grid.dimensions.cellWidth / 2) - 2) / 2 : null;
@@ -721,6 +745,7 @@ ICEAI.prototype.addTarget = function(x, y) {
 };
 
 ICEAI.prototype.takeAction = function() {
+    // If an ICE cell has not been accessed, isHunting will be false and no action should happen.
     if (this.isHunting) {
         this.calculatePath();
         this.increaseSteps();
@@ -729,6 +754,7 @@ ICEAI.prototype.takeAction = function() {
 };
 
 ICEAI.prototype.calculatePath = function() {
+    // Loops through targets, calculating paths to reach them.
     for (let i = this.targets.length - 1; i >= 0; i--){
         this.targets[i].getPath();
     }   
@@ -770,7 +796,7 @@ ICEAITarget.prototype.takeStep = function() {
 };
 
 ICEAITarget.prototype.setPath = function() {
-    if (this.path) {
+    if (this.path) { // Path may not be found.
         for (let step = 0; step < this.steps; step++)
             this.updateCell(step);
     }
@@ -781,13 +807,16 @@ ICEAITarget.prototype.updateCell = function(step) {
         const x = this.path[step].x;
         const y = this.path[step].y;
 
-        grid.cells[y][x].ICE.steps = step;
+        // Tells the cell how many steps from the origin point it is.
+        grid.cells[y][x].ICE.steps = step; 
 
+        // ICE may only travel to cells where the player has not accessed.
         if (!grid.cells[y][x].access) {
             grid.cells[y][x].ICE.hasICE = true;
             grid.cells[y][x].ICE.pathIntact = true;
         }
         else {
+            // If the player has accessed this cell, remove ICE.
             grid.cells[y][x].ICE.hasICE = false;
             this.severPath(step);
         }
@@ -795,10 +824,10 @@ ICEAITarget.prototype.updateCell = function(step) {
 };
 
 ICEAITarget.prototype.severPath = function(step) {
+    // Removes all steps to reach a target after the given step 
+    // Marks all cells along the path as severed.
     for (let i = this.path.length - 1; i >= step; i--) {
-        const x = this.path[i].x;
-        const y = this.path[i].y;
-        grid.cells[y][x].ICE.pathIntact = false;
+        grid.cells[this.path[i].y][this.path[i].x].ICE.pathIntact = false;
     }
     this.path.splice(step);
 };
