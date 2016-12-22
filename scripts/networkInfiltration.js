@@ -51,6 +51,7 @@ function netWorkInfiltrationConstructor() {
             x: 0,
             y: 0
         };
+        /*
         this.ICEAI = {
             targets: [],
             isHunting: false,
@@ -59,6 +60,7 @@ function netWorkInfiltrationConstructor() {
                 tickCount: 0
             }
         };
+        */
         // The grid is made up of cells.
         this.cells = [[]];
         this.levelBuilder = {
@@ -116,6 +118,26 @@ function netWorkInfiltrationConstructor() {
         // Clones connections map into ICEConnections
         this.levelBuilder.ICEConnections = this.levelBuilder.connections.map(function(arr) {return arr.slice();});
     };
+}
+
+class ICEAI {
+    constructor() {
+        this.targets = [];
+        this.isHunting = false;
+        this.animation = {
+            startEvery: 5,
+            tickCount: 0
+        };
+    }
+}
+
+class ICEAITarget {
+    constructor(x, y) {
+        this.targetX = x;
+        this.targetY = y;
+        this.path = null;
+        this.steps = 0;
+    }
 }
 
 class Cell {
@@ -254,7 +276,7 @@ Cell.prototype.renderICE = function() {
 
 Cell.prototype.getICEColorFromTick= function() {
     // Alternate colors are displayed based on the tick count and how far away the Cell is from the exit point.
-    const shouldAltColorRender = (grid.ICEAI.animation.tickCount - this.ICE.steps) % grid.ICEAI.animation.startEvery === 0;
+    const shouldAltColorRender = (grid.newICE.animation.tickCount - this.ICE.steps) % grid.newICE.animation.startEvery === 0;
     return shouldAltColorRender ? grid.colors.ICEAlt : grid.colors.ICEMain;
 };
 
@@ -328,9 +350,9 @@ Cell.prototype.takeAction = function() {
         this.enableAccessOnCell();
         // If this is a server.
         if (this.id === 4) {
-            grid.ICEAI.isHunting = true;
+            grid.newICE.isHunting = true;
         }
-        ICEHunt();
+        grid.newICE.takeAction();
     }
 };
 
@@ -368,10 +390,10 @@ function startHackGame() {
 
     createDimensionalCoordianates();
 
-    refreshNetworkInfiltration();
+    grid.newICE = new ICEAI;
+    grid.newICE.setServersAsTargets();
+    refreshNetworkInfiltration();   
 
-    getListOfServers();
-    ICEHunt(); // Happens asynchronously.
 }
 
 function refreshNetworkInfiltration() {
@@ -380,12 +402,13 @@ function refreshNetworkInfiltration() {
     renderCellConnections();
     renderCellBase();
     renderCellItems();
-    updateICEHunt();
+    grid.newICE.update();
+    //updateICEHunt();
     updateICEAnimation();
 }
 
 function updateICEAnimation() {
-    grid.ICEAI.animation.tickCount++;
+    grid.newICE.animation.tickCount++;
 }
 
 function clearGrid() {
@@ -414,7 +437,7 @@ function createDimensionalCoordianates() {
         cellY++;
         cellX = 0;
     }
-    console.log(cellX, cellY)
+    console.log(cellX, cellY);
 }
 
 function insertCellCoord(dimensionX, dimensionY, cellX, cellY) {
@@ -683,124 +706,99 @@ function isCellToRightAccessed(x, y) {
     return x === grid.cells[y].length - 1 ? false : grid.cells[y][x + 1].isAccessed();
 }
 
-function ICEHunt() {
-    // TODO.
-    getPathsForICETargets();
-    if (grid.ICEAI.isHunting) {
-        increaseICEHuntSteps();
-        getPathsForICETargets();
+ICEAI.prototype.setServersAsTargets = function() {
+    for (let y = 0; y < grid.cells.length; y++) {
+        for (let x = 0; x < grid.cells[y].length; x++) {
+            if (grid.cells[y][x].id === 5) { // The ID for servers is 5
+                this.addTarget(x, y);
+            }
+        }
+    }
+};
+
+ICEAI.prototype.addTarget = function(x, y) {
+    this.targets.push(new ICEAITarget(x, y));
+};
+
+ICEAI.prototype.takeAction = function() {
+    if (this.isHunting) {
+        this.calculatePath();
+        this.increaseSteps();
         refreshNetworkInfiltration();
     }
-}
+};
 
-function calculateICEHuntPath(i) {
+ICEAI.prototype.calculatePath = function() {
+    for (let i = this.targets.length - 1; i >= 0; i--){
+        this.targets[i].getPath();
+    }   
+};
+
+ICEAI.prototype.increaseSteps = function() {
+    for (let i = this.targets.length - 1; i >= 0; i--){
+        this.targets[i].takeStep();
+    }   
+};
+
+ICEAI.prototype.update = function() {
+    if (this.isHunting) {
+        for (let i = this.targets.length - 1; i >= 0; i--){
+            this.targets[i].setPath();
+        }
+    }
+};
+
+ICEAITarget.prototype.getPath = function() {
     const es = new EasyStar.js();
     es.setIterationsPerCalculation(1000);
     es.setGrid(grid.levelBuilder.ICEConnections);
     es.setAcceptableTiles([true]);
-    es.findPath(9, 9, grid.ICEAI.targets[i].x, grid.ICEAI.targets[i].y, function(path) {
+
+    es.findPath(9, 9, this.targetX, this.targetY, function(path) {
         if (path === null) {
             console.log("No possible path for ICE.");
         }
         else {
-            addICEHuntPath(path, i);
+            this.path = path;
         }
-    });
+    }.bind(this));
     es.calculate();
-}
+};
 
-function getPathsForICETargets() {
-    for (let i = grid.ICEAI.targets.length - 1; i >= 0; i--) {
-        calculateICEHuntPath(i);
+ICEAITarget.prototype.takeStep = function() {
+    this.steps++;
+};
+
+ICEAITarget.prototype.setPath = function() {
+    if (this.path) {
+        for (let step = 0; step < this.steps; step++)
+            this.updateCell(step);
     }
-}
+};
 
-function addICEHuntPath(path, i) {
-    // when calculateICEHuntPath() finds a path it will be added here.
-    grid.ICEAI.targets[i].path = path;
-}
+ICEAITarget.prototype.updateCell = function(step) {
+    if (this.path[step]) {
+        const x = this.path[step].x;
+        const y = this.path[step].y;
 
-function getListOfServers() {
-    // Populates an array of coordinates where servers exist.
-    // These will be used as targets for ICE.
-    for (let y = 0; y < grid.cells.length; y++) {
-        for (let x = 0; x < grid.cells[y].length; x++) {
-            detectServer(x, y);
-        }
-    }
+        grid.cells[y][x].ICE.steps = step;
 
-    function detectServer(x, y) {
-        if (grid.cells[y][x].id === 5) { // The ID for servers is 5
-            grid.ICEAI.targets.push({
-                x: x,
-                y: y
-            });
-        }
-    }
-}
-
-function increaseICEHuntSteps() {
-    // ICE will move one step every time the player takes an action.
-    for (let i = grid.ICEAI.targets.length - 1; i >= 0; i--) {
-        // If it is a new target, it will not have any steps.
-        if (typeof grid.ICEAI.targets[i].stepsTaken === "undefined") {
-            grid.ICEAI.targets[i].stepsTaken = 0;
-        }
-        // Increase steps until end of path is reached.
-        else if (grid.ICEAI.targets[i].stepsTaken < grid.ICEAI.targets[i].path.length) {
-            grid.ICEAI.targets[i].stepsTaken++;
-        }
-    }
-}
-
-function updateICEHunt() {
-    // This is a clusterfuck.
-    // There is a list of targets, each target may have a list of steps to reach the target (depending on async pathfinding)
-    if (grid.ICEAI.isHunting) { // If ICE has been triggered.
-        for (let tarI = grid.ICEAI.targets.length - 1; tarI >= 0; tarI--) { // Loop through ICE targets.
-            if (grid.ICEAI.targets[tarI].path) { // If a path has been found to reach the target.
-                for (let stepI = 0; stepI < grid.ICEAI.targets[tarI].stepsTaken; stepI++) { // Loop through the steps in the path.
-                    setICEAILocation(tarI, stepI); // Update grid with the current locations of ICE.
-                }
-            }
-        }
-    }
-}
-
-function setICEAILocation(target, step) {
-    if (grid.ICEAI.targets[target].path[step]) {
-        const x = grid.ICEAI.targets[target].path[step].x;
-        const y = grid.ICEAI.targets[target].path[step].y;
-
-        updateCellSteps(x, y, step);
-
-        if (grid.cells[y][x].access === false) {
-            // If the player has not accessed this area, ICE may move here.
+        if (!grid.cells[y][x].access) {
             grid.cells[y][x].ICE.hasICE = true;
             grid.cells[y][x].ICE.pathIntact = true;
         }
         else {
-            // If the player has accessed this area, ICE may not move here.
             grid.cells[y][x].ICE.hasICE = false;
-
-            // Remove all steps after this one since ICE cannot progress further.
-            severPath(target, step);
-            grid.ICEAI.targets[target].path.splice(step);
+            this.severPath(step);
         }
     }
-}
+};
 
-function severPath(target, step) {
-    for (var i = grid.ICEAI.targets[target].path.length - 1; i >= step; i--) {
-        const x = grid.ICEAI.targets[target].path[i].x;
-        const y = grid.ICEAI.targets[target].path[i].y;
+ICEAITarget.prototype.severPath = function(step) {
+    for (let i = this.path.length - 1; i >= step; i--) {
+        const x = this.path[i].x;
+        const y = this.path[i].y;
         grid.cells[y][x].ICE.pathIntact = false;
     }
-}
-
-function updateCellSteps(x, y, step) {
-    // So each Cell on the ICE path knows how many steps away from the node it is.
-    // Used for animating pulses.
-    grid.cells[y][x].ICE.steps = step;
-}
-
+    this.path.splice(step);
+};
