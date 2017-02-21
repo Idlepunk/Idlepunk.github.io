@@ -1,0 +1,7 @@
+- Replace asynchronous pathfinding with generic A* algorithm (why did I use an asynchronous algorithm in a turn based game???).
+- Make a level loader.
+- Make some levels.
+- Make a better reward system.
+- Add save support for minigame.
+- Cast current prestige system into the deepest depths of hell.
+- Figure out what is going on with line rendering (... / 2) + 2) / 2 ...???).
