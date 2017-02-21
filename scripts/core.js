@@ -811,9 +811,9 @@ function formatNumbers(number, dp = 0) {
         'novemquadragintillion', // Now that is a sweet name for a number.
         'If you are reading this then you need to tell me to add more number sizes.'];
             const i = Math.floor(Math.log(number) / Math.log(1000));
-            let num = parseFloat((number / Math.pow(1000, i)).toFixed(0));
-            num = num.toFixed(dp);
-            return num + ' ' + numberSizes[i];
+            let formattedNumber = parseFloat((number / Math.pow(1000, i)).toFixed(0));
+            formattedNumber = formattedNumber.toFixed(dp);
+            return formattedNumber + ' ' + numberSizes[i];
         } else {
             return number; // If the number is smaller than 100k, it just displays it normally.
         }
