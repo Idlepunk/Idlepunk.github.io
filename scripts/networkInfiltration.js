@@ -20,13 +20,13 @@ function netWorkInfiltrationConstructor() {
         this.ctx.lineWidth = "3";
         this.dimensions = {
             // Dimensions of the display area, change in HTML file as well.
-            gridHeight: 600,
-            gridWidth: 600,
+            gridHeight: 400,
+            gridWidth: 400,
             // Number of cells you want on the grid.
             // Note: Currently maps I made are for 10x10 grids, changing the number of cells will require new maps.
             cellNumX: 10,
             cellNumY: 10,
-            cellPadding: 30
+            cellPadding: 20
         };
         this.colors = {
             playerAccess: '#00ff00',
@@ -310,7 +310,7 @@ Cell.prototype.setCellAccessText = function() {
 };
 
 Cell.prototype.setCellICEText = function() {
-    if (!this.pathIntact) {
+    if (!this.ICE.pathIntact && this.ICE.hasICE) {
         HTMLEditor(grid.DOM.selectorICE, "Disconnected ICE is present here.");
         HTMLColorChange(grid.DOM.selectorICE, "Yellow");
     }
@@ -462,7 +462,6 @@ function createDimensionalCoordianates() {
         cellY++;
         cellX = 0;
     }
-    console.log(cellX, cellY);
 }
 
 function insertCellCoord(dimensionX, dimensionY, cellX, cellY) {
@@ -515,8 +514,9 @@ function renderLineBetweenCells(startCellX, startCellY, endCellX, endCellY, colo
     grid.ctx.strokeStyle = color;
 
     // Offset is so the lines only touch the cells, not enter them.
-    const offsetX = startCellX !== endCellX ? ((grid.dimensions.cellWidth / 2) - 2) / 2 : null;
-    const offsetY = startCellY !== endCellY ? ((grid.dimensions.cellHeight / 2) - 2) / 2 : null;
+    // Ternary determines if line is horizontal or vertical.
+    const offsetX = startCellX !== endCellX ? ((grid.dimensions.cellWidth  / 2) + 2) / 2 : null;
+    const offsetY = startCellY !== endCellY ? ((grid.dimensions.cellHeight / 2) + 2) / 2 : null;
 
     const paddingX = (grid.dimensions.cellWidth - grid.dimensions.cellPadding) / 2;
     const paddingY = (grid.dimensions.cellHeight - grid.dimensions.cellPadding) / 2;
