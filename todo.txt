@@ -1,4 +1,3 @@
-- Replace asynchronous pathfinding with generic A* algorithm (why did I use an asynchronous algorithm in a turn based game???).
 - Make a level loader.
 - Make some levels.
 - Make a better reward system.

@@ -776,7 +776,7 @@ ICEAI.prototype.update = function() {
 
 ICEAITarget.prototype.getPath = function() {
     const es = new EasyStar.js();
-    es.setIterationsPerCalculation(1000);
+    es.setIterationsPerCalculation(Infinity); // Because asynchronicity is overrated.
     es.setGrid(grid.levelBuilder.ICEConnections);
     es.setAcceptableTiles([true]);
 
