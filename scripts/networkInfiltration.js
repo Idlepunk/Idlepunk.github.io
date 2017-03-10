@@ -274,11 +274,19 @@ Cell.prototype.renderSelector = function() {
 
 Cell.prototype.renderSelectorText = function() {
     // Displays the detailed text of the state of the cell where the selector is.
-    this.setCellNameText();
-    this.setCellDescriptionText();
-    this.setCellCostText();
-    this.setCellAccessText();
-    this.setCellICEText();
+    if (this.connection) {
+        this.setCellNameText();
+        this.setCellDescriptionText();
+        this.setCellCostText();
+        this.setCellAccessText();
+        this.setCellICEText();
+    }
+    else if (!this.connection){
+        clearSelectorText();
+        this.setCellNameText();
+        this.setCellInaccessableText();
+    }
+
 };
 
 Cell.prototype.setCellNameText = function() {
@@ -300,10 +308,12 @@ Cell.prototype.setCellCostText = function() {
 
 Cell.prototype.setCellAccessText = function() {
     if (this.access) {
+        // Cell is accessed.
         HTMLEditor(grid.DOM.selectorAccess, "You have access to this.");
         HTMLColorChange(grid.DOM.selectorAccess, "Green");
     }
     else {
+        // Cell is not accessed and is connected.
         HTMLEditor(grid.DOM.selectorAccess, "You do not have access to this.");
         HTMLColorChange(grid.DOM.selectorAccess, "Red");
     }
@@ -323,6 +333,11 @@ Cell.prototype.setCellICEText = function() {
         HTMLColorChange(grid.DOM.selectorICE, "Green");
     }
 };
+
+Cell.prototype.setCellInaccessableText = function() {
+        HTMLEditor(grid.DOM.selectorAccess, "You cannot gain access to this.");
+        HTMLColorChange(grid.DOM.selectorAccess, "Gray");
+}
 
 Cell.prototype.drawCellFill = function(color) {
     // Draws a full color square.
@@ -438,6 +453,13 @@ function updateICEAnimation() {
 
 function clearGrid() {
     grid.ctx.clearRect(0, 0, grid.dimensions.gridWidth, grid.dimensions.gridHeight);
+}
+
+function clearSelectorText() {
+    HTMLEditor(grid.DOM.selectorDetail, '');
+    HTMLEditor(grid.DOM.selectorDescription, '');
+    HTMLEditor(grid.DOM.selectorAccess, '');
+    HTMLEditor(grid.DOM.selectorICE, '');
 }
 
 function convertBinaryMapToBooleanMap(grid) {
