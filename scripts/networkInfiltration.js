@@ -53,11 +53,11 @@ function netWorkInfiltrationConstructor() {
 }
 
 class level {
-    constructor(items, connections, playerAccess) {
-        this.items = items;
-        this.connections = connections;
-        this.ICEConnections = connections;
-        this.playerAccess = playerAccess;
+    constructor(e) {
+        this.items = e.items;
+        this.connections = e.connections;
+        this.ICEConnections = e.connections;
+        this.playerAccess = e.playerAccess;
     }
 }
 
@@ -384,9 +384,8 @@ function startHackGame() {
     // First time run.
     importLevels(defaultLevels);
     // Converts the easy to read/make binary arrays to easy to process booleans.
-    convertBinaryMapToBooleanMap(grid.levels[grid.currentLevel].playerAccess);
-    convertBinaryMapToBooleanMap(grid.levels[grid.currentLevel].connections);
-    convertBinaryMapToBooleanMap(grid.levels[grid.currentLevel].ICEConnections);
+
+    parseLevels();
 
     createCellMap();
     populateCellMap();
@@ -397,6 +396,12 @@ function startHackGame() {
     grid.ICE.setServersAsTargets();
     refreshNetworkInfiltration();
 
+}
+
+function parseLevels() {
+    convertBinaryMapToBooleanMap(grid.levels[grid.currentLevel].playerAccess);
+    convertBinaryMapToBooleanMap(grid.levels[grid.currentLevel].connections);
+    convertBinaryMapToBooleanMap(grid.levels[grid.currentLevel].ICEConnections);
 }
 
 function refreshNetworkInfiltration() {
