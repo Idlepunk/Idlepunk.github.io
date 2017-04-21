@@ -48,7 +48,62 @@ function netWorkInfiltrationConstructor() {
         // The grid is made up of cells.
         this.cells = [[]];
         this.currentLevel = 0;
-        this.levels = [];
+        this.levels = [doTheThing()]
+        /*this.levelBuilder = {
+            // The game level is made by drawing these 3 arrays.
+            // All the arrays will get merged into the cells array.
+
+            // This determines what items are in what Cell:
+            // The number corresponds to what item will be in that array position.
+            // 0 = blank
+            // 1 = start
+            // 2 = end
+            // 3 = firewall
+            // 4 = ICE
+            // 5 = server
+            items: [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                    [4, 4, 0, 0, 0, 0, 0, 0, 0, 4],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [5, 0, 0, 0, 0, 0, 0, 5, 5, 5],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 5, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+                ],
+            // This determines where connections should appear running through the grid.
+            // two 1s must be touching to draw a line between those rectangles.
+            connections: [
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                ],
+            // This determines where the player has access to at the start of the game.
+            playerAccess: [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                ],
+        };
+        // Clones connections map into ICEConnections
+        this.levelBuilder.ICEConnections = this.levelBuilder.connections.map(function(arr) {return arr.slice();});
+        */
     };
 }
 
@@ -61,10 +116,44 @@ class level {
     }
 }
 
-function importLevels(newLevels) {
-    for (var i = newLevels.length - 1; i >= 0; i--) {
-        grid.levels.push(newLevels[i]);
-    }
+function doTheThing(){
+    const items = [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                    [4, 4, 0, 0, 0, 0, 0, 0, 0, 4],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [5, 0, 0, 0, 0, 0, 0, 5, 5, 5],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 5, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+                ];
+    const connections = [
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 0, 0, 0, 0, 1, 1, 1],
+                    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+                ];
+    const playerAccess = [
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                ];
+    return new level(items, connections, playerAccess)
 }
 
 class ICEAI {
@@ -382,7 +471,7 @@ Cell.prototype.getCostToAccess = function() {
 
 function startHackGame() {
     // First time run.
-    importLevels(defaultLevels);
+
     // Converts the easy to read/make binary arrays to easy to process booleans.
     convertBinaryMapToBooleanMap(grid.levels[grid.currentLevel].playerAccess);
     convertBinaryMapToBooleanMap(grid.levels[grid.currentLevel].connections);
