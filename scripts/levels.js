@@ -1,7 +1,7 @@
 const defaultLevels = [
 new level({
     items: [
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [4, 4, 0, 0, 0, 0, 0, 0, 0, 4],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -10,7 +10,7 @@ new level({
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 5, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+        [0, 0, 0, 5, 0, 0, 0, 0, 0, 2]
     ],
     // This determines where connections should appear running through the grid.
     // two 1s must be touching to draw a line between those rectangles.
@@ -28,7 +28,7 @@ new level({
     ],
     // This determines where the player has access to at the start of the game.
     playerAccess: [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

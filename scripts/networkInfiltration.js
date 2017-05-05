@@ -33,6 +33,8 @@ function netWorkInfiltrationConstructor() {
             ICEMain: 'red',
             ICEAlt: '#FF5900',
             ICEDead: '#AD4D4D',
+            ICEHeadMain: 'red',
+            ICEHeadAlt: 'yellow',
             selector: 'white'
         };
         // Sets the dimensions of cells
@@ -58,7 +60,8 @@ class ICEAI {
         this.isHunting = false;
         this.animation = {
             startEvery: 5,
-            tickCount: 0
+            tickCount: 0,
+            renderHeads: []
         };
     }
 }
@@ -79,6 +82,7 @@ class Cell {
         this.access = grid.levels[grid.currentLevel].playerAccess[y][x];
         this.connection = grid.levels[grid.currentLevel].connections[y][x];
         this.setDefaultICEStatus();
+        this.isHeadOfICE = false;
     }
 }   
 
@@ -217,6 +221,7 @@ Cell.prototype.renderICE = function() {
 
 Cell.prototype.getICEColor = function() {
     // Alternate colors are displayed based on the tick count and how far away the Cell is from the exit point.
+    // This creates a pulsing snake like animation starting at the exit and traveling down the ICE chain.
     const shouldAltColorRender = (grid.ICE.animation.tickCount - this.ICE.steps) % grid.ICE.animation.startEvery === 0;
     return shouldAltColorRender ? grid.colors.ICEAlt : grid.colors.ICEMain;
 };
@@ -382,6 +387,10 @@ Cell.prototype.getCostToAccess = function() {
     return this.costMultiplier * itemList[getBestUnlockedItem()].itemData.baseCost;
 };
 
+Cell.prototype.toggleHeadOfICE = function() {
+    this.isHeadOfICE = !this.isHeadOfICE;
+}
+
 function startHackGame() {
     // First time run.
     importLevels(defaultLevels);
@@ -420,6 +429,8 @@ function refreshNetworkInfiltration() {
     renderCellBase();
     renderCellItems();
     grid.ICE.update();
+    grid.ICE.renderHeads();
+
     //updateICEHunt();
     updateICEAnimation();
 }
@@ -765,6 +776,7 @@ ICEAI.prototype.calculatePath = function() {
 };
 
 ICEAI.prototype.increaseSteps = function() {
+    this.clearHeads();
     for (let i = this.targets.length - 1; i >= 0; i--){
         this.targets[i].takeStep();
     }   
@@ -797,6 +809,7 @@ ICEAITarget.prototype.getPath = function() {
 
 ICEAITarget.prototype.takeStep = function() {
     this.steps++;
+    this.setHead();
 };
 
 ICEAITarget.prototype.setPath = function() {
@@ -835,3 +848,41 @@ ICEAITarget.prototype.severPath = function(step) {
     }
     this.path.splice(step);
 };
+
+ICEAITarget.prototype.setHead = function() {
+    // Sets the locations of the front of ICE chains.
+    if (this.path) {
+        if ((this.path.length === 0) || (this.steps < this.path.length)) {
+            let headX = this.path[this.steps].x
+            let headY = this.path[this.steps].y
+            grid.ICE.animation.renderHeads.push({headX, headY})
+        }
+        else if (this.steps >= this.path.length) {
+            let headX = this.path[this.path.length - 1].x
+            let headY = this.path[this.path.length - 1].y
+            grid.ICE.animation.renderHeads.push({headX, headY})
+        }
+    }
+}
+
+ICEAI.prototype.clearHeads = function() {
+    grid.ICE.animation.renderHeads = [];
+}
+
+ICEAI.prototype.renderHeads = function () {
+    for (var i = this.animation.renderHeads.length - 1; i >= 0; i--) {
+        let x = this.animation.renderHeads[i].headX
+        let y = this.animation.renderHeads[i].headY
+        //grid.cells[y][x].drawCellInternalOutline('red'); // PLACEHOLDER
+        //grid.cells[y][x].drawCellFill('orange')
+        //grid.cells[y][x].drawCellOutline('red')
+        grid.cells[y][x].renderHead();
+    }
+}
+
+Cell.prototype.renderHead = function() {
+    const shouldAltColorRender = (grid.ICE.animation.tickCount) % 10 === 0;
+    const color = shouldAltColorRender ? grid.colors.ICEHeadAlt : grid.colors.ICEHeadMain;
+    this.drawCellFill(color);
+    this.drawCellInternalOutline(grid.colors.ICEHeadAlt);
+}
