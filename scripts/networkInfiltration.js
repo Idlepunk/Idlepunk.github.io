@@ -52,21 +52,6 @@ function netWorkInfiltrationConstructor() {
     };
 }
 
-class level {
-    constructor(e) {
-        this.items = e.items;
-        this.connections = e.connections;
-        this.ICEConnections = e.connections;
-        this.playerAccess = e.playerAccess;
-    }
-}
-
-function importLevels(newLevels) {
-    for (var i = newLevels.length - 1; i >= 0; i--) {
-        grid.levels.push(newLevels[i]);
-    }
-}
-
 class ICEAI {
     constructor() {
         this.targets = [];
@@ -175,6 +160,15 @@ class Server extends Cell {
     }
 }
 
+class level {
+    constructor(levelData) {
+        this.items = levelData.items;
+        this.connections = levelData.connections;
+        this.ICEConnections = levelData.connections;
+        this.playerAccess = levelData.playerAccess;
+    }
+}
+
 Cell.prototype.setDefaultICEStatus = function () {
     this.ICE = {
         hasICE: false,
@@ -216,12 +210,12 @@ Cell.prototype.renderICE = function() {
         }
         else {
             // Else pick a color based on animation.
-            this.drawCellInternalOutline(this.getICEColorFromTick());
+            this.drawCellInternalOutline(this.getICEColor());
         }
     }
 };
 
-Cell.prototype.getICEColorFromTick = function() {
+Cell.prototype.getICEColor = function() {
     // Alternate colors are displayed based on the tick count and how far away the Cell is from the exit point.
     const shouldAltColorRender = (grid.ICE.animation.tickCount - this.ICE.steps) % grid.ICE.animation.startEvery === 0;
     return shouldAltColorRender ? grid.colors.ICEAlt : grid.colors.ICEMain;
@@ -244,7 +238,7 @@ Cell.prototype.renderSelectorText = function() {
         this.setCellAccessText();
         this.setCellICEText();
     }
-    else if (!this.connection){
+    else {
         clearSelectorText();
         this.setCellNameText();
         this.setCellInaccessableText();
@@ -300,7 +294,7 @@ Cell.prototype.setCellICEText = function() {
 Cell.prototype.setCellInaccessableText = function() {
         HTMLEditor(grid.DOM.selectorAccess, "You cannot gain access to this.");
         HTMLColorChange(grid.DOM.selectorAccess, "Gray");
-}
+};
 
 Cell.prototype.drawCellFill = function(color) {
     // Draws a full color square.
@@ -351,12 +345,20 @@ Cell.prototype.takeAction = function() {
         const x = this.coords.x;
         const y = this.coords.y;
         this.enableAccessOnCell();
-        // If this is a server.
-        if (this.id === 4) {
+        // If this is a server or ICE, start ICE hunting.
+        if (this.isServer() || this.isICE()) {
             grid.ICE.isHunting = true;
         }
         grid.ICE.takeAction();
     }
+};
+
+Cell.prototype.isICE = function() {
+	return this.id === 4;
+};
+
+Cell.prototype.isServer = function() {
+	return this.id === 5;
 };
 
 Cell.prototype.enableAccessOnCell = function() {
@@ -396,6 +398,13 @@ function startHackGame() {
     grid.ICE.setServersAsTargets();
     refreshNetworkInfiltration();
 
+}
+
+function importLevels(newLevels) {
+	// Must iterate forwards.
+	for (let i = 0, len = newLevels.length; i < len; i++) {
+		grid.levels.push(newLevels[i]);
+	}
 }
 
 function parseLevels() {
@@ -439,23 +448,26 @@ function convertBinaryMapToBooleanMap(grid) {
     }
 }
 
+
 function createDimensionalCoordianates() {
-    // Creates top right corner coords for cells.
+    // Creates coordinates for the top left of each cell.
     // Coords are based off of dimensions and padding of cells.
-    let cellX = 0;
-    let cellY = 0;
-    for (let y = 1; y < grid.dimensions.gridHeight; y += grid.dimensions.cellHeight) {
-        for (let x = 1; x < grid.dimensions.gridWidth; x += grid.dimensions.cellWidth) {
-            insertCellCoord(x, y, cellX, cellY);
-            cellX++;
+
+    let cellPosX = 0;
+    let cellPosY = 0;
+
+    for (let cellDimensionY = 1; cellDimensionY < grid.dimensions.gridHeight; cellDimensionY += grid.dimensions.cellHeight) {
+        for (let cellDimensionX = 1; cellDimensionX < grid.dimensions.gridWidth; cellDimensionX += grid.dimensions.cellWidth) {
+            insertCellCoord(cellDimensionX, cellDimensionY, cellPosX, cellPosY);
+            cellPosX++;
         }
-        cellY++;
-        cellX = 0;
+        cellPosY++;
+        cellPosX = 0;
     }
 }
 
-function insertCellCoord(dimensionX, dimensionY, cellX, cellY) {
-    grid.cells[cellY][cellX].dimensions = {
+function insertCellCoord(dimensionX, dimensionY, cellPosX, cellPosY) {
+    grid.cells[cellPosY][cellPosX].dimensions = {
         x: dimensionX,
         y: dimensionY
     };
@@ -488,7 +500,7 @@ function createCell(x, y) {
 }
 
 function getItemClass(id) {
-    return itemTypes = {
+    itemTypes = {
         0: Switch,
         1: EntryNode,
         2: NodeCore,
@@ -496,6 +508,7 @@ function getItemClass(id) {
         4: ICE,
         5: Server
     }[id];
+    return itemTypes;
 }
 
 function renderLineBetweenCells(startCellX, startCellY, endCellX, endCellY, color) {
@@ -721,9 +734,10 @@ function isCellToRightAccessed(x, y) {
 }
 
 ICEAI.prototype.setServersAsTargets = function() {
+	// Loops through cells, setting servers as targets for ICE.
     for (let y = 0; y < grid.cells.length; y++) {
         for (let x = 0; x < grid.cells[y].length; x++) {
-            if (grid.cells[y][x].id === 5) { // The ID for servers is 5
+            if (grid.cells[y][x].isServer()) {
                 this.addTarget(x, y);
             }
         }
