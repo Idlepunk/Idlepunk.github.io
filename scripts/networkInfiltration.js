@@ -72,6 +72,7 @@ class ICEAITarget {
         this.targetY = y;
         this.path = null;
         this.steps = 0;
+        this.severed = false;
     }
 }
 
@@ -452,8 +453,8 @@ function clearSelectorText() {
 
 function convertBinaryMapToBooleanMap(grid) {
     // Converts an array of 1s & 0s to an array of trues & falses.
-    for (var y = grid.length - 1; y >= 0; y--) {
-        for (var x = grid[y].length - 1; x >= 0; x--) {
+    for (let y = grid.length - 1; y >= 0; y--) {
+        for (let x = grid[y].length - 1; x >= 0; x--) {
             grid[y][x] = grid[y][x] !== 0 ? true : false;
         }
     }
@@ -847,14 +848,16 @@ ICEAITarget.prototype.severPath = function(step) {
         grid.cells[this.path[i].y][this.path[i].x].ICE.pathIntact = false;
     }
     this.path.splice(step);
+    this.severed = true;
 };
 
 ICEAITarget.prototype.setHead = function() {
     // Sets the locations of the front of ICE chains.
-    if (this.path) {
+    // If the chain has been severed at any point then the head will stay dead and not move.
+    if (this.path && !this.severed) {
         if ((this.path.length === 0) || (this.steps < this.path.length)) {
-            let headX = this.path[this.steps].x
-            let headY = this.path[this.steps].y
+            let headX = this.path[this.steps - 1].x
+            let headY = this.path[this.steps - 1].y
             grid.ICE.animation.renderHeads.push({headX, headY})
         }
         else if (this.steps >= this.path.length) {
@@ -870,19 +873,20 @@ ICEAI.prototype.clearHeads = function() {
 }
 
 ICEAI.prototype.renderHeads = function () {
-    for (var i = this.animation.renderHeads.length - 1; i >= 0; i--) {
+    for (let i = this.animation.renderHeads.length - 1; i >= 0; i--) {
         let x = this.animation.renderHeads[i].headX
         let y = this.animation.renderHeads[i].headY
-        //grid.cells[y][x].drawCellInternalOutline('red'); // PLACEHOLDER
-        //grid.cells[y][x].drawCellFill('orange')
-        //grid.cells[y][x].drawCellOutline('red')
-        grid.cells[y][x].renderHead();
+        if (grid.cells[y][x].ICE.pathIntact) {
+            grid.cells[y][x].renderHead();
+        }
     }
 }
 
 Cell.prototype.renderHead = function() {
-    const shouldAltColorRender = (grid.ICE.animation.tickCount) % 10 === 0;
+    const flashRate = 4;
+    const shouldAltColorRender = (grid.ICE.animation.tickCount) % flashRate === 0;
     const color = shouldAltColorRender ? grid.colors.ICEHeadAlt : grid.colors.ICEHeadMain;
-    this.drawCellFill(color);
-    this.drawCellInternalOutline(grid.colors.ICEHeadAlt);
+    //this.drawCellFill(color);
+    //this.drawCellInternalOutline(grid.colors.ICEHeadAlt);
+    this.drawCellInternalOutline(color);
 }
