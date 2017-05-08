@@ -542,8 +542,11 @@ function renderLineBetweenCells(startCellX, startCellY, endCellX, endCellY, colo
 
     // Offset is so the lines only touch the cells, not enter them.
     // Ternary determines if line is horizontal or vertical.
-    const offsetX = startCellX !== endCellX ? ((grid.dimensions.cellWidth  / 2)) / 2 : null;
-    const offsetY = startCellY !== endCellY ? ((grid.dimensions.cellHeight / 2)) / 2 : null;
+    // Horizontal Offset = Width*2^-2.
+    // Vertical Offset = Height*2^-2.
+    const offsetX = startCellX !== endCellX ? grid.dimensions.cellWidth  * Math.pow(2, -2) : null;
+    const offsetY = startCellY !== endCellY ? grid.dimensions.cellHeight * Math.pow(2, -2) : null;
+
 
     const paddingX = (grid.dimensions.cellWidth - grid.dimensions.cellPadding) / 2;
     const paddingY = (grid.dimensions.cellHeight - grid.dimensions.cellPadding) / 2;
