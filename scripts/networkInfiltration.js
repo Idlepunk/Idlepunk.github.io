@@ -202,12 +202,14 @@ Cell.prototype.renderCell = function() {
 };
 
 Cell.prototype.renderPlayerAccess = function(x, y) {
+    // Draws cells that the player has access to.
     if (this.access) {
         this.drawCellOutline(grid.colors.playerAccess);
     }
 };
 
 Cell.prototype.renderICE = function() {
+    // Draws cells that contain ICE.
     if (this.ICE.hasICE) {
         if (!this.ICE.pathIntact) {
             // If the path is broken, display the dead ICE color.
@@ -244,6 +246,7 @@ Cell.prototype.renderSelectorText = function() {
         this.setCellAccessText();
         this.setCellICEText();
     }
+    // If there is no connection to the cell then it is inaccessable.
     else {
         clearSelectorText();
         this.setCellNameText();
@@ -283,14 +286,17 @@ Cell.prototype.setCellAccessText = function() {
 };
 
 Cell.prototype.setCellICEText = function() {
+    // Severed ICE.
     if (!this.ICE.pathIntact && this.ICE.hasICE) {
         HTMLEditor(grid.DOM.selectorICE, "Disconnected ICE is present here.");
         HTMLColorChange(grid.DOM.selectorICE, "Yellow");
     }
+    // Normal ICE.
     else if (this.ICE.hasICE) {
         HTMLEditor(grid.DOM.selectorICE, "ICE is present here.");
         HTMLColorChange(grid.DOM.selectorICE, "Red");
     }
+    // No ICE.
     else {
         HTMLEditor(grid.DOM.selectorICE, "ICE is not present here.");
         HTMLColorChange(grid.DOM.selectorICE, "Green");
@@ -303,7 +309,7 @@ Cell.prototype.setCellInaccessableText = function() {
 };
 
 Cell.prototype.drawCellFill = function(color) {
-    // Draws a full color square.
+    // Draws a filled square.
     grid.ctx.lineWidth = "4";
     grid.ctx.fillStyle = color || this.fillColor;
 
@@ -331,7 +337,7 @@ Cell.prototype.drawCellOutline = function(color) {
 };
 
 Cell.prototype.drawCellInternalOutline = function(color) {
-    // Draws the outline of a square with some negative padding.
+    // Draws the outline of a square with some negative padding so it looks like an internal border.
     const bonusPad = 3;
     grid.ctx.lineWidth = "3";
     grid.ctx.strokeStyle = color || this.color;
@@ -346,10 +352,11 @@ Cell.prototype.drawCellInternalOutline = function(color) {
 };
 
 Cell.prototype.takeAction = function() {
+    // The player has taken an action on a cell.
     if (canEnableAccessAtSelector() && this.canAffordAccess()) {
         subtractData(this.getCostToAccess());
-        const x = this.coords.x;
-        const y = this.coords.y;
+        //const x = this.coords.x;
+        //const y = this.coords.y;
         this.enableAccessOnCell();
         // If this is a server or ICE, start ICE hunting.
         if (this.isServer() || this.isICE()) {
@@ -368,7 +375,7 @@ Cell.prototype.isServer = function() {
 };
 
 Cell.prototype.enableAccessOnCell = function() {
-    // Possible glitch with ICE AI here.
+    // Enables player access, removes ICE and severs ICE connections.
     this.access = true;
     grid.cells[this.coords.y][this.coords.x].ICE.connection = false;
     this.ICE.hasICE = false;
@@ -441,6 +448,7 @@ function updateICEAnimation() {
 }
 
 function clearGrid() {
+    // Completely clears the grid area, make it a blank area.
     grid.ctx.clearRect(0, 0, grid.dimensions.gridWidth, grid.dimensions.gridHeight);
 }
 
@@ -462,8 +470,9 @@ function convertBinaryMapToBooleanMap(grid) {
 
 
 function createDimensionalCoordianates() {
-    // Creates coordinates for the top left of each cell.
+    // Creates coordinates for the top left (right?) of each cell.
     // Coords are based off of dimensions and padding of cells.
+    // They are used for rendering locations.
 
     let cellPosX = 0;
     let cellPosY = 0;
@@ -512,6 +521,9 @@ function createCell(x, y) {
 }
 
 function getItemClass(id) {
+    // Returns a class from an ID.
+    // It is bad that each class contains an ID and this is a seperate list.
+    // TODO.
     itemTypes = {
         0: Switch,
         1: EntryNode,
@@ -530,8 +542,8 @@ function renderLineBetweenCells(startCellX, startCellY, endCellX, endCellY, colo
 
     // Offset is so the lines only touch the cells, not enter them.
     // Ternary determines if line is horizontal or vertical.
-    const offsetX = startCellX !== endCellX ? ((grid.dimensions.cellWidth  / 2) + 2) / 2 : null;
-    const offsetY = startCellY !== endCellY ? ((grid.dimensions.cellHeight / 2) + 2) / 2 : null;
+    const offsetX = startCellX !== endCellX ? ((grid.dimensions.cellWidth  / 2)) / 2 : null;
+    const offsetY = startCellY !== endCellY ? ((grid.dimensions.cellHeight / 2)) / 2 : null;
 
     const paddingX = (grid.dimensions.cellWidth - grid.dimensions.cellPadding) / 2;
     const paddingY = (grid.dimensions.cellHeight - grid.dimensions.cellPadding) / 2;
@@ -546,10 +558,6 @@ function renderLineBetweenCells(startCellX, startCellY, endCellX, endCellY, colo
     grid.ctx.moveTo(startX, startY);
     grid.ctx.lineTo(endX, endY);
     grid.ctx.stroke();
-}
-
-function isCellBelowOtherCell(firstCellX) {
-
 }
 
 function renderCellBase() {
@@ -793,7 +801,7 @@ ICEAI.prototype.update = function() {
 
 ICEAITarget.prototype.getPath = function() {
     const es = new EasyStar.js();
-    es.setIterationsPerCalculation(Infinity); // Because asynchronicity is overrated.
+    es.setIterationsPerCalculation(Infinity); // Forces path to be returned during current tick.
     es.setGrid(grid.levels[grid.currentLevel].ICEConnections);
     es.setAcceptableTiles([true]);
 
@@ -860,11 +868,13 @@ ICEAITarget.prototype.setHead = function() {
             let headY = this.path[this.steps - 1].y
             grid.ICE.animation.renderHeads.push({headX, headY})
         }
+        /*
         else if (this.steps >= this.path.length) {
             let headX = this.path[this.path.length - 1].x
             let headY = this.path[this.path.length - 1].y
             grid.ICE.animation.renderHeads.push({headX, headY})
         }
+        */
     }
 }
 
