@@ -803,17 +803,18 @@ ICEAI.prototype.update = function() {
 };
 
 ICEAITarget.prototype.getPath = function() {
+    // A* algo for finding path that ICE uses.
     const es = new EasyStar.js();
     es.setIterationsPerCalculation(Infinity); // Forces path to be returned during current tick.
     es.setGrid(grid.levels[grid.currentLevel].ICEConnections);
-    es.setAcceptableTiles([true]);
+    es.setAcceptableTiles([true]); // Cells that are True are accessable by ICE.
 
     es.findPath(9, 9, this.targetX, this.targetY, function(path) {
         if (path === null) {
-            console.log("No possible path for ICE.");
+            throw('Level Error: No possible path for ICE', this)
         }
         else {
-            this.path = path;
+            this.path = path;            
         }
     }.bind(this));
     es.calculate();
@@ -863,21 +864,13 @@ ICEAITarget.prototype.severPath = function(step) {
 };
 
 ICEAITarget.prototype.setHead = function() {
-    // Sets the locations of the front of ICE chains.
+    // Sets the location of the front of this ICE chain.
     // If the chain has been severed at any point then the head will stay dead and not move.
-    if (this.path && !this.severed) {
-        if ((this.path.length === 0) || (this.steps < this.path.length)) {
-            let headX = this.path[this.steps - 1].x
-            let headY = this.path[this.steps - 1].y
-            grid.ICE.animation.renderHeads.push({headX, headY})
-        }
-        /*
-        else if (this.steps >= this.path.length) {
-            let headX = this.path[this.path.length - 1].x
-            let headY = this.path[this.path.length - 1].y
-            grid.ICE.animation.renderHeads.push({headX, headY})
-        }
-        */
+    if (this.path && !this.severed && this.steps < this.path.length) {
+        let x = this.path[this.steps - 1].x;
+        let y = this.path[this.steps - 1].y;
+        grid.ICE.animation.renderHeads.push({x, y});
+
     }
 }
 
@@ -886,9 +879,10 @@ ICEAI.prototype.clearHeads = function() {
 }
 
 ICEAI.prototype.renderHeads = function () {
+    // Loop through the heads, displaying them if they are still intact.
     for (let i = this.animation.renderHeads.length - 1; i >= 0; i--) {
-        let x = this.animation.renderHeads[i].headX
-        let y = this.animation.renderHeads[i].headY
+        let x = this.animation.renderHeads[i].x
+        let y = this.animation.renderHeads[i].y
         if (grid.cells[y][x].ICE.pathIntact) {
             grid.cells[y][x].renderHead();
         }
