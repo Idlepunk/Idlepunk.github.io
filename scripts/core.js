@@ -474,8 +474,7 @@ function achievementsUI() {
 function makeAchDisplay(achUnlockedCount, achLockedCount) {
     const achUnlockedDisplay = '&Dagger;'.repeat(achUnlockedCount); // Creates a row of symbols to represent unlocked achievements.
     const achLockedDisplay = '_'.repeat(achLockedCount); // Creates a row of symbols to represent locked achievements.
-    const achDisplay = achUnlockedDisplay + achLockedDisplay; // Will look like |||||----- changing based on unlock status.
-    return achDisplay;
+    return achUnlockedDisplay + achLockedDisplay; // Will look like |||||----- changing based on unlock status.
 }
 
 function showAchievements(item, achDisplay, achName) {
@@ -719,22 +718,23 @@ function destroyFloats() {
 function formatBytes(bytes) {
     // Converts a number of Bytes into a data format. E.g. 3000 bytes -> 3KB.
     bytes = Math.round(bytes);
-    let dp = 2;
     if (bytes <= 999999999999999999999999999) { // 1000 YB = 1*10^27 Bytes, this is 1 less than that.
+        let dp = 2;
         if (bytes < 1000) {
             dp = 0;
         }
+
         if (bytes === 0) {
             return '0 Bytes';
         }
         if (bytes === 1) {
             return '1 Byte';
         }
+
         const dataSizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
         const i = Math.floor(Math.log(bytes) / Math.log(1000));
-        let num = parseFloat((bytes / Math.pow(1000, i)).toFixed(dp));
+        const num = parseFloat((bytes / Math.pow(1000, i)).toFixed(dp));
         return num.toFixed(dp) + ' ' + dataSizes[i];
-        //num = num + ' ' + dataSizes[i]; 
     } 
     else if (bytes === Infinity) {
         return "Max";
@@ -742,8 +742,7 @@ function formatBytes(bytes) {
     else {
         // If it is larger than the largest data format (9999 Yottabytes), shows scientific notation of Bytes instead.
         bytes = bytes.toExponential(0);
-        bytes += ' Bytes';
-        return bytes;
+        return bytes += ' Bytes';
     }
 }
 

@@ -714,7 +714,7 @@ function getBestUnlockedItem() {
             return i;
         }
     }
-    return 0;
+    return 0; // Player has not unlocked or bought anything.
 }
 
 function isSelectorOverConnectionCell() {
@@ -788,7 +788,7 @@ ICEAI.prototype.calculatePath = function() {
 };
 
 ICEAI.prototype.increaseSteps = function() {
-    this.clearHeads();
+    this.clearHeads(); // The head locations are going to change once a step occurs.
     for (let i = this.targets.length - 1; i >= 0; i--){
         this.targets[i].takeStep();
     }   
@@ -807,7 +807,7 @@ ICEAITarget.prototype.getPath = function() {
     const es = new EasyStar.js();
     es.setIterationsPerCalculation(Infinity); // Forces path to be returned during current tick.
     es.setGrid(grid.levels[grid.currentLevel].ICEConnections);
-    es.setAcceptableTiles([true]); // Cells that are True are accessable by ICE.
+    es.setAcceptableTiles([true]); // Cells that are True are accessible by ICE.
 
     es.findPath(9, 9, this.targetX, this.targetY, function(path) {
         if (path === null) {
