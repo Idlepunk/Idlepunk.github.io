@@ -6,6 +6,7 @@
 
 function netWorkInfiltrationConstructor() {
     window.grid = new function() {
+        // Names of DOM elements.
         this.DOM = {
             selectorDetail: "selectorName",
             selectorDescription: "selectorDescription",
@@ -26,7 +27,7 @@ function netWorkInfiltrationConstructor() {
             // Note: Currently maps I made are for 10x10 grids, changing the number of cells will require new maps.
             cellNumX: 10,
             cellNumY: 10,
-            cellPadding: 20
+            cellPadding: 20 // Distance between cells.
         };
         this.colors = {
             playerAccess: '#00ff00',
@@ -40,15 +41,17 @@ function netWorkInfiltrationConstructor() {
         // Sets the dimensions of cells
         this.dimensions.cellWidth = this.dimensions.gridWidth / this.dimensions.cellNumX;
         this.dimensions.cellHeight = this.dimensions.gridHeight / this.dimensions.cellNumY;
-        // Sets the dimensions in the canvas.
+        // Sets the dimensions of the canvas.
         this.ctx.canvas.width = this.dimensions.gridWidth;
         this.ctx.canvas.height = this.dimensions.gridHeight;
+        // Start position of selector.
         this.selector = {
             x: 0,
             y: 0
         };
-        // The grid is made up of cells.
+
         this.cells = [[]];
+
         this.currentLevel = 0;
         this.levels = [];
     };
@@ -83,14 +86,14 @@ class Cell {
         this.access = grid.levels[grid.currentLevel].playerAccess[y][x];
         this.connection = grid.levels[grid.currentLevel].connections[y][x];
         this.setDefaultICEStatus();
-        this.isHeadOfICE = false;
+        this.isHeadOfICE = false; // Move to setDefaultICEStatus?
     }
 }   
 
 class Switch extends Cell {
     constructor(x, y) {
         super(x, y);
-        this.createSpecificItem({
+        this.createGridItem({
             name: "Switch",
             id: 0,
             description: "There is nothing of import here",
@@ -103,12 +106,12 @@ class Switch extends Cell {
 class EntryNode extends Cell {
     constructor(x, y) {
         super(x, y);
-        this.createSpecificItem({
+        this.createGridItem({
             name: "Entry Node",
             id: 1,
             description: "Start Here",
             costMultiplier: false,
-            fillColor: grid.colors.playerAccess,
+            fillColor: grid.colors.playerAccess
         });
     }
 }
@@ -116,7 +119,7 @@ class EntryNode extends Cell {
 class NodeCore extends Cell {
     constructor(x, y) {
         super(x, y);
-        this.createSpecificItem({
+        this.createGridItem({
             name: "Node Core",
             id: 2,
             description: "Contains large quantities of sensitive information",
@@ -129,7 +132,7 @@ class NodeCore extends Cell {
 class Firewall extends Cell {
     constructor(x, y) {
         super(x, y);
-        this.createSpecificItem({
+        this.createGridItem({
             name: "Firewall",
             id: 3,
             description: "Prevents access",
@@ -142,7 +145,7 @@ class Firewall extends Cell {
 class ICE extends Cell {
     constructor(x, y) {
         super(x, y);
-        this.createSpecificItem({
+        this.createGridItem({
             name: "ICE",
             id: 4,
             description: "Attacks Intruders",
@@ -155,7 +158,7 @@ class ICE extends Cell {
 class Server extends Cell {
     constructor(x, y) {
         super(x, y);
-        this.createSpecificItem({
+        this.createGridItem({
             name: "Server",
             id: 5,
             description: "Contains information",
@@ -183,13 +186,13 @@ Cell.prototype.setDefaultICEStatus = function () {
     };
 };
 
-Cell.prototype.createSpecificItem = function(e) {
+Cell.prototype.createGridItem = function(itemData) {
     // TODO.
-    this.name = e.name;
-    this.id = e.id;
-    this.description = e.description;
-    this.costMultiplier = e.costMultiplier;
-    this.fillColor = e.fillColor;
+    this.name = itemData.name;
+    this.id = itemData.id;
+    this.description = itemData.description;
+    this.costMultiplier = itemData.costMultiplier;
+    this.fillColor = itemData.fillColor;
 };
 
 Cell.prototype.renderCell = function() {
@@ -217,12 +220,12 @@ Cell.prototype.renderICE = function() {
         }
         else {
             // Else pick a color based on animation.
-            this.drawCellInternalOutline(this.getICEColor());
+            this.drawCellInternalOutline(this.getICEAnimationColor());
         }
     }
 };
 
-Cell.prototype.getICEColor = function() {
+Cell.prototype.getICEAnimationColor = function() {
     // Alternate colors are displayed based on the tick count and how far away the Cell is from the exit point.
     // This creates a pulsing snake like animation starting at the exit and traveling down the ICE chain.
     const shouldAltColorRender = (grid.ICE.animation.tickCount - this.ICE.steps) % grid.ICE.animation.startEvery === 0;
@@ -246,13 +249,12 @@ Cell.prototype.renderSelectorText = function() {
         this.setCellAccessText();
         this.setCellICEText();
     }
-    // If there is no connection to the cell then it is inaccessable.
+    // If there is no connection to the cell then it is inaccessible.
     else {
         clearSelectorText();
         this.setCellNameText();
         this.setCellInaccessableText();
     }
-
 };
 
 Cell.prototype.setCellNameText = function() {
@@ -522,7 +524,7 @@ function createCell(x, y) {
 
 function getItemClass(id) {
     // Returns a class from an ID.
-    // It is bad that each class contains an ID and this is a seperate list.
+    // It is bad that each class contains an ID and this is a separate list.
     // TODO.
     itemTypes = {
         0: Switch,
@@ -811,7 +813,7 @@ ICEAITarget.prototype.getPath = function() {
 
     es.findPath(9, 9, this.targetX, this.targetY, function(path) {
         if (path === null) {
-            throw('Level Error: No possible path for ICE', this)
+            throw('Level Error: No possible path for ICE', this);
         }
         else {
             this.path = path;            
